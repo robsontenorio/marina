@@ -4,9 +4,9 @@ set -e
 
 clear
 
-read -p 'Folder name (ex: myapp): ' folder
-read -p 'Github username: ' ghusername
-read -p 'Github token: ' ghtoken
+read < /dev/tty -p 'Folder name (ex: myapp): ' folder
+read < /dev/tty -p 'Github username: ' ghusername
+read < /dev/tty -p 'Github token: ' ghtoken
 
 # docker
 if ! docker --version; then
