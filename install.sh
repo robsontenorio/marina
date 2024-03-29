@@ -9,12 +9,12 @@ read -p 'Github username: ' ghusername
 read -p 'Github token: ' ghtoken
 
 # docker
-#if ! docker --version; then
-#  curl -fsSL https://get.docker.com -o get-docker.sh &&
-#  sudo sh ./get-docker.sh &&
-#  sudo systemctl enable docker.service &&
-#  sudo systemctl enable containerd.service &&
-# fi
+if ! docker --version; then
+  curl -fsSL https://get.docker.com -o get-docker.sh &&
+  sudo sh ./get-docker.sh &&
+  sudo systemctl enable docker.service &&
+  sudo systemctl enable containerd.service
+fi
 
 # https://github.com/Wowu/docker-rollout
 mkdir -p ~/.docker/cli-plugins &&
