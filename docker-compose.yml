@@ -1,0 +1,51 @@
+volumes:
+    ping17-mysql-volume:
+    ping17-proxy-volume:
+    ping17-letsencrypt-volume:
+
+services:
+    ######## APP ########
+    ping17-app:
+        image: ghcr.io/robsontenorio/ping17.com:main
+        restart: unless-stopped
+        pull_policy: always
+        environment:
+            - CONTAINER_ROLE=APP
+        depends_on:
+          ping17-mysql:
+          condition: service_healthy
+
+        env_file:
+            - .env.docker
+
+    ######## MSQYL ########
+    ping17-mysql:
+        image: mysql:8.3.0
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: ping17
+            MYSQL_DATABASE: ping17db
+            MYSQL_USER: ping17
+            MYSQL_PASSWORD: ping17
+        ports:
+            - 3306:3306
+        volumes:
+            - ping17-mysql-volume:/var/lib/mysql
+        healthcheck:
+          test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+          interval: 30s
+          timeout: 10s
+          retries: 5
+
+
+    ####### NGINX PROXY ##########
+    ping17-proxy:
+        image: jc21/nginx-proxy-manager:latest
+        restart: unless-stopped
+        ports:
+            - 80:80
+            - 81:81
+            - 443:443
+        volumes:
+            - ping17-proxy-volume:/data
+            - ping17-letsencrypt-volume:/etc/letsencrypt
