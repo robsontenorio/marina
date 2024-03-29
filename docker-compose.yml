@@ -13,7 +13,7 @@ services:
             - CONTAINER_ROLE=APP
         depends_on:
           ping17-mysql:
-          condition: service_healthy
+            condition: service_healthy
 
         env_file:
             - .env.docker
