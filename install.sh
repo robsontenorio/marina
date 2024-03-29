@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 clear
 
 read -p 'Folder name (ex: myapp): ' folder
