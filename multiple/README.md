@@ -6,8 +6,8 @@
 
 **Guidelines**
 
-- Build the project images using **GitHub Actions** and push to **GitHub Registry**.
 - Set up a **Nginx Proxy Manager** to forward the incoming requests to the correct project.
+- Build the project images using **GitHub Actions** and push to **GitHub Registry**.
 - Use **Watchtower** to deploy automatically new versions of images from your project.
 - Each project has **it own** `docker-compose.yml`
 
@@ -19,21 +19,104 @@
 
 ## Pre-requisites
 
+1. A GitHub repository for each project.
 1. A brand-new Cloud VPS.
 1. Docker installed inside your VPS.
 1. A domain name.
 
+## Private GitHub Registry
 
-## Sumary
+The following script will authenticate you on the Private GitHub Registry and store the credentials on docker config file.
 
-1. Create a VPS
-1. Point your domain to VPS
-1. Create the skeleton
-1. Docker network
-1. Private GitHub Registry
-1. The proxy project
-1. The `docker-compose.yml` anatomy
-1. Configure `proxy.mary-ui.com`
+[How to get a GitHub Classic Token?](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)
+
+```bash
+# Replace the variables
+export CR_PAT=<YOUR_GITHUB_CLASSIC_TOKEN> &&
+echo $CR_PAT| docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --password-stdin
+```
+
+
+## GitHub Actions
+Use GitHub Actions to build the project images and push them to the Private GitHub Registry.
+
+**Approach**
+- If you push git a tag like `x.y.z`, build the `production` docker image tag.
+- If you push git a tag like `stage-xxxx`, build the `stage` docker image tag.
+
+**Why?**
+- You need a fixed tag to use on the `docker-compose.yml` files.
+- Otherwise, you will need to update the `docker-compose.yml` file every time you push a new image.
+
+**Images**  
+
+This will produce the following images we will use on the `docker-compose.yml` files.
+- `ghcr.io/robsontenorio/mary-ui.com:production` 
+- `ghcr.io/robsontenorio/mary-ui.com:stage`
+
+**.github/workflows /docker-publish.yml**
+
+```yml
+name: Create and publish a Docker image
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'        # any `x.y.z` tag builds the `production` image
+      - 'stage-*'                     # the `stage-xxxx` pattern tag builds the`stage` image
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: "Log in to the Container registry"
+        uses: docker/login-action@v3.1.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Check Github Tag"
+        id: check-tag
+        run: |
+          if [[ ${{ github.event.ref }} =~ ^refs/tags/[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "IS_PRODUCTION=true" >> $GITHUB_OUTPUT
+          fi
+
+          if [[ ${{ github.event.ref }} =~ ^refs/tags/stage-(.*)$ ]]; then
+              echo "IS_STAGE=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: "Extract Docker metadata (tags, labels)"
+        id: meta
+        uses: docker/metadata-action@v5.5.1
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          flavor: |
+            latest=false
+          tags: |
+            type=raw,value=production,enable=${{  steps.check-tag.outputs.IS_PRODUCTION == 'true' }}
+            type=raw,value=stage,enable=${{  steps.check-tag.outputs.IS_STAGE == 'true' }}
+
+      - name: "Build and push Docker images"
+        uses: docker/build-push-action@v5.3.0
+        with:
+          context: .
+          file: .docker/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+```
 
 ## Create a VPS
 
@@ -52,7 +135,7 @@ The following example is from a domain registered on Cloudflare .
 
 ![](domains.png)
 
-## Create the skeleton
+## The skeleton
 
 Create the following structure for your projects. Notice the folder name reflects the project's domains itself, but it is not mandatory.
 
@@ -84,12 +167,14 @@ SQLite is used on these projects, but you can use any database you want through 
    |__ database.sqlite   
 ```
 
-Give correct permission to SQLite database, because we will mount it to the container.
 
-```
-chown 1000:1000 database.sqlite
-```
+## Docker network
 
+Create a docker network. All projects must join to this network. So, you need to use the same name on all projects.
+
+```bash
+docker network create mary
+```
 
 
 ## The `docker-compose.yml` anatomy 
@@ -115,27 +200,7 @@ services:
         image: mysql:8.3        
 ```
 
-## Docker network
-
-Create a docker network. All projects we will join to this network. Any name you want, but you need to use the same name on all projects.
-
-```bash
-docker network create mary
-```
-
-## Private GitHub Registry
-
-The following script will authenticate you on the GitHub Registry (private) and store the credentials on docker config file.
-
-Get your GitHub Classic Token [here - TODO](TODO).
-
-```bash
-# Replace the variables
-export CR_PAT=<YOUR_GITHUB_CLASSIC_TOKEN> &&
-echo $CR_PAT| docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --password-stdin
-```
-
-## Set up the proxy project
+## The proxy project
 
 Actually we set up two things here:
 - **Nginx Proxy Manager** to forward all incoming traffic to the correct project.
@@ -144,13 +209,12 @@ Actually we set up two things here:
 
 ```bash
 |   
-|__ proxy.mary-ui.com/        
+|__ proxy.mary-ui.com/        # <!---- You are here!  
     |
-    |__ docker-compose.yml  # <!---- You are here!
+    |__ docker-compose.yml  
 ```
----
-<details>
-<summary>Click to see the docker-compose.yml</summary>
+
+**docker-compose.yml**
 
 ```yml
 networks:
@@ -186,9 +250,6 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock
             - /root/.docker/config.json:/config.json
 ```
-</details>
-
----
 
 **Run it**
 
@@ -198,20 +259,67 @@ After started, you can access the Nginx Proxy Manager at `http://YOUR-VPS-IP-NUM
 docker-compose up -d
 ```
 
+Now, configure `proxy.mary-ui.com` domain to access the **Nginx Proxy Manager** panel. 
+After saving, you can access it on `https://proxy.mary-ui.com`
 
-## Configure `proxy.mary-ui.com`
+![img_3.png](mary-proxy.png)
 
 > [!WARNING]
 > There is no need to configure the SSL certificate. Cloudflare will do it for you.
 
 > [!WARNING]
-> As we are working with Docker  **always use the service name** you have set on `docker-compose.yml` files to configure the proxy hosts as you will see on the next sections.
+> As we are working with Docker  **always use the service name and the port** you have set on `docker-compose.yml` files to configure the proxy hosts as you will see on the next sections.
 
-- The first one is the `proxy.mary-ui.com` domain to access the **Nginx Proxy Manager** panel.
-- After saving, you can access it on `https://proxy.mary-ui.com`
+> [!WARNING]
+> Notice the scheme is always `http`
 
-![img_3.png](mary-proxy.png)
+
 
 ## Configure `mary-ui.com`
+Create the following files.
 
-...
+```bash
+|__ mary-ui.com/                # <!---- You are here! 
+    |
+    |__ .env                
+    |__ docker-compose.yml
+    |__ database.sqlite
+```
+**.env**
+
+```bash
+APP_ENV=production
+APP_DEBUG=false
+APP_KEY=base64:....
+APP_URL=http://mary-ui.com
+```
+
+**docker-compose.yml**
+
+> [!WARNING]
+> We don't need to expose the port, because the Nginx Proxy Manager will forward the traffic to the correct project.
+```yml
+networks:
+  default:
+    name: mary
+    external: true
+
+services:
+    mary-app:                                                   # <-- referenced by `Nginx Proxy Manager`
+        container_name: mary-app                                # <-- referenced by `Watchtower`
+        image: ghcr.io/robsontenorio/mary-ui.com:production     # <-- Use fixed `production` tag
+        restart: always
+        pull_policy: always
+        env_file:
+          - .env
+        volumes:
+  	   - ./database.sqlite:/var/www/app/database/database.sqlite
+```
+
+**SQLite**
+> [!WARNING]
+> Give correct permission to SQLite database, because we will mount it to the container.
+
+```
+chown 1000:1000 database.sqlite
+```
