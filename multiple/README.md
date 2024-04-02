@@ -105,9 +105,13 @@ This following GitHub Action will produce this images that will be used on the `
 - `ghcr.io/robsontenorio/mary-ui.com:production` 
 - `ghcr.io/robsontenorio/mary-ui.com:stage`
 
-**.github/workflows /docker-publish.yml**
+
+<details>
+<summary>Click to see</summary>
 
 ```yml
+# robsontenorio/mary-ui.com/.github/workflows/docker-publish.yml
+
 name: Create and publish a Docker image
 
 on:
@@ -168,6 +172,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 ```
+</details>
 
 ## Point your domains to VPS 
 
@@ -207,12 +212,10 @@ Actually we set up two things here:
 ```bash
 YOUR VPS
 |   
-|__ proxy.mary-ui.com/        # <!---- You are here!  
+|__ proxy.mary-ui.com/          
     |
-    |__ docker-compose.yml  
+    |__ docker-compose.yml  # <!---- You are here!
 ```
-
-**docker-compose.yml**
 
 ```yml
 networks:
@@ -257,10 +260,15 @@ After started, you can access the Nginx Proxy Manager at `http://YOUR-VPS-IP-NUM
 docker-compose up -d
 ```
 
-Now, configure `proxy.mary-ui.com` domain to access the **Nginx Proxy Manager** panel. 
+**Configure the first domain** 
+
+Configure `proxy.mary-ui.com` domain to point to the **Nginx Proxy Manager** panel itself.  
 After saving, you can access it on `https://proxy.mary-ui.com`
 
 ![img_3.png](mary-proxy.png)
+
+> [!WARNING]
+> Remember that you have to point this domain on Cloudflare to the IP address of your **VPS**. 
 
 > [!WARNING]
 > There is no need to configure the SSL certificate. Cloudflare will do it for you.
