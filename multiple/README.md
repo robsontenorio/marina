@@ -101,7 +101,7 @@ robsontenorio/mary-ui.com         # Github repository
 
 **Images**  
 
-This following GitHub Action will produce this images that will be used on the `docker-compose.yml` files.
+The GitHub Action will produce this images that will be used to set up the projects on your **VPS**.
 - `ghcr.io/robsontenorio/mary-ui.com:production` 
 - `ghcr.io/robsontenorio/mary-ui.com:stage`
 
