@@ -159,15 +159,19 @@ services:
 
 ---
 
-Actually we will run two things here:
-- **Nginx Proxy Manager** to redirect all incoming traffic to the correct project.
-- **Docker Watch Tower** to deploy automatically new versions of images from your project.
-
 **Run it**
 
 ```
 docker-compose up -d
 ```
+
+---
+
+Actually we will run two things here:
+- **Nginx Proxy Manager** to redirect all incoming traffic to the correct project.
+- **Docker Watch Tower** to deploy automatically new versions of images from your project.
+
+
 
 **Configure the first proxy**
 
