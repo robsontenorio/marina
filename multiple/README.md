@@ -2,6 +2,12 @@
 
 This document describes how to set up multiple projects on the same server using Docker.
 
+## When to use it
+
+- Projects does not have a lot of traffic.
+- You want to save money.
+
+
 ## Pre-requisites
 
 - A project on GitHub.
@@ -20,17 +26,18 @@ This document describes how to set up multiple projects on the same server using
 - Use **Watchtower** to deploy automatically new versions of images from your project.
 - Each project has **it own** `docker-compose.yml` 
 
-**When to use it**
+## Base Docker image
 
-- Projects does not have a lot of traffic.
-- You want to save money.
+For reference, all the projects here use the same base image `robsontenorio/laravel` that includes a Nginx server bound to port `8080`.  
+Of course, you can use any base image you want.
+
 
 ## The skeleton
 
-Create the following folder structure on your **VPS**, that represents the sites you want to deploy.  
-On the next sections we will describe each folder.
+The following folder structure on your **VPS** represents the sites you want to deploy.
 
 ```bash
+YOUR VPS
 |   
 |__ proxy.mary-ui.com/        # Nginx Proxy Manager + Watchtower
 |   |
@@ -55,24 +62,18 @@ On the next sections we will describe each folder.
    |__ docker-compose.yml
 ```
 
-
 ## Repositories
 
-Although you can use any name you want, we named the repositories to match the **VPS** folder structure above.  
-Notice that we will not pull these repositories into the **VPS**, it js just a name convention.
+Although you can use any name you want, we named the repositories to match the site we want to deploy.  
+Notice that we will not pull directly these repositories into the **VPS**, it js just a name convention.
 
 ![repositories.png](repositories.png)
-
-## Base Docker image
-
-For reference, all the projects here use the same base image `robsontenorio/laravel` and it includes a Nginx server bound to port `8080`.  
-Of course, you can use any base image you want.
-
 
 ## GitHub Actions
 Set up a GitHub Action on your repository to build the project Docker images and push them to the **Private GitHub Registry**.
 
 ```bash
+robsontenorio/mary-ui.com         # Github repository
 |   
 |__ .docker/
 |    |
@@ -82,7 +83,7 @@ Set up a GitHub Action on your repository to build the project Docker images and
 |    |
 |    |__ workflows/
 |       |
-|       |__ docker-publish.yml        # <-- You are here!
+|       |__ docker-publish.yml    # <-- You are here!
 |               
 |__ app/
 |__ bootstrap/
@@ -195,28 +196,6 @@ docker network create mary
 ```
 
 
-## The `docker-compose.yml` anatomy 
-
-- All projects belong to the **same docker network**.
-- The **service** name is used to configure the **Nginx Proxy Manager** entries.
-- The **container** name is used to configure the **Watchtower**.
-
-```yml
-networks:
-    default:
-        name: mary                        # <--- docker network
-        external: true                    # <--- important!
-
-services:    
-    myapp:                                # <--- service name (referenced by `Nginx Proxy Manager` )        
-        container_name: myapp             # <--- container name (referenced by `Watchtower` )
-        image: my-company/myapp:latest
-    
-    # Other services (optional) ...
-    myapp-mysql:
-        container_name: myapp-mysql
-        image: mysql:8.3        
-```
 
 ## The proxy project
 
@@ -226,6 +205,7 @@ Actually we set up two things here:
 
 
 ```bash
+YOUR VPS
 |   
 |__ proxy.mary-ui.com/        # <!---- You are here!  
     |
@@ -345,7 +325,7 @@ services:
         env_file:
           - .env
         volumes:
-  	   - ./database.sqlite:/var/www/app/database/database.sqlite
+  	      - ./database.sqlite:/var/www/app/database/database.sqlite
 ```
 
 **SQLite**
