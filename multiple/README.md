@@ -172,7 +172,7 @@ services:
 
     ######## WATCHTOWER ########
     
-    watchtower:
+    mary-watchtower:
         image: containrrr/watchtower
         container_name: ping17-watchower
         # Place here all `container_name` of the upcoming projects you want to watch.
@@ -191,7 +191,8 @@ services:
 docker-compose up -d
 ```
 
-Now you can access the Nginx Proxy Manager at `http://YOUR-VPS-IP:81`.
+> [!NOTE]  
+> Now you can access the Nginx Proxy Manager at `http://YOUR-VPS-IP-NUMBER:81`.
 
 ---
 
@@ -202,7 +203,7 @@ Actually we run two things here:
 
 ## Configure `proxy.mary-ui.com`
 
-> [!NOTE]
+> [!WARNING]
 > There is no need to configure the SSL certificate. Cloudflare will do it for you.
 
 > [!WARNING]
