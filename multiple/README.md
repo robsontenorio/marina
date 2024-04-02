@@ -289,8 +289,8 @@ export CR_PAT=<YOUR_GITHUB_CLASSIC_TOKEN> &&
 echo $CR_PAT| docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --password-stdin
 ```
 
-## Configure `mary-ui.com`
-Create the following files.
+## The `mary-ui.com` project
+Create the following files on your **VPS**.
 
 ```bash
 |__ mary-ui.com/                # <!---- You are here! 
@@ -309,10 +309,6 @@ APP_URL=http://mary-ui.com
 ```
 
 **docker-compose.yml**
-
-> [!WARNING]
-> Do not expose any port here!
-
 ```yml
 networks:
   default:
@@ -332,8 +328,8 @@ services:
 ```
 
 **SQLite**
-> [!WARNING]
-> Give correct permission to SQLite database, because we will mount it to the container.
+
+Give correct permission to SQLite database, because we will mount it to the container.
 
 ```
 chown 1000:1000 database.sqlite
