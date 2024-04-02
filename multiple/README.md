@@ -116,11 +116,6 @@ services:
     |
     |__ docker-compose.yml  # <!---- You are here!
 ```
-
-Actually we will run two things here:
-- **Nginx Proxy Manager** to redirect all incoming traffic to the correct project. 
-- **Docker Watch Tower** to deploy automatically new versions of images from your project.
-
 ---
 <details>
 <summary>Click to see the docker-compose.yml</summary>
@@ -162,6 +157,10 @@ services:
 </details>
 
 ---
+
+Actually we will run two things here:
+- **Nginx Proxy Manager** to redirect all incoming traffic to the correct project.
+- **Docker Watch Tower** to deploy automatically new versions of images from your project.
 
 **Run it**
 
