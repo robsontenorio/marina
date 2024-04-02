@@ -26,18 +26,15 @@ This document describes how to set up multiple projects on the same server using
 - Use **Watchtower** to deploy automatically new versions of images from your project.
 - Each project has **it own** `docker-compose.yml` 
 
-## Base Docker image
-
-For reference, all the projects here use the same base image `robsontenorio/laravel` that includes a Nginx server bound to port `8080`.  
-Of course, you can use any base image you want.
 
 
-## The skeleton
+
+## The final result
 
 The following folder structure on your **VPS** represents the sites you want to deploy.
 
 ```bash
-YOUR VPS
+YOUR_VPS
 |   
 |__ proxy.mary-ui.com/        # Nginx Proxy Manager + Watchtower
 |   |
@@ -176,15 +173,18 @@ jobs:
 
 ## Point your domains to VPS 
 
-- The registered domain is `mary-ui.com`
-- You can also create subdomains (`flow.mary-ui.com`, `orange.mary-ui.com` ...)
+- The root registered domain is `mary-ui.com`
+- You can also create subdomains
+  - `flow.mary-ui.com` 
+  - `orange.mary-ui.com`
+  - ...
 - All of them points to the same IP address of your **VPS**.
 
 > [!TIP]
 > Cloudflare provides the SSL certificate for all domains/subdomains for free. So, you do not need to do anything else on your VPS.
 
 
-![](domains.png)
+![img.png](domains.png)
 
 
 ## Docker network
@@ -205,7 +205,7 @@ Actually we set up two things here:
 
 
 ```bash
-YOUR VPS
+YOUR_VPS
 |   
 |__ proxy.mary-ui.com/          
     |
@@ -255,10 +255,12 @@ After started, you can access the Nginx Proxy Manager at `http://YOUR-VPS-IP-ADD
 docker-compose up -d
 ```
 
-**Configure the first domain** 
+**Configure the first proxy host** 
 
-Configure `proxy.mary-ui.com` domain to point to the **Nginx Proxy Manager** panel itself.  
-After saving, you can access it on `https://proxy.mary-ui.com`
+On `Hosts > Proxy Hosts`:
+- Add `proxy.mary-ui.com` domain as follows.
+- This domain will proxy to the **Nginx Proxy Manager** panel itself.
+- After saving, you can access the panel at `https://proxy.mary-ui.com`
 
 ![img_3.png](mary-proxy.png)
 
@@ -269,16 +271,17 @@ After saving, you can access it on `https://proxy.mary-ui.com`
 > There is no need to configure the SSL certificate. Cloudflare will do it for you.
 
 > [!WARNING]
-> Notice the scheme is always `http`
+> Notice the scheme is always `http`, because we are inside the VPS and communicating with docker containers.
 
 > [!WARNING]
-> As we are working with Docker  **always use the service name and the port** described `docker-compose.yml`.
+> As we are working with Docker  **always use the service name and the port** described on `docker-compose.yml` files.
 
 ## Private GitHub Registry
 
-Our images were pushed to the **Private GitHub Registry** using **GitHub Actions**. So, you need to authenticate  in to the registry on your **VPS** to pull the images.
+Our images were pushed to the **Private GitHub Registry** using **GitHub Actions**.
 
-Run The following script will authenticate you on the Private GitHub Registry and store the credentials on docker config file.
+Run the following script on your **VPS** to authenticate you on the Private GitHub Registry and be able to pull private images.
+It will store the auth token  at `~/.docker/config.json`. 
 
 [How to get a GitHub Classic Token?](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)
 
@@ -288,12 +291,21 @@ Run The following script will authenticate you on the Private GitHub Registry an
 export CR_PAT=<YOUR_GITHUB_CLASSIC_TOKEN> &&
 echo $CR_PAT| docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --password-stdin
 ```
+> [!TIP]
+> You need to do it once for all projects on this VPS.
 
-## The `mary-ui.com` project
+
+## Add the `mary-ui.com` project
 Create the following files on your **VPS**.
 
 ```bash
-|__ mary-ui.com/                # <!---- You are here! 
+YOUR_VPS
+|   
+|__ proxy.mary-ui.com/          # This already exists, it rules all projects
+|   |
+|   |__ docker-compose.yml
+|
+|__ mary-ui.com/                # <-- New project 
     |
     |__ .env                
     |__ docker-compose.yml
@@ -302,10 +314,10 @@ Create the following files on your **VPS**.
 **.env**
 
 ```bash
+APP_URL=http://mary-ui.com
 APP_ENV=production
 APP_DEBUG=false
 APP_KEY=base64:....
-APP_URL=http://mary-ui.com
 ```
 
 **docker-compose.yml**
@@ -318,7 +330,7 @@ networks:
 services:
     mary-app:                                                   # <-- referenced by `Nginx Proxy Manager`
         container_name: mary-app                                # <-- referenced by `Watchtower`
-        image: ghcr.io/robsontenorio/mary-ui.com:production     # <-- Use fixed `production` tag
+        image: ghcr.io/robsontenorio/mary-ui.com:production     # <-- Use fixed `production` tag, it was pushed by GitHub Actions
         restart: always
         pull_policy: always
         env_file:
@@ -335,5 +347,58 @@ Give correct permission to SQLite database, because we will mount it to the cont
 chown 1000:1000 database.sqlite
 ```
 
-**Configure the proxy**
+**Configure the proxy host**
 
+![img.png](mary-app-proxy.png)
+
+**Run it**  
+
+```bash
+# Inside the `mary-ui.com/` folder
+
+docker compose up -d
+```
+
+After started, you can access the site at `http://mary-ui.com`
+
+
+## Adding new projects
+
+```bash
+YOUR VPS
+|   
+|__ proxy.mary-ui.com/        # This already exists, it rules all projects
+|   |
+|   |__ docker-compose.yml
+|
+|__ flow.mary-ui.com/         # <-- New project
+   |
+   |__ .env   
+   |__ database.sqlite
+   |__ docker-compose.yml
+
+```
+
+This works exactly the same way as the `mary-ui.com` project.
+
+1. Prepare your GitHub repository with actions to build and push the images.
+1. Set up a domain on Cloudflare and point it to the IP address of your **VPS**.
+1. Create the folder structure on your **VPS**.
+1. Add a proxy host for `flow.mary-ui.com` on **Nginx Proxy Manager**.
+1. Add the "container name" on **Watchtower** service at `proxy.mary-ui.com/docker-compose.yml`.
+
+Reload the proxy container to apply the changes.
+
+```bash
+# Inside the `YOUR_VPS/proxy.mary-ui.com/` folder
+
+docker compose up -d
+```
+
+Run the project.
+
+```bash
+# Inside the `YOUR_VPS/flow.mary-ui.com/` folder
+
+docker compose up -d
+```
