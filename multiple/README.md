@@ -176,25 +176,20 @@ jobs:
 
 ## Point your domains to VPS 
 
-The following example is from a domain registered on Cloudflare .
-
 - The registered domain is `mary-ui.com`
 - You can also create subdomains (`flow.mary-ui.com`, `orange.mary-ui.com` ...)
 - All of them points to the same IP address of your **VPS**.
-
-
-![](domains.png)
 
 > [!TIP]
 > Cloudflare provides the SSL certificate for all domains/subdomains for free. So, you do not need to do anything else on your VPS.
 
 
-
+![](domains.png)
 
 
 ## Docker network
 
-Create a docker network. All projects must join to this network. So, you need to use the same name on all projects.
+Create a docker network. All projects must join to this network.
 
 ```bash
 docker network create mary
@@ -268,7 +263,7 @@ After saving, you can access it on `https://proxy.mary-ui.com`
 ![img_3.png](mary-proxy.png)
 
 > [!WARNING]
-> Remember that you have to point this domain on Cloudflare to the IP address of your **VPS**. 
+> Remember you have configured Cloudflare to point to the IP address of your **VPS**. 
 
 > [!WARNING]
 > There is no need to configure the SSL certificate. Cloudflare will do it for you.
@@ -277,7 +272,7 @@ After saving, you can access it on `https://proxy.mary-ui.com`
 > Notice the scheme is always `http`
 
 > [!WARNING]
-> As we are working with Docker  **always use the service name and the port** you have set on `docker-compose.yml` files to configure the proxy entries.
+> As we are working with Docker  **always use the service name and the port** described `docker-compose.yml`.
 
 ## Private GitHub Registry
 
