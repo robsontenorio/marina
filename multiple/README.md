@@ -135,7 +135,12 @@ export CR_PAT=<YOUR_GITHUB_CLASSIC_TOKEN> &&
 echo $CR_PAT| docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --password-stdin
 ```
 
-## The proxy project
+## Set up the proxy project
+
+Actually we set up two things here:
+- **Nginx Proxy Manager** to forward all incoming traffic to the correct project.
+- **Watchtower** to deploy automatically new versions of images from your project.
+
 
 ```bash
 |   
@@ -174,9 +179,9 @@ services:
     
     mary-watchtower:
         image: containrrr/watchtower
-        container_name: ping17-watchower
-        # Place here all `container_name` of the upcoming projects you want to watch.
-        command: mary-app flow-app ping-app orange-app paper-app  --log-level error --interval 5 --rolling-restart
+        container_name: mary-watchower
+        # Use the `container_name` (not service name) of the projects you want to watch
+        command: mary-app flow-app orange-app  --log-level error --interval 5 --rolling-restart
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - /root/.docker/config.json:/config.json
@@ -187,18 +192,11 @@ services:
 
 **Run it**
 
+After started, you can access the Nginx Proxy Manager at `http://YOUR-VPS-IP-NUMBER:81`
+
 ```
 docker-compose up -d
 ```
-
-> [!NOTE]  
-> Now you can access the Nginx Proxy Manager at `http://YOUR-VPS-IP-NUMBER:81`.
-
----
-
-Actually we run two things here:
-- **Nginx Proxy Manager** to forward all incoming traffic to the correct project.
-- **Docker Watchtower** to deploy automatically new versions of images from your project.
 
 
 ## Configure `proxy.mary-ui.com`
