@@ -249,7 +249,7 @@ services:
 
 **Run it**
 
-After started, you can access the Nginx Proxy Manager at `http://YOUR-VPS-IP-NUMBER:81`
+After started, you can access the Nginx Proxy Manager at `http://YOUR-VPS-IP-ADDRESS:81`
 
 ```
 docker-compose up -d
