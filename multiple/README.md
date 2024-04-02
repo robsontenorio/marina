@@ -2,11 +2,13 @@
 
 ## Overview
 
+![overview.png](overview.png)
+
 **Guidelines**
 
-- We have a **proxy manager** that will route the requests to the correct project.
+- We have a **proxy manager** that forwards the requests to the correct project.
 - All projects are on the same **docker network**.
-- Each project runs **isolated** from others.
+- Each project has **it own** `docker-compose.yml`
 
 **When to use it**
 
@@ -23,13 +25,7 @@
 
 ## VPS
 
-Create a VPS somewhere and install Docker on it and ... done!
-
-- Digital Ocean 
-- Hetzner
-- Hostinger 
-- ...
-
+Create a VPS somewhere and install Docker ... done!
 
 ## Domain 
 
@@ -39,8 +35,8 @@ The following example is from a domain registered on Cloudflare .
 - Create some subdomains (`flow.mary-ui.com`, `orange.mary-ui.com` ...)
 - All of them points to the same IP address of your VPS.
 
----
-Cloudflare provides the SSL certificate for all domains/subdomains. So, you do not need to do anything else on your VPS.
+> [!TIP]
+> Cloudflare provides the SSL certificate for all domains/subdomains for free. So, you do not need to do anything else on your VPS.
 
 ![](domains.png)
 
@@ -82,13 +78,7 @@ Give correct permission to Sqlite database, because we will mount it to the cont
 chown 1000:1000 database.sqlite
 ```
 
-## Docker network
 
-Create a docker network. All projects we will join to this network. Any name you want, but you need to use the same name on all projects.
-
-```bash
-docker network create mary
-```
 
 ## The `docker-compose.yml` anatomy 
 
@@ -111,6 +101,14 @@ services:
     myapp-mysql:
         container_name: myapp-mysql
         image: mysql:8.3        
+```
+
+## Docker network
+
+Create a docker network. All projects we will join to this network. Any name you want, but you need to use the same name on all projects.
+
+```bash
+docker network create mary
 ```
 
 ## The proxy project
@@ -174,7 +172,7 @@ Now you can access the Nginx Proxy Manager at `http://YOUR-VPS-IP:81`.
 ---
 
 Actually we run two things here:
-- **Nginx Proxy Manager** to redirect all incoming traffic to the correct project.
+- **Nginx Proxy Manager** to forward all incoming traffic to the correct project.
 - **Docker Watch Tower** to deploy automatically new versions of images from your project.
 
 As we are working with Docker  **always use the service name** you have set on `docker-compose.yml` files to configure the proxy hosts as you will see on the next sections.
