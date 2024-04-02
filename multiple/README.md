@@ -16,13 +16,16 @@
 - Projects does not have a lot of traffic.
 - You want to save money.
 
+## Base Docker image
 
-## Pre-requisites
+For reference, all the projects here use the same base image `robsontenorio/laravel`. It includes a Nginx server bound to port `8080` as you can see on the introduction image.
 
-1. A GitHub repository for each project.
-1. A brand-new Cloud VPS.
-1. Docker installed inside your VPS.
-1. A domain name.
+## Naming conventions
+
+Although you can use any name you want, the following naming convention for repositories is used in this document.
+Each repository name represents a site itself.
+
+![repositories.png](repositories.png)
 
 ## Private GitHub Registry
 
@@ -268,12 +271,10 @@ After saving, you can access it on `https://proxy.mary-ui.com`
 > There is no need to configure the SSL certificate. Cloudflare will do it for you.
 
 > [!WARNING]
-> As we are working with Docker  **always use the service name and the port** you have set on `docker-compose.yml` files to configure the proxy hosts as you will see on the next sections.
-
-> [!WARNING]
 > Notice the scheme is always `http`
 
-
+> [!WARNING]
+> As we are working with Docker  **always use the service name and the port** you have set on `docker-compose.yml` files to configure the proxy entries.
 
 ## Configure `mary-ui.com`
 Create the following files.
@@ -297,7 +298,8 @@ APP_URL=http://mary-ui.com
 **docker-compose.yml**
 
 > [!WARNING]
-> We don't need to expose the port, because the Nginx Proxy Manager will forward the traffic to the correct project.
+> Do not expose any port here!
+
 ```yml
 networks:
   default:
@@ -323,3 +325,6 @@ services:
 ```
 chown 1000:1000 database.sqlite
 ```
+
+**Configure the proxy**
+
