@@ -18,7 +18,7 @@
 
 ## Base Docker image
 
-For reference, all the projects here use the same base image `robsontenorio/laravel`. It includes a Nginx server bound to port `8080` as you can see on the introduction image.
+For reference, all the projects here use the same base image `robsontenorio/laravel` and it includes a Nginx server bound to port `8080`.
 
 ## Naming conventions
 
@@ -127,10 +127,9 @@ The following example is from a domain registered on Cloudflare .
 
 ## The skeleton
 
-Create the following structure for your projects. Notice the folder name reflects the project's domains itself, but it is not mandatory.
+Create the following structure for your projects on the VPS the represents the sites.
 
-
-SQLite is used on these projects, but you can use any database you want through `docker-compose.yml`.
+SQLite is used on these projects, but you can use any database you want.
 
 ```bash
 |   
