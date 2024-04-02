@@ -1,4 +1,4 @@
-# Multiple projects on same server
+# Multiple projects on a single server
 
 This document describes how to set up multiple projects on the same server using Docker.
 
@@ -13,6 +13,7 @@ This document describes how to set up multiple projects on the same server using
 - A project on GitHub.
 - A VPS with Docker installed.
 - A domain name registered on Cloudflare.
+- Be comfortable with Docker and GitHub Actions.
 
 
 ## Overview
@@ -21,10 +22,10 @@ This document describes how to set up multiple projects on the same server using
 
 **Guidelines**
 
-- Set the **Nginx Proxy Manager** to forward the traffic to the correct project.
+- Set the **Nginx Proxy Manager** to forward the traffic to the correct container.
 - Build the project images using **GitHub Actions** and push to **GitHub Registry**.
 - Use **Watchtower** to deploy automatically new versions of images from your project.
-- Each project has **it own** `docker-compose.yml` 
+- Each project has **it own** `docker-compose.yml`.
 
 
 
