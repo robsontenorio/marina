@@ -6,8 +6,9 @@
 
 **Guidelines**
 
-- We have a **proxy manager** that forwards the requests to the correct project.
-- All projects are on the same **docker network**.
+- Build the project images using **GitHub Actions** and push to **GitHub Registry**.
+- Set up a **Nginx Proxy Manager** to forward the incoming requests to the correct project.
+- Use **Watchtower** to deploy automatically new versions of images from your project.
 - Each project has **it own** `docker-compose.yml`
 
 **When to use it**
@@ -23,16 +24,27 @@
 1. A domain name.
 
 
-## VPS
+## Sumary
+
+1. Create a VPS
+1. Point your domain to VPS
+1. Create the skeleton
+1. Docker network
+1. Private GitHub Registry
+1. The proxy project
+1. The `docker-compose.yml` anatomy
+1. Configure `proxy.mary-ui.com`
+
+## Create a VPS
 
 Create a VPS somewhere and install Docker ... done!
 
-## Domain 
+## Point your domain to VPS 
 
 The following example is from a domain registered on Cloudflare .
 
 - The registered domain is `mary-ui.com`
-- Create some subdomains (`flow.mary-ui.com`, `orange.mary-ui.com` ...)
+- You can also create subdomains (`flow.mary-ui.com`, `orange.mary-ui.com` ...)
 - All of them points to the same IP address of your VPS.
 
 > [!TIP]
@@ -40,12 +52,12 @@ The following example is from a domain registered on Cloudflare .
 
 ![](domains.png)
 
-## Structure
+## Create the skeleton
 
-Create the following structure for each project with empty files. Notice the folder name reflects the project domains itself, but it is not mandatory.
+Create the following structure for your projects. Notice the folder name reflects the project's domains itself, but it is not mandatory.
 
 
-We will fill this files later. 
+SQLite is used on these projects, but you can use any database you want through `docker-compose.yml`.
 
 ```bash
 |   
@@ -72,7 +84,7 @@ We will fill this files later.
    |__ database.sqlite   
 ```
 
-Give correct permission to Sqlite database, because we will mount it to the container.
+Give correct permission to SQLite database, because we will mount it to the container.
 
 ```
 chown 1000:1000 database.sqlite
@@ -83,8 +95,8 @@ chown 1000:1000 database.sqlite
 ## The `docker-compose.yml` anatomy 
 
 - All projects belong to the **same docker network**.
-- The **service** name is used to configure the **proxy manager**.
-- The **container** name is used to configure the **watchtower**.
+- The **service** name is used to configure the **Nginx Proxy Manager** entries.
+- The **container** name is used to configure the **Watchtower**.
 
 ```yml
 networks:
@@ -93,8 +105,8 @@ networks:
         external: true                    # <--- important!
 
 services:    
-    myapp:                                # <--- service name (for proxy reference)        
-        container_name: myapp             # <--- container name (for watchtower reference)
+    myapp:                                # <--- service name (referenced by `Nginx Proxy Manager` )        
+        container_name: myapp             # <--- container name (referenced by `Watchtower` )
         image: my-company/myapp:latest
     
     # Other services (optional) ...
@@ -109,6 +121,18 @@ Create a docker network. All projects we will join to this network. Any name you
 
 ```bash
 docker network create mary
+```
+
+## Private GitHub Registry
+
+The following script will authenticate you on the GitHub Registry (private) and store the credentials on docker config file.
+
+Get your GitHub Classic Token [here - TODO](TODO).
+
+```bash
+# Replace the variables
+export CR_PAT=<YOUR_GITHUB_CLASSIC_TOKEN> &&
+echo $CR_PAT| docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --password-stdin
 ```
 
 ## The proxy project
@@ -136,15 +160,15 @@ services:
     mary-proxy:
         #image: jc21/nginx-proxy-manager:latest (TODO)
         image: jc21/nginx-proxy-manager:github-pr-3478
-        container_name: ping17-proxy
+        container_name: mary-proxy
         restart: unless-stopped
         ports:
             - 80:80
             - 81:81
             - 443:443
         volumes:
-            - ./proxy.mary-ui.com/data:/data
-            - ./ping17.com/letsencrypt:/etc/letsencrypt
+            - ./data:/data
+            - ./letsencrypt:/etc/letsencrypt
 
     ######## WATCHTOWER ########
     
@@ -173,14 +197,19 @@ Now you can access the Nginx Proxy Manager at `http://YOUR-VPS-IP:81`.
 
 Actually we run two things here:
 - **Nginx Proxy Manager** to forward all incoming traffic to the correct project.
-- **Docker Watch Tower** to deploy automatically new versions of images from your project.
+- **Docker Watchtower** to deploy automatically new versions of images from your project.
 
-As we are working with Docker  **always use the service name** you have set on `docker-compose.yml` files to configure the proxy hosts as you will see on the next sections.
 
 ## Configure `proxy.mary-ui.com`
- 
-- The first one is the `proxy.mary-ui.com` domain to access the proxy panel.
-- After saving you can access it on `https://proxy.mary-ui.com`
+
+> [!NOTE]
+> There is no need to configure the SSL certificate. Cloudflare will do it for you.
+
+> [!WARNING]
+> As we are working with Docker  **always use the service name** you have set on `docker-compose.yml` files to configure the proxy hosts as you will see on the next sections.
+
+- The first one is the `proxy.mary-ui.com` domain to access the **Nginx Proxy Manager** panel.
+- After saving, you can access it on `https://proxy.mary-ui.com`
 
 ![img_3.png](mary-proxy.png)
 
