@@ -27,19 +27,6 @@ Each repository name represents a site itself.
 
 ![repositories.png](repositories.png)
 
-## Private GitHub Registry
-
-The following script will authenticate you on the Private GitHub Registry and store the credentials on docker config file.
-
-[How to get a GitHub Classic Token?](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)
-
-```bash
-# Replace the variables
-export CR_PAT=<YOUR_GITHUB_CLASSIC_TOKEN> &&
-echo $CR_PAT| docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --password-stdin
-```
-
-
 ## GitHub Actions
 Use GitHub Actions to build the project images and push them to the Private GitHub Registry.
 
@@ -275,6 +262,21 @@ After saving, you can access it on `https://proxy.mary-ui.com`
 
 > [!WARNING]
 > As we are working with Docker  **always use the service name and the port** you have set on `docker-compose.yml` files to configure the proxy entries.
+
+## Private GitHub Registry
+
+Our images were pushed to the GitHub Registry using GitHub Actions. So, you need to authenticate  in to the registry on your VPS to pull the images.
+
+The following script will authenticate you on the Private GitHub Registry and store the credentials on docker config file.
+
+[How to get a GitHub Classic Token?](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)
+
+```bash
+# Replace the variables
+
+export CR_PAT=<YOUR_GITHUB_CLASSIC_TOKEN> &&
+echo $CR_PAT| docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --password-stdin
+```
 
 ## Configure `mary-ui.com`
 Create the following files.
