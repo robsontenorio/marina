@@ -1,34 +1,94 @@
 # Multiple projects on same server
 
+This document describes how to set up multiple projects on the same server using Docker.
+
+## Pre-requisites
+
+- A project on GitHub.
+- A VPS with Docker installed.
+- A domain name registered on Cloudflare.
+
+
 ## Overview
 
 ![overview.png](overview.png)
 
 **Guidelines**
 
-- Set up a **Nginx Proxy Manager** to forward the incoming requests to the correct project.
+- Set the **Nginx Proxy Manager** to forward the traffic to the correct project.
 - Build the project images using **GitHub Actions** and push to **GitHub Registry**.
 - Use **Watchtower** to deploy automatically new versions of images from your project.
-- Each project has **it own** `docker-compose.yml`
+- Each project has **it own** `docker-compose.yml` 
 
 **When to use it**
 
 - Projects does not have a lot of traffic.
 - You want to save money.
 
-## Base Docker image
+## The skeleton
 
-For reference, all the projects here use the same base image `robsontenorio/laravel` and it includes a Nginx server bound to port `8080`.
+Create the following folder structure on your **VPS**, that represents the sites you want to deploy.  
+On the next sections we will describe each folder.
 
-## Naming conventions
+```bash
+|   
+|__ proxy.mary-ui.com/        # Nginx Proxy Manager + Watchtower
+|   |
+|   |__ docker-compose.yml
+|
+|__ mary-ui.com/              # Project 1
+|   |
+|   |__ .env   
+|   |__ database.sqlite
+|   |__ docker-compose.yml
+|
+|__ flow.mary-ui.com/         # Project 2
+|   |
+|   |__ .env   
+|   |__ database.sqlite
+|   |__ docker-compose.yml
+|
+|__ orange.mary-ui.com/       # Project 3
+   |
+   |__ .env   
+   |__ database.sqlite
+   |__ docker-compose.yml
+```
 
-Although you can use any name you want, the following naming convention for repositories is used in this document.
-Each repository name represents a site itself.
+
+## Repositories
+
+Although you can use any name you want, we named the repositories to match the **VPS** folder structure above.  
+Notice that we will not pull these repositories into the **VPS**, it js just a name convention.
 
 ![repositories.png](repositories.png)
 
+## Base Docker image
+
+For reference, all the projects here use the same base image `robsontenorio/laravel` and it includes a Nginx server bound to port `8080`.  
+Of course, you can use any base image you want.
+
+
 ## GitHub Actions
-Use GitHub Actions to build the project images and push them to the Private GitHub Registry.
+Set up a GitHub Action on your repository to build the project Docker images and push them to the **Private GitHub Registry**.
+
+```bash
+|   
+|__ .docker/
+|    |
+|    |__ Dockerfile                   
+|
+|__ .github/
+|    |
+|    |__ workflows/
+|       |
+|       |__ docker-publish.yml        # <-- You are here!
+|               
+|__ app/
+|__ bootstrap/
+|__ database/
+|__ ...
+``` 
 
 **Approach**
 - If you push git a tag like `x.y.z`, build the `production` docker image tag.
@@ -40,7 +100,7 @@ Use GitHub Actions to build the project images and push them to the Private GitH
 
 **Images**  
 
-This will produce the following images we will use on the `docker-compose.yml` files.
+This following GitHub Action will produce this images that will be used on the `docker-compose.yml` files.
 - `ghcr.io/robsontenorio/mary-ui.com:production` 
 - `ghcr.io/robsontenorio/mary-ui.com:stage`
 
@@ -108,53 +168,22 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 ```
 
-## Create a VPS
-
-Create a VPS somewhere and install Docker ... done!
-
-## Point your domain to VPS 
+## Point your domains to VPS 
 
 The following example is from a domain registered on Cloudflare .
 
 - The registered domain is `mary-ui.com`
 - You can also create subdomains (`flow.mary-ui.com`, `orange.mary-ui.com` ...)
-- All of them points to the same IP address of your VPS.
+- All of them points to the same IP address of your **VPS**.
+
+
+![](domains.png)
 
 > [!TIP]
 > Cloudflare provides the SSL certificate for all domains/subdomains for free. So, you do not need to do anything else on your VPS.
 
-![](domains.png)
 
-## The skeleton
 
-Create the following structure for your projects on the VPS the represents the sites.
-
-SQLite is used on these projects, but you can use any database you want.
-
-```bash
-|   
-|__ proxy.mary-ui.com/        # Proxy project
-|   |
-|   |__ docker-compose.yml
-|
-|__ mary-ui.com/              # Project 1
-|   |
-|   |__ docker-compose.yml
-|   |__ .env
-|   |__ database.sqlite
-|
-|__ flow.mary-ui.com/         # Project 2
-|   |
-|   |__ docker-compose.yml
-|   |__ .env
-|   |__ database.sqlite
-|
-|__ orange.mary-ui.com/       # Project 3
-   |
-   |__ docker-compose.yml
-   |__ .env
-   |__ database.sqlite   
-```
 
 
 ## Docker network
@@ -264,7 +293,7 @@ After saving, you can access it on `https://proxy.mary-ui.com`
 
 ## Private GitHub Registry
 
-Our images were pushed to the GitHub Registry using GitHub Actions. So, you need to authenticate  in to the registry on your VPS to pull the images.
+Our images were pushed to the GitHub Registry using GitHub Actions. So, you need to authenticate  in to the registry on your **VPS** to pull the images.
 
 The following script will authenticate you on the Private GitHub Registry and store the credentials on docker config file.
 
