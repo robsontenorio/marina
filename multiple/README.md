@@ -276,9 +276,9 @@ After saving, you can access it on `https://proxy.mary-ui.com`
 
 ## Private GitHub Registry
 
-Our images were pushed to the GitHub Registry using GitHub Actions. So, you need to authenticate  in to the registry on your **VPS** to pull the images.
+Our images were pushed to the **Private GitHub Registry** using **GitHub Actions**. So, you need to authenticate  in to the registry on your **VPS** to pull the images.
 
-The following script will authenticate you on the Private GitHub Registry and store the credentials on docker config file.
+Run The following script will authenticate you on the Private GitHub Registry and store the credentials on docker config file.
 
 [How to get a GitHub Classic Token?](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)
 
