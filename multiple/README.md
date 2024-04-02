@@ -237,11 +237,11 @@ services:
             - ./letsencrypt:/etc/letsencrypt
 
     ######## WATCHTOWER ########
+    # --> Important: Use the `container_name` (not service name) of the projects you want to watch
     
     mary-watchtower:
         image: containrrr/watchtower
-        container_name: mary-watchower
-        # Use the `container_name` (not service name) of the projects you want to watch
+        container_name: mary-watchower        
         command: mary-app flow-app orange-app  --log-level error --interval 5 --rolling-restart
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock

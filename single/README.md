@@ -146,3 +146,153 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 ```
 </details>
+
+
+## Point your domain to VPS
+
+- The root registered domain is `mary-ui.com`
+- Create an extra `proxy` subdomain.
+- Point all of them to the IP address of your **VPS**.
+
+> [!TIP]
+> Cloudflare provides the SSL certificate for all domains/subdomains for free. So, you do not need to do anything else on your VPS.
+
+
+![img.png](domains.png)
+
+
+## Docker network
+
+Create a docker network. All projects must join to this network.
+
+```bash
+docker network create mary
+```
+
+## The  setup
+
+```bash
+YOUR_VPS
+|   
+|__ mary-ui.com/     # <!---- You are here!    
+    |
+    |__ .env
+    |__ database.sqlite
+    |__ docker-compose.yml  
+```
+**.env**
+
+```bash
+APP_URL=http://mary-ui.com
+APP_ENV=production
+APP_DEBUG=false
+APP_KEY=base64:....
+```
+
+**SQLite**
+
+Give correct permission to SQLite database, because we will mount it to the container.
+
+```
+chown 1000:1000 database.sqlite
+```
+
+**docker-compose.yml**
+
+- **Your project** docker image.
+- **Nginx Proxy Manager** to forward all incoming traffic to the correct project.
+- **Watchtower** to deploy automatically new versions of images from your project.
+
+```yml
+networks:
+    default:
+        name: mary
+        external: true
+
+services:
+    ####### YOUR PROJECT ##########
+  
+    mary-app:                                                   # Referenced by `Nginx Proxy Manager`
+        container_name: mary-app                                # Referenced by `Watchtower`
+        image: ghcr.io/robsontenorio/mary-ui.com:production     # Use fixed `production` tag, it was pushed by GitHub Actions
+        restart: always
+        pull_policy: always
+        env_file:
+          - .env
+        volumes:
+          - ./database.sqlite:/var/www/app/database/database.sqlite
+
+    ####### NGINX PROXY ##########
+  
+    mary-proxy:
+        #image: jc21/nginx-proxy-manager:latest (TODO)
+        image: jc21/nginx-proxy-manager:github-pr-3478
+        container_name: mary-proxy
+        restart: unless-stopped
+        ports:
+            - 80:80
+            - 81:81
+            - 443:443
+        volumes:
+            - ./data:/data
+            - ./letsencrypt:/etc/letsencrypt
+
+    ######## WATCHTOWER ########
+    
+    # Important: Use the `container_name` (not service name) of the projects you want to watch
+    
+    mary-watchtower:
+        image: containrrr/watchtower
+        container_name: mary-watchower        
+        command: mary-app --log-level error --interval 5 --rolling-restart
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /root/.docker/config.json:/config.json
+```
+
+**Run it**
+
+After started, you can access the **Nginx Proxy Manager** at `http://YOUR-VPS-IP-ADDRESS:81`
+
+```
+docker-compose up -d
+```
+
+## Configure the proxy host
+
+> [!WARNING]
+> Remember you have configured Cloudflare to point to the IP address of your **VPS**.
+
+> [!WARNING]
+> There is no need to configure the SSL certificate. Cloudflare will do it for you.
+
+> [!WARNING]
+> Notice the scheme is always `http`, because we are inside the VPS and communicating with docker containers.
+
+> [!WARNING]
+> As we are working with Docker  **always use the service name and the port** described on `docker-compose.yml` files.
+
+
+On `Hosts > Proxy Hosts`:
+- Add `proxy.mary-ui.com` domain as follows.
+- This domain will proxy to the **Nginx Proxy Manager** panel itself.
+- After saving, you can access the panel at `https://proxy.mary-ui.com`
+
+![img_3.png](mary-proxy.png)
+
+- Now, add a new proxy host for `mary-ui.com` domain.  
+- Notice the port `8080` is exposed by `robsontenorio/laravel` docker image.
+- After saving, you can access at `https://mary-ui.com`
+
+![img.png](mary-app-proxy.png)
+
+## Additional containers
+
+You can keep adding other projects and  on the same `docker-compose.yml` file and configure the **Nginx Proxy Manager** to redirect the traffic to the correct container.
+
+**Pros**
+- Easy to manage.
+
+**Cons**
+- Some changes in the `docker-compose.yml` can cause downtime in another running images.
+
