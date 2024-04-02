@@ -17,18 +17,19 @@
 ## Pre-requisites
 
 1. A brand-new Cloud VPS.
-1. Docker installed inse your VPS.
+1. Docker installed inside your VPS.
 1. A domain name.
 
 
 ## VPS
 
-Create a VPS somewhere and install Docker on it.
+Create a VPS somewhere and install Docker on it and ... done!
 
 - Digital Ocean 
 - Hetzner
 - Hostinger 
 - ...
+
 
 ## Domain 
 
@@ -46,6 +47,9 @@ Cloudflare provides the SSL certificate for all domains/subdomains. So, you do n
 ## Structure
 
 Create the following structure for each project with empty files. Notice the folder name reflects the project domains itself, but it is not mandatory.
+
+
+We will fill this files later. 
 
 ```bash
 |   
@@ -86,7 +90,7 @@ Create a docker network. All projects we will join to this network. Any name you
 docker network create mary
 ```
 
-## Mandatory anatomy 
+## The `docker-compose.yml` anatomy 
 
 - All projects belong to the **same docker network**.
 - The **service** name is used to configure the **proxy manager**.
@@ -95,18 +99,18 @@ docker network create mary
 ```yml
 networks:
     default:
-        name: mary                        # <--- The docker network
-        external: true
+        name: mary                        # <--- docker network
+        external: true                    # <--- important!
 
 services:    
-    myapp:                                # <--- Service name
+    myapp:                                # <--- service name (for proxy reference)        
+        container_name: myapp             # <--- container name (for watchtower reference)
         image: my-company/myapp:latest
-        container_name: myapp             # <--- Container name
     
     # Other services (optional) ...
     myapp-mysql:
-        image: mysql:8.3
         container_name: myapp-mysql
+        image: mysql:8.3        
 ```
 
 ## The proxy project
@@ -165,20 +169,23 @@ services:
 docker-compose up -d
 ```
 
+Now you can access the Nginx Proxy Manager at `http://YOUR-VPS-IP:81`.
+
 ---
 
-Actually we will run two things here:
+Actually we run two things here:
 - **Nginx Proxy Manager** to redirect all incoming traffic to the correct project.
 - **Docker Watch Tower** to deploy automatically new versions of images from your project.
 
+As we are working with Docker  **always use the service name** you have set on `docker-compose.yml` files to configure the proxy hosts as you will see on the next sections.
 
-
-**Configure the first proxy**
-
-After this point you are on the Docker "land", so  **always use the service name** to configure the proxy hosts.
-
-- You can access the Nginx Proxy Manager at `http://YOUR-VPS-IP:81`.  
+## Configure `proxy.mary-ui.com`
+ 
 - The first one is the `proxy.mary-ui.com` domain to access the proxy panel.
 - After saving you can access it on `https://proxy.mary-ui.com`
 
 ![img_3.png](mary-proxy.png)
+
+## Configure `mary-ui.com`
+
+...
