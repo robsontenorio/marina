@@ -38,9 +38,10 @@ The following example is from a domain registered on Cloudflare .
 - Create some subdomains (`flow.mary-ui.com`, `orange.mary-ui.com` ...)
 - All of them points to the same IP address of your VPS.
 
-![](domains.png)
+---
+Cloudflare provides the SSL certificate for all domains/subdomains. So, you do not need to do anything else on your VPS.
 
-Cloudflare provides the SSL certificate **for free** for all domains/subdomains. So, you do not need to do anything else on your VPS.
+![](domains.png)
 
 ## Structure
 
