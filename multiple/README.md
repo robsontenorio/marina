@@ -105,7 +105,7 @@ The GitHub Action will produce these images that will be used to set up the proj
 
 
 <details>
-<summary>Click to see</summary>
+<summary>Click to see the GitHub Actions</summary>
 
 ```yml
 # robsontenorio/mary-ui.com/.github/workflows/docker-publish.yml

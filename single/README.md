@@ -80,7 +80,7 @@ The GitHub Action will produce these images that will be used to set up the proj
 
 
 <details>
-<summary>Click to see</summary>
+<summary>Click to see the GitHub Actions</summary>
 
 ```yml
 # robsontenorio/mary-ui.com/.github/workflows/docker-publish.yml
@@ -274,25 +274,25 @@ docker-compose up -d
 
 
 On `Hosts > Proxy Hosts`:
-- Add `proxy.mary-ui.com` domain as follows.
+- Add a new proxy host for `proxy.mary-ui.com` domain as follows.
 - This domain will proxy to the **Nginx Proxy Manager** panel itself.
 - After saving, you can access the panel at `https://proxy.mary-ui.com`
 
 ![img_3.png](mary-proxy.png)
 
-- Now, add a new proxy host for `mary-ui.com` domain.  
-- Notice the port `8080` is exposed by `robsontenorio/laravel` docker image.
+- Add a new proxy host for `mary-ui.com` domain as follows.
+- Notice the port `8080` is exposed by `robsontenorio/laravel` docker image from our project.
 - After saving, you can access at `https://mary-ui.com`
 
 ![img.png](mary-app-proxy.png)
 
 ## Additional containers
 
-You can keep adding other projects and  on the same `docker-compose.yml` file and configure the **Nginx Proxy Manager** to redirect the traffic to the correct container.
+You can keep adding other images on the same `docker-compose.yml`.
 
 **Pros**
 - Easy to manage.
 
 **Cons**
-- Some changes in the `docker-compose.yml` can cause downtime in another running images.
+- Some changes in the `docker-compose.yml` can cause downtime in another running container.
 
