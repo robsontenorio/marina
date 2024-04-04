@@ -269,7 +269,7 @@ services:
       update_config:
         delay: 1s
         order: start-first
-        failure_action: continue
+        failure_action: rollback
       rollback_config:
         order: start-first
 
@@ -289,7 +289,7 @@ services:
       update_config:
         delay: 1s
         order: start-first
-        failure_action: continue
+        failure_action: rollback
       rollback_config:
         order: start-first
 
@@ -309,7 +309,7 @@ services:
       update_config:
         delay: 1s
         order: start-first
-        failure_action: continue
+        failure_action: rollback
       rollback_config:
         order: start-first
 
@@ -329,7 +329,7 @@ services:
       update_config:
         delay: 1s
         order: start-first
-        failure_action: continue
+        failure_action: rollback
       rollback_config:
         order: start-first
 
@@ -349,7 +349,7 @@ services:
       update_config:
         delay: 1s
         order: start-first
-        failure_action: continue
+        failure_action: rollback
       rollback_config:
         order: start-first
 ```

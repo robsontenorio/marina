@@ -14,6 +14,7 @@ With self-hosting you can save money and have more control over your data.
 
 ## Approaches
 
+1. [Docker Swarm](swarm/README.md).
 1. [A single project on a single server](single/README.md).
 1. [Multiple projects on a single server](multiple/README.md).
-2. 1. [Docker Swarm](swarm/README.md).
+
