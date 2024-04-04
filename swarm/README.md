@@ -4,6 +4,27 @@ A simple approach to deploy **multiple** Laravel projects using Docker Swarm on 
 
 [TODO IMAGE]
 
+**GUIDELINES**
+
+- **Nginx Proxy Manager** forwards all the incoming traffic to the correct container.
+- **GitHub Actions** build the images and push to **GitHub Private Registry**.
+- **xxxx** will monitor for new versions of images from your project.
+- **Swarm** will handle zero downtime deployments and rollback.
+
+## When to use it
+
+- Projects does not have a lot of traffic.
+- You want to put them all on same server to save money.
+
+
+## Pre-requisites
+
+- A project on GitHub.
+- A brand-new VPS.
+- A domain name registered on Cloudflare.
+- Be comfortable with Docker
+Be comfortable GitHub Actions.
+
 
 ## GitHub Actions
 Set up a GitHub Action on **each repository** to build docker images and push them to the **Private GitHub Registry**.
