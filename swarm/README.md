@@ -358,13 +358,12 @@ services:
 
 --- 
 
-## Stack
-This term `stack` refers to a group of services that are defined in a `docker-compose.yml` file.
-
 ## Deploy the stack
 
+- This term `stack` refers to a group of services that are defined in a docker-compose.yml file.
+- If you change any configuration on docker-compose.yml you need to re-deploy the stack.
 - Think it as a `docker-compose up` command, but for Swarm.
-- This term stack refers to a group of services that are defined in a docker-compose.yml file.
+- After deploy see  **Nginx Proxy Manager** at http://YOUR-VPS-IP-ADDRESS:81
 
 ```bash 
 #                [output progress]                  [file]        [any name]    [private registry]
@@ -372,9 +371,6 @@ This term `stack` refers to a group of services that are defined in a `docker-co
                                 
 docker stack deploy --detach=false --compose-file docker-compose.yml mary --with-registry-auth
 ```
-
-- At this pint you can access the **Nginx Proxy Manager** at http://YOUR-VPS-IP-ADDRESS:81
-- If you change any configuration on docker-compose.yml you need to re-deploy the stack.
 
 
 ## Point your domains to the VPS
@@ -409,14 +405,15 @@ docker stack deploy --detach=false --compose-file docker-compose.yml mary --with
 
 **PROXY.MARY-UI.COM**
 
-The domain for this panel itself. 
+- The domain for this panel itself.
+- Notice the port `81` is exposed by `jc21/nginx-proxy-manager` docker image.
 
 ![img_3.png](mary-proxy.png)
 
 **MARY-UI.COM**
 
 - The domain for `https://mary-ui.com`
-- Notice the port `8080` is exposed by `robsontenorio/laravel` docker image used on this project.
+- Notice the port `8080` is exposed by `robsontenorio/laravel` docker image from our project.
 
 ![img_3.png](mary-app-proxy.png)
 
