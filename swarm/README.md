@@ -363,6 +363,9 @@ This term `stack` refers to a group of services that are defined in a `docker-co
 
 ## Deploy the stack
 
+- Think it as a `docker-compose up` command, but for Swarm.
+- This term stack refers to a group of services that are defined in a docker-compose.yml file.
+
 ```bash 
 #                [output progress]                  [file]        [any name]    [private registry]
 #                         |                            |              |              |         
@@ -372,7 +375,7 @@ docker stack deploy --detach=false --compose-file docker-compose.yml mary --with
 
 - At this pint you can access the **Nginx Proxy Manager** at http://YOUR-VPS-IP-ADDRESS:81
 - If you change any configuration on docker-compose.yml you need to re-deploy the stack.
-- Think it as a `docker-compose up` command, but for Swarm.
+
 
 ## Point your domains to the VPS
 
@@ -387,11 +390,12 @@ docker stack deploy --detach=false --compose-file docker-compose.yml mary --with
 
 ## Configure the proxy hosts
 
-> [!WARNING]
-> - Make sure you already have pointed the domains to the VPS.
-> - There is no need to configure the SSL certificate on proxy hosts, Cloudflare will do it for you.
-> - Use the "service name" and  "port" to configure the proxy hosts.
-> - The internal services communication is through `http` not `https`.
+**CHECKLIST**
+
+- Make sure you already have pointed the domains to the VPS.
+- There is no need to configure the SSL certificate on proxy hosts, Cloudflare will do it for you.
+- Use the "service name" and  "port" to configure the proxy hosts.
+- The internal services communication is through `http` not `https`.
 
 **LOGIN ON PROXY MANAGER PANEL** 
 
