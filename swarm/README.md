@@ -209,10 +209,8 @@ APP_KEY=...
 **COMPOSE FILE**
 
 > [!WARNING]
-> At this point make sure you have pushed the images to the GitHub Registry.
-
-> [!WARNING]
-> Do not map ports for your apps. The Nginx Proxy Manager will handle it.
+> - At this point make sure you have pushed the images to the GitHub Registry.
+> - Do not map ports for your apps. The Nginx Proxy Manager will handle it.
 
 ---
 
@@ -365,11 +363,10 @@ This term `stack` refers to a group of services that are defined in a `docker-co
 
 ## Deploy the stack
 
-Think it as a `docker-compose up` command, but for Swarm.
+> [!NOTE]
+> If you change any configuration on `docker-compose.yml` you need to re-deploy the stack.
 
-```yaml
-docker stack deploy [OPTIONS] [STACK_NAME] [EXTRA]
-```
+Think it as a `docker-compose up` command, but for Swarm.
 
 ```bash 
 #                [output progress]                  [file]        [any name]    [private registry]
@@ -377,9 +374,6 @@ docker stack deploy [OPTIONS] [STACK_NAME] [EXTRA]
                                 
 docker stack deploy --detach=false --compose-file docker-compose.yml mary --with-registry-auth
 ```
-
-> [!NOTE]
-> If you change any configuration on `docker-compose.yml` you need to re-deploy the stack using the same command above.
 
 At this pint you can access the **Nginx Proxy Manager** at http://YOUR-VPS-IP-ADDRESS:81
 
@@ -390,7 +384,8 @@ At this pint you can access the **Nginx Proxy Manager** at http://YOUR-VPS-IP-AD
 - Point all of them to the same IP address of your **VPS**.
 
 > [!NOTE]
-> Cloudflare provides the SSL certificate for all domains/subdomains for free. So, you do not need to do anything else on your VPS.
+> - Cloudflare provides the SSL certificate for all domains/subdomains for free.
+> - you do not need to do anything else on your VPS.
 
 ![](domains.png)
 
@@ -398,12 +393,10 @@ At this pint you can access the **Nginx Proxy Manager** at http://YOUR-VPS-IP-AD
 ## Configure the proxy hosts
 
 > [!CAUTION]
-> IMPORTANT!
-
-- Make sure you already have pointed the domains to the VPS.
-- There is no need to configure the SSL certificate on proxy hosts, Cloudflare will do it for you.
-- Use the "service name" and  "port" to configure the proxy hosts.
-- The internal services communication is through `http` not `https`.
+> - Make sure you already have pointed the domains to the VPS.
+> - There is no need to configure the SSL certificate on proxy hosts, Cloudflare will do it for you.
+> - Use the "service name" and  "port" to configure the proxy hosts.
+> - The internal services communication is through `http` not `https`.
 
 **LOGIN ON PROXY MANAGER PANEL** 
 
