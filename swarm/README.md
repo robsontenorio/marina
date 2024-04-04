@@ -363,11 +363,6 @@ This term `stack` refers to a group of services that are defined in a `docker-co
 
 ## Deploy the stack
 
-> [!NOTE]
-> If you change any configuration on `docker-compose.yml` you need to re-deploy the stack.
-
-Think it as a `docker-compose up` command, but for Swarm.
-
 ```bash 
 #                [output progress]                  [file]        [any name]    [private registry]
 #                         |                            |              |              |         
@@ -375,24 +370,24 @@ Think it as a `docker-compose up` command, but for Swarm.
 docker stack deploy --detach=false --compose-file docker-compose.yml mary --with-registry-auth
 ```
 
-At this pint you can access the **Nginx Proxy Manager** at http://YOUR-VPS-IP-ADDRESS:81
+- At this pint you can access the **Nginx Proxy Manager** at http://YOUR-VPS-IP-ADDRESS:81
+- If you change any configuration on docker-compose.yml you need to re-deploy the stack.
+- Think it as a `docker-compose up` command, but for Swarm.
 
 ## Point your domains to the VPS
 
 - The root registered domain is `mary-ui.com`
 - Make sure to create an extra `proxy` subdomain.
 - Point all of them to the same IP address of your **VPS**.
-
-> [!NOTE]
-> - Cloudflare provides the SSL certificate for all domains/subdomains for free.
-> - you do not need to do anything else on your VPS.
+- Cloudflare provides the SSL certificate for all domains/subdomains for free.
+- You do not need to do anything else on your VPS.
 
 ![](domains.png)
 
 
 ## Configure the proxy hosts
 
-> [!CAUTION]
+> [!WARNING]
 > - Make sure you already have pointed the domains to the VPS.
 > - There is no need to configure the SSL certificate on proxy hosts, Cloudflare will do it for you.
 > - Use the "service name" and  "port" to configure the proxy hosts.
