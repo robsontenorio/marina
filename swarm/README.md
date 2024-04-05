@@ -2,14 +2,14 @@
 
 A simple approach to deploy **multiple** Laravel projects using Docker Swarm on **same server**.
 
-[TODO IMAGE]
+![img.png](overview.png)
 
-**GUIDELINES**
+**Tools**
 
+- **Docker Swarm** will handle zero downtime deployments and rollback.
 - **Nginx Proxy Manager** forwards all the incoming traffic to the correct container.
 - **GitHub Actions** build the images and push to **GitHub Private Registry**.
-- **xxxx** will monitor for new versions of images from your project.
-- **Swarm** will handle zero downtime deployments and rollback.
+- **Shepherd** will watch for new versions of images from your project.
 
 ## When to use it
 
@@ -269,7 +269,7 @@ services:
       - mary-proxy-letsencrypt:/etc/letsencrypt
 
   ######## SHEPHERD  ########   
-  shepherd:
+  mary-shepherd:
     env_file: .env.shepherd
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
