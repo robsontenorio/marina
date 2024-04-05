@@ -204,7 +204,6 @@ YOUR_VPS
 |__ docker-compose.yml
 ```
 
-
 **ENV FILES**
 
 Create a `.env.xxxx` file for each service.
@@ -225,6 +224,22 @@ APP_KEY=...
 
 # keep going for each service ...
 ```
+
+Also create .`env.shepherd` for  the `shepherd` service.  
+It auto deploy the services when a new version is available on Registry.  
+Use the same credentials you used to log in on the GitHub Private Registry on "VPS Setup" step aboce.
+
+```bash 
+# .env.shepherd
+
+REGISTRY_HOST=ghcr.io
+REGISTRY_USER=<USERNAME>
+REGISTRY_PASSWORD=<TOKEN>
+WITH_REGISTRY_AUTH=true
+SLEEP_TIME=30s
+FILTER_SERVICES=label=shepherd.autodeploy=true
+```
+
 
 
 **COMPOSE FILE**
@@ -253,11 +268,17 @@ services:
       - mary-proxy-data:/data
       - mary-proxy-letsencrypt:/etc/letsencrypt
 
+  ######## SHEPHERD  ########   
+  shepherd:
+    env_file: .env.shepherd
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
   ######## MARY ########
   mary-app:
+    # TODO: change to "mary-ui.com:production"
     image: ghcr.io/robsontenorio/ping17.com:production
-    env_file:
-      - .env.mary
+    env_file: .env.mary
     volumes:
       - mary-db:/var/www/app/database/
     healthcheck:
@@ -267,6 +288,8 @@ services:
       timeout: 10s
       retries: 2
     deploy:
+      labels:
+        - shepherd.autodeploy=true
       update_config:
         order: start-first
         failure_action: rollback
@@ -274,8 +297,7 @@ services:
   ######## ORANGE ########
   orange-app:
     image: ghcr.io/robsontenorio/orange.mary-ui.com:production
-    env_file:
-      - .env.orange
+    env_file: .env.orange
     volumes:
       - orange-db:/var/www/app/database/
     healthcheck:
@@ -285,6 +307,8 @@ services:
       timeout: 10s
       retries: 2
     deploy:
+      labels:
+      - shepherd.autodeploy=true
       update_config:
         order: start-first
         failure_action: rollback
@@ -292,8 +316,7 @@ services:
   ######## PAPER ########
   paper-app:
     image: ghcr.io/robsontenorio/paper.mary-ui.com:production
-    env_file:
-      - .env.paper
+    env_file: .env.paper
     volumes:
       - paper-db:/var/www/app/database/
     healthcheck:
@@ -303,6 +326,8 @@ services:
       timeout: 10s
       retries: 2
     deploy:
+      labels:
+        - shepherd.autodeploy=true
       update_config:
         order: start-first
         failure_action: rollback
@@ -310,8 +335,7 @@ services:
   ######## FLOW ########
   flow-app:
     image: ghcr.io/robsontenorio/flow.mary-ui.com:production
-    env_file:
-      - .env.flow
+    env_file: .env.flow
     volumes:
       - flow-db:/var/www/app/database/
     healthcheck:
@@ -321,6 +345,8 @@ services:
       timeout: 10s
       retries: 2
     deploy:
+      labels:
+        - shepherd.autodeploy=true
       update_config:
         order: start-first
         failure_action: rollback
@@ -328,8 +354,7 @@ services:
   ######## PING ########
   ping-app:
     image: ghcr.io/robsontenorio/ping.mary-ui.com:production
-    env_file:
-      - .env.ping
+    env_file: .env.ping
     volumes:
       - ping-db:/var/www/app/database/
     healthcheck:
@@ -339,6 +364,8 @@ services:
       timeout: 10s
       retries: 2
     deploy:
+      labels:
+        - shepherd.autodeploy=true
       update_config:
         order: start-first
         failure_action: rollback
