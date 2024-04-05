@@ -6,10 +6,10 @@ A simple approach to deploy **multiple** Laravel projects using Docker Swarm on 
 
 **Tools**
 
-- **Docker Swarm** will handle zero downtime deployments and rollback.
 - **Nginx Proxy Manager** forwards all the incoming traffic to the correct container.
 - **GitHub Actions** build the images and push to **GitHub Private Registry**.
-- **Shepherd** will watch for new versions of images from your project.
+- **Shepherd** will update the services when a new version is available on the Registry.
+- **Docker Swarm** will handle zero downtime deployments and rollback.
 
 ## When to use it
 
@@ -25,6 +25,9 @@ A simple approach to deploy **multiple** Laravel projects using Docker Swarm on 
 - Be comfortable with Docker
 Be comfortable GitHub Actions.
 
+## Important
+> [!WARNING]
+> This document describes the use case of `mary-ui.com` project and its demos. Of course, you must adapt it to your own projects.
 
 ## GitHub Actions
 Set up a GitHub Action on **each repository** to build docker images and push them to the **Private GitHub Registry**.
@@ -166,7 +169,7 @@ echo $CR_PAT| docker login ghcr.io -u <USERNAME> --password-stdin
 
 **NETWORK**
 
-All services will join to this network.
+- All services will join to this network.
 
 ```bash
 docker network create -d overlay mary
@@ -174,7 +177,7 @@ docker network create -d overlay mary
 
 **VOLUMES**
 
-Create all needed volumes for each service.
+- Create all needed volumes for each service.
 
 ```bash
 # Apps
@@ -191,22 +194,22 @@ docker volume create mary-proxy-letsencrypt
 
 **STRUCTURE**
 
-Create the following structure on **your VPS**.
+- Create the following structure on **your VPS**.
 
 ```bash
 YOUR_VPS
 |   
 |__ .env.mary
 |__ .env.flow
-|__ .env.orange
-|__ # ...
-|__ # ...                      
+|__ ...
+|__ ...
+|__ .env.shepherd
 |__ docker-compose.yml
 ```
 
 **ENV FILES**
 
-Create a `.env.xxxx` file for each service.
+- Create a `.env.xxxx` file for each service.
 
 
 ```bash
@@ -225,9 +228,9 @@ APP_KEY=...
 # keep going for each service ...
 ```
 
-Also create .`env.shepherd` for  the `shepherd` service.  
-It auto deploy the services when a new version is available on Registry.  
-Use the same credentials you used to log in on the GitHub Private Registry on "VPS Setup" step aboce.
+- Also create `.env.shepherd` for  the `shepherd` service.  
+- It auto deploy the services when a new version is available on Registry.  
+- Use the same credentials you used to log in on the GitHub Private Registry on "VPS Setup" step aboce.
 
 ```bash 
 # .env.shepherd
@@ -406,7 +409,7 @@ volumes:
 - After deploy see  **Nginx Proxy Manager** at http://YOUR-VPS-IP-ADDRESS:81
 
 ```bash 
-#             [see the progress]    [compose file]    [name it]    [private registry]
+#               [see the progress]  [compose file]    [name it]    [private registry]
 #                         |                |              |              |         
                                 
 docker stack deploy --detach=false -c docker-compose.yml mary --with-registry-auth
@@ -416,8 +419,9 @@ docker stack deploy --detach=false -c docker-compose.yml mary --with-registry-au
 ## Point your domains to the VPS
 
 - The root registered domain is `mary-ui.com`
+- Create all other subdomains for each service.
 - Make sure to create an extra `proxy` subdomain.
-- Point all of them to the same IP address of your **VPS**.
+- Point all of them to the same IP address of **your VPS**.
 - Cloudflare provides the SSL certificate for all domains/subdomains for free.
 - You do not need to do anything else on your VPS.
 
@@ -443,14 +447,14 @@ docker stack deploy --detach=false -c docker-compose.yml mary --with-registry-au
 
 - Go to `Hosts > Proxy Hosts`
 
-**PROXY.MARY-UI.COM**
+**ADD "PROXY.MARY-UI.COM"**
 
 - The domain for this panel itself.
 - Notice the port `81` is exposed by `jc21/nginx-proxy-manager` docker image.
 
 ![img_3.png](mary-proxy.png)
 
-**MARY-UI.COM**
+**ADD "MARY-UI.COM"**
 
 - The domain for `https://mary-ui.com`
 - Notice the port `8080` is exposed by `robsontenorio/laravel` docker image from our project.
@@ -465,6 +469,10 @@ docker stack deploy --detach=false -c docker-compose.yml mary --with-registry-au
 **ADD OTHERS**
 
 Keep going to all domains you have pointed.
+
+## Test it
+
+At this point all domains should be working.
 
 ## Zero downtime deployments and rollback
 
@@ -487,4 +495,8 @@ deploy:
 
 ## Deploying new image versions
 
-TODO ...
+- Push a new code to the repository.
+- Create a new **git tag**.
+- The **GitHub Action** will build the image and push it to the **GitHub Private Registry**.
+- The `shepherd` service will update the service when a new version is available on the registry.
+- Profit!
