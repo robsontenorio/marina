@@ -239,27 +239,6 @@ APP_KEY=...
 <summary>Click to see the GitHub Action</summary>
 
 ```yaml
-networks:
-  default:
-    name: mary
-    external: true
-
-volumes:  
-  mary-db:
-    external: true
-  paper-db:
-    external: true
-  orange-db:
-    external: true
-  flow-db:
-    external: true
-  ping-db:
-    external: true
-  mary-proxy-data:
-    external: true
-  mary-proxy-letsencrypt:
-    external: true
-
 services:
 
   ####### PROXY ##########
@@ -282,17 +261,15 @@ services:
     volumes:
       - mary-db:/var/www/app/database/
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/up" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+      start_period: 40s
       interval: 5s
       timeout: 10s
       retries: 2
     deploy:
       update_config:
-        delay: 1s
         order: start-first
         failure_action: rollback
-      rollback_config:
-        order: start-first
 
   ######## ORANGE ########
   orange-app:
@@ -302,17 +279,15 @@ services:
     volumes:
       - orange-db:/var/www/app/database/
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/up" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+      start_period: 40s
       interval: 5s
       timeout: 10s
       retries: 2
     deploy:
       update_config:
-        delay: 1s
         order: start-first
         failure_action: rollback
-      rollback_config:
-        order: start-first
 
   ######## PAPER ########
   paper-app:
@@ -322,17 +297,15 @@ services:
     volumes:
       - paper-db:/var/www/app/database/
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/up" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+      start_period: 40s
       interval: 5s
       timeout: 10s
       retries: 2
     deploy:
       update_config:
-        delay: 1s
         order: start-first
         failure_action: rollback
-      rollback_config:
-        order: start-first
 
   ######## FLOW ########
   flow-app:
@@ -342,17 +315,15 @@ services:
     volumes:
       - flow-db:/var/www/app/database/
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/up" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+      start_period: 40s
       interval: 5s
       timeout: 10s
       retries: 2
     deploy:
       update_config:
-        delay: 1s
         order: start-first
         failure_action: rollback
-      rollback_config:
-        order: start-first
 
   ######## PING ########
   ping-app:
@@ -363,16 +334,37 @@ services:
       - ping-db:/var/www/app/database/
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/up" ]
+      start_period: 40s
       interval: 5s
       timeout: 10s
       retries: 2
     deploy:
       update_config:
-        delay: 1s
         order: start-first
         failure_action: rollback
-      rollback_config:
-        order: start-first
+
+#### NETWORKS ####
+networks:
+  default:
+    name: mary
+    external: true
+
+#### VOLUMES ####
+volumes:
+  mary-proxy-data:
+    external: true
+  mary-proxy-letsencrypt:
+    external: true
+  mary-db:
+    external: true
+  paper-db:
+    external: true
+  orange-db:
+    external: true
+  flow-db:
+    external: true
+  ping-db:
+    external: true
 ```
 
 </details>
@@ -381,16 +373,16 @@ services:
 
 ## Deploy the stack
 
-- This term `stack` refers to a group of services that are defined in a docker-compose.yml file.
-- If you change any configuration on docker-compose.yml you need to re-deploy the stack.
+- This term `stack` refers to a group of services that are defined in a `docker-compose.yml`.
+- If you change any configuration on `docker-compose.yml` you need to re-deploy the stack.
 - Think it as a `docker-compose up` command, but for Swarm.
 - After deploy see  **Nginx Proxy Manager** at http://YOUR-VPS-IP-ADDRESS:81
 
 ```bash 
-#                [output progress]                  [file]        [any name]    [private registry]
-#                         |                            |              |              |         
+#             [see the progress]    [compose file]    [name it]    [private registry]
+#                         |                |              |              |         
                                 
-docker stack deploy --detach=false --compose-file docker-compose.yml mary --with-registry-auth
+docker stack deploy --detach=false -c docker-compose.yml mary --with-registry-auth
 ```
 
 
@@ -435,8 +427,13 @@ docker stack deploy --detach=false --compose-file docker-compose.yml mary --with
 
 - The domain for `https://mary-ui.com`
 - Notice the port `8080` is exposed by `robsontenorio/laravel` docker image from our project.
+- If your project uses websockets, just enable ""Websockets Support" toggle.
 
 ![img_3.png](mary-app-proxy.png)
+
+- Add this entry on "Custom locations" tab, to make Livewire file upload work.
+
+![img.png](mary-app-location.png)
 
 **ADD OTHERS**
 
@@ -444,8 +441,10 @@ Keep going to all domains you have pointed.
 
 ## Zero downtime deployments and rollback
 
-These configs make zero downtime deployments and rollback possible,
+These configs below make zero downtime deployments and rollback possible,
 whenever you need to re-deploy the stack or update the service images.
+
+Depending on how long your health check takes to pass, you may need to adjust the `start_period` and `timeout` values.
 
 ```yaml
 # This is configured for each service on `docker-compose.yml`
