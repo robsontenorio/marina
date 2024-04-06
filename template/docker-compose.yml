@@ -14,23 +14,23 @@ services:
 
     ######## SHEPHERD  ########
     mary-shepherd:
+        image: containrrr/shepherd:latest
         env_file: .env.shepherd
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
 
     ######## MARY ########
     mary-app:
-        # TODO: change to "mary-ui.com:production"
-        image: ghcr.io/robsontenorio/ping17.com:production
+        image: ghcr.io/robsontenorio/mary-ui.com:production
         env_file: .env.mary
         volumes:
             - mary-db:/var/www/app/database/
         healthcheck:
             test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
-            start_period: 40s
+            start_period: 120s
             interval: 5s
             timeout: 10s
-            retries: 2
+            retries: 3
         deploy:
             labels:
                 - shepherd.autodeploy=true
@@ -38,18 +38,16 @@ services:
                 order: start-first
                 failure_action: rollback
 
-    ######## ORANGE ########
-    orange-app:
-        image: ghcr.io/robsontenorio/orange.mary-ui.com:production
-        env_file: .env.orange
-        volumes:
-            - orange-db:/var/www/app/database/
+    ######## PING17 (TEMP - DELETE IT) ########
+    ping17-app:
+        image: ghcr.io/robsontenorio/ping17.com:production
+        env_file: .env.ping17
         healthcheck:
             test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
-            start_period: 40s
+            start_period: 120s
             interval: 5s
             timeout: 10s
-            retries: 2
+            retries: 3
         deploy:
             labels:
                 - shepherd.autodeploy=true
@@ -65,10 +63,29 @@ services:
             - paper-db:/var/www/app/database/
         healthcheck:
             test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
-            start_period: 40s
+            start_period: 120s
             interval: 5s
             timeout: 10s
-            retries: 2
+            retries: 3
+        deploy:
+            labels:
+                - shepherd.autodeploy=true
+            update_config:
+                order: start-first
+                failure_action: rollback
+
+    ######## ORANGE ########
+    orange-app:
+        image: ghcr.io/robsontenorio/orange.mary-ui.com:production
+        env_file: .env.orange
+        volumes:
+            - orange-db:/var/www/app/database/
+        healthcheck:
+            test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+            start_period: 120s
+            interval: 5s
+            timeout: 10s
+            retries: 3
         deploy:
             labels:
                 - shepherd.autodeploy=true
@@ -84,10 +101,10 @@ services:
             - flow-db:/var/www/app/database/
         healthcheck:
             test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
-            start_period: 40s
+            start_period: 120s
             interval: 5s
             timeout: 10s
-            retries: 2
+            retries: 3
         deploy:
             labels:
                 - shepherd.autodeploy=true
@@ -103,16 +120,35 @@ services:
             - ping-db:/var/www/app/database/
         healthcheck:
             test: [ "CMD", "curl", "-f", "http://localhost:8080/up" ]
-            start_period: 40s
+            start_period: 120s
             interval: 5s
             timeout: 10s
-            retries: 2
+            retries: 3
         deploy:
             labels:
                 - shepherd.autodeploy=true
             update_config:
                 order: start-first
                 failure_action: rollback
+
+    ######## PING17-MYSQL (TEMP DELETE) ########
+    ping17-mysql:
+        image: mysql:8.3.0
+        environment:
+            MYSQL_ROOT_PASSWORD: ping17
+            MYSQL_DATABASE: ping17db
+            MYSQL_USER: ping17
+            MYSQL_PASSWORD: ping17
+        volumes:
+            - ping17-mysql:/var/lib/mysql
+        ports:
+            - "3306:3306"
+        healthcheck:
+            test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+            start_period: 120s
+            interval: 10s
+            timeout: 10s
+            retries: 3
 
 #### NETWORKS ####
 networks:
@@ -135,4 +171,6 @@ volumes:
     flow-db:
         external: true
     ping-db:
+        external: true
+    ping17-mysql:
         external: true

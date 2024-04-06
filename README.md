@@ -53,77 +53,7 @@ robsontenorio/mary-ui.com
 |__ ...
 ``` 
 
---- 
-
-<details>
-<summary>Click to see the GitHub Action</summary>
-
-```yml
-# github.com/robsontenorio/mary-ui.com/.github/workflows/docker-publish.yml
-
-name: Create and publish a Docker image
-
-on:
-  push:
-    tags:
-      - '[0-9]+.[0-9]+.[0-9]+'        # any `x.y.z` tag builds the `production` image
-      - 'stage-*'                     # the `stage-xxxx` pattern tag builds the`stage` image
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
-jobs:
-  build-and-push-image:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: "Log in to the Container registry"
-        uses: docker/login-action@v3.1.0
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: "Check Github Tag"
-        id: check-tag
-        run: |
-          if [[ ${{ github.event.ref }} =~ ^refs/tags/[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-              echo "IS_PRODUCTION=true" >> $GITHUB_OUTPUT
-          fi
-
-          if [[ ${{ github.event.ref }} =~ ^refs/tags/stage-(.*)$ ]]; then
-              echo "IS_STAGE=true" >> $GITHUB_OUTPUT
-          fi
-
-      - name: "Extract Docker metadata (tags, labels)"
-        id: meta
-        uses: docker/metadata-action@v5.5.1
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          flavor: |
-            latest=false
-          tags: |
-            type=raw,value=production,enable=${{  steps.check-tag.outputs.IS_PRODUCTION == 'true' }}
-            type=raw,value=stage,enable=${{  steps.check-tag.outputs.IS_STAGE == 'true' }}
-
-      - name: "Build and push Docker images"
-        uses: docker/build-push-action@v5.3.0
-        with:
-          context: .
-          file: .docker/Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-```
-</details>
-
---- 
+See [docker-publish.yml](template/docker-publish.yml) GitHub Action.
 
 **Images**
 
@@ -185,7 +115,7 @@ docker volume create mary-db &&
 docker volume create paper-db &&
 docker volume create orange-db &&
 docker volume create flow-db &&
-docker volume create ping-db && 
+docker volume create ping-db 
 
 # Proxy
 docker volume create mary-proxy-data &&
@@ -251,155 +181,8 @@ FILTER_SERVICES=label=shepherd.autodeploy=true
 > - At this point make sure you have pushed the images to the GitHub Registry.
 > - Do not map ports for your apps. The Nginx Proxy Manager will handle it.
 > - You could split it into multiple compose files.
----
 
-<details>
-<summary>Click to see the compose file</summary>
-
-```yaml
-services:
-
-  ####### PROXY ##########
-  mary-proxy:
-    #image: jc21/nginx-proxy-manager:latest
-    image: jc21/nginx-proxy-manager:github-pr-3478
-    ports:
-      - 80:80
-      - 81:81
-      - 443:443
-    volumes:
-      - mary-proxy-data:/data
-      - mary-proxy-letsencrypt:/etc/letsencrypt
-
-  ######## SHEPHERD  ########   
-  mary-shepherd:
-    env_file: .env.shepherd
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-
-  ######## MARY ########
-  mary-app:
-    # TODO: change to "mary-ui.com:production"
-    image: ghcr.io/robsontenorio/ping17.com:production
-    env_file: .env.mary
-    volumes:
-      - mary-db:/var/www/app/database/
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
-      start_period: 40s
-      interval: 5s
-      timeout: 10s
-      retries: 2
-    deploy:
-      labels:
-        - shepherd.autodeploy=true
-      update_config:
-        order: start-first
-        failure_action: rollback
-
-  ######## ORANGE ########
-  orange-app:
-    image: ghcr.io/robsontenorio/orange.mary-ui.com:production
-    env_file: .env.orange
-    volumes:
-      - orange-db:/var/www/app/database/
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
-      start_period: 40s
-      interval: 5s
-      timeout: 10s
-      retries: 2
-    deploy:
-      labels:
-      - shepherd.autodeploy=true
-      update_config:
-        order: start-first
-        failure_action: rollback
-
-  ######## PAPER ########
-  paper-app:
-    image: ghcr.io/robsontenorio/paper.mary-ui.com:production
-    env_file: .env.paper
-    volumes:
-      - paper-db:/var/www/app/database/
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
-      start_period: 40s
-      interval: 5s
-      timeout: 10s
-      retries: 2
-    deploy:
-      labels:
-        - shepherd.autodeploy=true
-      update_config:
-        order: start-first
-        failure_action: rollback
-
-  ######## FLOW ########
-  flow-app:
-    image: ghcr.io/robsontenorio/flow.mary-ui.com:production
-    env_file: .env.flow
-    volumes:
-      - flow-db:/var/www/app/database/
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
-      start_period: 40s
-      interval: 5s
-      timeout: 10s
-      retries: 2
-    deploy:
-      labels:
-        - shepherd.autodeploy=true
-      update_config:
-        order: start-first
-        failure_action: rollback
-
-  ######## PING ########
-  ping-app:
-    image: ghcr.io/robsontenorio/ping.mary-ui.com:production
-    env_file: .env.ping
-    volumes:
-      - ping-db:/var/www/app/database/
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/up" ]
-      start_period: 40s
-      interval: 5s
-      timeout: 10s
-      retries: 2
-    deploy:
-      labels:
-        - shepherd.autodeploy=true
-      update_config:
-        order: start-first
-        failure_action: rollback
-
-#### NETWORKS ####
-networks:
-  default:
-    name: mary
-    external: true
-
-#### VOLUMES ####
-volumes:
-  mary-proxy-data:
-    external: true
-  mary-proxy-letsencrypt:
-    external: true
-  mary-db:
-    external: true
-  paper-db:
-    external: true
-  orange-db:
-    external: true
-  flow-db:
-    external: true
-  ping-db:
-    external: true
-```
-
-</details>
-
---- 
+See [docker-compose.yml](template/docker-compose.yml).
 
 ## Deploy the stack
 
