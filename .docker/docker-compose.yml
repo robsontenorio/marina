@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+    ######## APP ########
+    joe-app:
+        build:
+            context: ..
+            dockerfile: .docker/Dockerfile
+            target: local
+        environment:
+            - CONTAINER_ROLE=APP
+        volumes:
+            - ../:/var/www/app:cached
+        ports:
+            - "8717:8080"
+            - "5717:5717"
