@@ -2,7 +2,7 @@
 
 A simple approach to deploy **multiple** Laravel projects using Docker Swarm on **same server**.
 
-![img.png](overview.png)
+![img.png](assets/overview.png)
 
 **Tools**
 
@@ -250,11 +250,11 @@ FILTER_SERVICES=label=shepherd.autodeploy=true
 > [!WARNING]
 > - At this point make sure you have pushed the images to the GitHub Registry.
 > - Do not map ports for your apps. The Nginx Proxy Manager will handle it.
-
+> - You could split it into multiple compose files.
 ---
 
 <details>
-<summary>Click to see the GitHub Action</summary>
+<summary>Click to see the compose file</summary>
 
 ```yaml
 services:
@@ -419,13 +419,13 @@ docker stack deploy --detach=false -c docker-compose.yml mary --with-registry-au
 ## Point your domains to the VPS
 
 - The root registered domain is `mary-ui.com`
-- Create all other subdomains for each service.
+- Create more domains or subdomains for each service.
 - Make sure to create an extra `proxy` subdomain.
 - Point all of them to the same IP address of **your VPS**.
 - Cloudflare provides the SSL certificate for all domains/subdomains for free.
 - You do not need to do anything else on your VPS.
 
-![](domains.png)
+![](assets/domains.png)
 
 
 ## Configure the proxy hosts
@@ -452,7 +452,7 @@ docker stack deploy --detach=false -c docker-compose.yml mary --with-registry-au
 - The domain for this panel itself.
 - Notice the port `81` is exposed by `jc21/nginx-proxy-manager` docker image.
 
-![img_3.png](mary-proxy.png)
+![img_3.png](assets/mary-proxy.png)
 
 **ADD "MARY-UI.COM"**
 
@@ -460,11 +460,11 @@ docker stack deploy --detach=false -c docker-compose.yml mary --with-registry-au
 - Notice the port `8080` is exposed by `robsontenorio/laravel` docker image from our project.
 - If your project uses websockets, just enable ""Websockets Support" toggle.
 
-![img_3.png](mary-app-proxy.png)
+![img_3.png](assets/mary-app-proxy.png)
 
 - Add this entry on "Custom locations" tab, to make Livewire file upload work.
 
-![img.png](mary-app-location.png)
+![img.png](assets/mary-app-location.png)
 
 **ADD OTHERS**
 
