@@ -13,7 +13,9 @@
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.4",
         "livewire/volt": "^1.6",
-        "robsontenorio/mary": "^1.26"
+        "neilime/ansi-escapes-to-html": "^3.0",
+        "robsontenorio/mary": "^1.26",
+        "sensiolabs/ansi-to-html": "^1.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

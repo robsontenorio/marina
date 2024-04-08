@@ -11,6 +11,7 @@ services:
             - CONTAINER_ROLE=APP
         volumes:
             - ../:/var/www/app:cached
+            - /var/run/docker.sock:/var/run/docker.sock
         ports:
             - "8717:8080"
             - "5717:5717"

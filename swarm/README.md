@@ -1,4 +1,4 @@
-# Docker Swarm 
+# Docker Swarm
 
 A simple approach to deploy **multiple** Laravel projects using Docker Swarm on **same server**.
 
@@ -16,20 +16,21 @@ A simple approach to deploy **multiple** Laravel projects using Docker Swarm on 
 - Projects does not have a lot of traffic.
 - You want to put them all on same server to save money.
 
-
 ## Pre-requisites
 
 - A project on GitHub.
 - A brand-new VPS.
 - A domain name registered on Cloudflare.
 - Be comfortable with Docker
-Be comfortable GitHub Actions.
+  Be comfortable GitHub Actions.
 
 ## Important
+
 > [!WARNING]
 > This document describes the use case of `mary-ui.com` project and its demos. Of course, you must adapt it to your own projects.
 
 ## GitHub Actions
+
 Set up a GitHub Action on **each repository** to build docker images and push them to the **Private GitHub Registry**.
 
 ```bash
@@ -58,21 +59,24 @@ See [docker-publish.yml](template/docker-publish.yml) GitHub Action.
 **Images**
 
 The above GitHub Action will produce these images:
+
 - `ghcr.io/robsontenorio/mary-ui.com:production`
 - `ghcr.io/robsontenorio/mary-ui.com:stage`
 
 **Approach**
+
 - A git tag like `x.y.z` always builds the `production` docker image tag.
 - A git tag like `stage-xxxx` always builds the `stage` docker image tag.
 
 **Why?**
+
 - You need a fixed tag to use on the `docker-compose.yml` files.
 - Otherwise, you will need to update the `docker-compose.yml` every time you push a new docker image tag.
 
+## VPS Setup
 
-## VPS Setup 
+**DOCKER**
 
-**DOCKER** 
 ```bash
 # Install Docker
 curl -fsSL https://get.docker.com -o get-docker.sh &&
@@ -86,9 +90,10 @@ sudo systemctl enable containerd.service &&
 docker swarm init
 ```
 
-**GITHUB PRIVATE REGISTRY**  
+**GITHUB PRIVATE REGISTRY**
 
-This is required to pull images from GitHub Private Registry using a [GitHub Classic Token]((https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)). 
+This is required to pull images from GitHub Private Registry using
+a [GitHub Classic Token]((https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)).
 
 ```bash
 export CR_PAT=<REGISTRY_TOKEN> &&
@@ -115,7 +120,7 @@ docker volume create mary-db &&
 docker volume create paper-db &&
 docker volume create orange-db &&
 docker volume create flow-db &&
-docker volume create ping-db 
+docker volume create ping-db && 
 
 # Proxy
 docker volume create mary-proxy-data &&
@@ -141,7 +146,6 @@ YOUR_VPS
 
 - Create a `.env.xxxx` file for each service.
 
-
 ```bash
 # .env.mary
 
@@ -158,8 +162,8 @@ APP_KEY=...
 # keep going for each service ...
 ```
 
-- Also create `.env.shepherd` for  the `shepherd` service.  
-- It auto deploy the services when a new version is available on Registry.  
+- Also create `.env.shepherd` for the `shepherd` service.
+- It auto deploy the services when a new version is available on Registry.
 - Use the same credentials you used to log in on the GitHub Private Registry on "VPS Setup" step aboce.
 
 ```bash 
@@ -172,8 +176,6 @@ WITH_REGISTRY_AUTH=true
 SLEEP_TIME=30s
 FILTER_SERVICES=label=shepherd.autodeploy=true
 ```
-
-
 
 **COMPOSE FILE**
 
@@ -198,7 +200,6 @@ See [docker-compose.yml](template/docker-compose.yml).
 docker stack deploy --detach=false -c docker-compose.yml mary --with-registry-auth
 ```
 
-
 ## Point your domains to the VPS
 
 - The root registered domain is `mary-ui.com`
@@ -210,7 +211,6 @@ docker stack deploy --detach=false -c docker-compose.yml mary --with-registry-au
 
 ![](assets/domains.png)
 
-
 ## Configure the proxy hosts
 
 **CHECKLIST**
@@ -220,7 +220,7 @@ docker stack deploy --detach=false -c docker-compose.yml mary --with-registry-au
 - Use the "service name" and  "port" to configure the proxy hosts.
 - The internal services communication is through `http` not `https`.
 
-**LOGIN ON PROXY MANAGER PANEL** 
+**LOGIN ON PROXY MANAGER PANEL**
 
 - http://YOUR-VPS-IP-ADDRESS:81
 - User: admin@example.com
@@ -268,11 +268,11 @@ Depending on how long your health check takes to pass, you may need to adjust th
 # This is configured for each service on `docker-compose.yml`
 
 healthcheck:
-  # ...
+# ...
 deploy:
-  update_config:
+    update_config:
     # ...
-  rollback_config:
+    rollback_config:
     # ...
 ```
 

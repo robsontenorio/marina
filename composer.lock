@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6f071099c9f61c1c604dfc14e79c11fd",
+    "content-hash": "316447533797c801aad7b643596985c5",
     "packages": [
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -2463,6 +2463,69 @@
             "time": "2023-10-27T15:32:31+00:00"
         },
         {
+            "name": "neilime/ansi-escapes-to-html",
+            "version": "v3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neilime/ansi-escapes-to-html.git",
+                "reference": "ac0869e6c540db036d066da934b13140abb6e20a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neilime/ansi-escapes-to-html/zipball/ac0869e6c540db036d066da934b13140abb6e20a",
+                "reference": "ac0869e6c540db036d066da934b13140abb6e20a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4 || ^8"
+            },
+            "require-dev": {
+                "pcov/clobber": "^2.0",
+                "phpstan/extension-installer": "^1.2",
+                "phpstan/phpstan": "^1.9",
+                "phpstan/phpstan-phpunit": "^1.2",
+                "phpunit/phpunit": "^9.5.26",
+                "squizlabs/php_codesniffer": "^3.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "AnsiEscapesToHtml\\": "src/AnsiEscapesToHtml"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Neilime",
+                    "homepage": "https://github.com/neilime",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Convert ANSI escapes (terminal formatting/color codes) to HTML",
+            "homepage": "http://neilime.github.io/ansi-escapes-to-html/",
+            "keywords": [
+                "ansi",
+                "convert",
+                "escapes",
+                "highlight",
+                "html"
+            ],
+            "support": {
+                "issues": "https://github.com/neilime/ansi-escapes-to-html/issues",
+                "source": "https://github.com/neilime/ansi-escapes-to-html/tree/v3.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/neilime",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-11-22T09:00:33+00:00"
+        },
+        {
             "name": "nesbot/carbon",
             "version": "3.2.4",
             "source": {
@@ -3739,6 +3802,60 @@
                 }
             ],
             "time": "2024-03-27T16:39:46+00:00"
+        },
+        {
+            "name": "sensiolabs/ansi-to-html",
+            "version": "v1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sensiolabs/ansi-to-html.git",
+                "reference": "94a3145aae4733ff933c8910263ef56d1ae317a9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sensiolabs/ansi-to-html/zipball/94a3145aae4733ff933c8910263ef56d1ae317a9",
+                "reference": "94a3145aae4733ff933c8910263ef56d1ae317a9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.5"
+            },
+            "conflict": {
+                "twig/twig": "< 2.4.0"
+            },
+            "require-dev": {
+                "twig/twig": "^2.4 || ^3.0"
+            },
+            "suggest": {
+                "twig/twig": "Provides nice templating features"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "SensioLabs\\AnsiConverter\\": "SensioLabs/AnsiConverter"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                }
+            ],
+            "description": "A library to convert a text with ANSI codes to HTML",
+            "support": {
+                "issues": "https://github.com/sensiolabs/ansi-to-html/issues",
+                "source": "https://github.com/sensiolabs/ansi-to-html/tree/v1.2.1"
+            },
+            "time": "2020-10-06T05:48:55+00:00"
         },
         {
             "name": "symfony/clock",
