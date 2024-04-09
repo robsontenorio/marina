@@ -14,7 +14,7 @@ export default {
         extend: {},
     },
     safelist: [{
-        pattern: /badge-*/
+        pattern: /badge-*|bg-success/
     }],
 
     // Add daisyUI
