@@ -29,8 +29,6 @@ new class extends Component {
 
     public function boot()
     {
-        //$this->stats = collect();
-
         $this->tasks = $this->tasks();
         $this->stats = $this->fetchStats();
         $this->services = $this->services();
@@ -269,8 +267,6 @@ new class extends Component {
             <x-button label="Re-deploy" wire:click="deployStack" class="btn-primary" icon="o-fire" spinner responsive />
         </x-slot:actions>
     </x-header>
-
-    <div x-init="setInterval(() =>  fetch('/stats'), 3000)"></div>
 
     @foreach($services as $service)
         <x-card x-data="{expand: false}" @click="expand = !expand" shadow class="mb-5 border border-base-100 hover:!border-primary cursor-pointer"
