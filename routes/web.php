@@ -1,9 +1,10 @@
 <?php
 
-use App\Jobs\FetchDockerStatsJob;
 use Livewire\Volt\Volt;
 
 Volt::route('/', 'users.index');
 
-Volt::route('/stacks', 'stacks.index');
+Volt::route('/all-stacks', 'stacks.index');
 
+Volt::route('/stacks/{stack}/edit', 'stacks.edit');
+Volt::route('/stacks/{stack}', 'stacks.show');

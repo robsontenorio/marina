@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+@php use Illuminate\Support\Facades\File; @endphp
+    <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -46,11 +47,16 @@
                 <x-menu-separator />
             @endif
 
-            <x-menu-item title="Stacks" icon="o-server-stack" link="/stacks" />
-            <x-menu-sub title="Settings" icon="o-cog-6-tooth">
-                <x-menu-item title="Wifi" icon="o-wifi" link="####" />
-                <x-menu-item title="Archives" icon="o-archive-box" link="####" />
+            <x-menu-item title="Home" icon="o-home" link="/" />
+            <x-menu-item title="Console" icon="o-command-line" link="/" />
+
+            <x-menu-sub title="Stacks" icon="o-server-stack">
+                <x-menu-item title="All stacks" icon="o-server" link="/all-stacks" />
+                @foreach(File::directories(base_path('stacks')) as $stack)
+                    <x-menu-item title="{{ basename($stack) }}" icon="o-server" link="/stacks/{{ basename($stack) }}" />
+                @endforeach
             </x-menu-sub>
+
         </x-menu>
     </x-slot:sidebar>
 

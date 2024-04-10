@@ -1,17 +1,17 @@
 <?php
 
-use AnsiEscapesToHtml\Highlighter;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Process;
-use Livewire\Attributes\Computed;
 use Livewire\Volt\Component;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
 
 new class extends Component {
+    public string $stack = '';
+
     public string $process_output = '';
 
     public ?Collection $services;
@@ -22,9 +22,9 @@ new class extends Component {
 
     public array $updating = [];
 
-    public function mount()
+    public function mount(string $stack): void
     {
-        $this->stats = collect();
+        $this->stack = $stack;
     }
 
     public function boot()
@@ -34,29 +34,59 @@ new class extends Component {
         $this->services = $this->services();
     }
 
-//    //curl --unix-socket /var/run/docker.sock http://localhost/v1.44/images/json
-//    public function swarm(): Collection
-//    {
-//        return Http::withOptions(['curl' => [CURLOPT_UNIX_SOCKET_PATH => '/var/run/docker.sock']])
-//            ->get('http://v1.44/swarm')
-//            ->collect();
-//    }
-//
-//    public function stacks()
-//    {
-////        return $this->services()->pluck('Spec.Labels')->map(fn($labels) => $labels['com.docker.stack.namespace'])->unique();
-//        return [];
-//    }
-//
-//    public function servicesFrom(string $stack)
-//    {
-//        return $this->services()->filter(fn($service) => $service['Spec']['Labels']['com.docker.stack.namespace'] === $stack);
-//    }
+    public function remove(): void
+    {
+        Process::path(base_path())->quietly()->start("./docker stack rm {$this->stack}");
+    }
+
+    public function deploy(): void
+    {
+        Process::path(base_path())->quietly()->start("./docker stack deploy -c stacks/{$this->stack}/docker-compose.yml {$this->stack} --with-registry-auth");
+    }
+
+    public function fetchStats()
+    {
+        return collect(Cache::get('joe-stats', []));
+    }
+
+    public function scaleUpService(string $id)
+    {
+        $service = $this->services()->firstwhere('ID', $id);
+        $name = $service['Spec']['Name'];
+        $replicas = $service['Spec']['Mode']['Replicated']['Replicas'] + 1;
+        $this->updating[] = $id;
+
+        $process = Process::path(base_path())->quietly()->start("./docker service scale {$name}={$replicas}");
+    }
+
+    public function scaleDown(string $id)
+    {
+        $service = $this->services()->firstwhere('ID', $id);
+        $name = $service['Spec']['Name'];
+        $replicas = $service['Spec']['Mode']['Replicated']['Replicas'] - 1;
+        $this->updating[] = $id;
+
+        $process = Process::path(base_path())->quietly()->start("./docker service scale {$name}={$replicas}");
+    }
+
+    public function forceUpdate(string $id)
+    {
+        $service = $this->services()->firstwhere('ID', $id);
+        $name = $service['Spec']['Name'];
+
+        $this->updating[] = $id;
+
+        $process = Process::path(base_path())->quietly()->start("./docker service update --force {$name}");
+    }
 
     public function services()
     {
         return Http::withOptions(['curl' => [CURLOPT_UNIX_SOCKET_PATH => '/var/run/docker.sock']])
-            ->get('http://v1.44/services')
+            ->withQueryParameters([
+                'status' => true,
+                'filters' => '{"label": ["com.docker.stack.namespace=' . $this->stack . '"]}'
+            ])
+            ->get("http://v1.44/services")
             ->collect()
             ->map(function ($service) {
                 $service['tasks'] = $this->tasks
@@ -184,41 +214,6 @@ new class extends Component {
             ->json();
     }
 
-    public function fetchStats()
-    {
-        return collect(Cache::get('joe-stats', []));
-    }
-
-    public function scaleUpService(string $id)
-    {
-        $service = $this->services()->firstwhere('ID', $id);
-        $name = $service['Spec']['Name'];
-        $replicas = $service['Spec']['Mode']['Replicated']['Replicas'] + 1;
-        $this->updating[] = $id;
-
-        $process = Process::path(base_path())->quietly()->start("./docker service scale {$name}={$replicas}");
-    }
-
-    public function scaleDown(string $id)
-    {
-        $service = $this->services()->firstwhere('ID', $id);
-        $name = $service['Spec']['Name'];
-        $replicas = $service['Spec']['Mode']['Replicated']['Replicas'] - 1;
-        $this->updating[] = $id;
-
-        $process = Process::path(base_path())->quietly()->start("./docker service scale {$name}={$replicas}");
-    }
-
-    public function forceUpdate(string $id)
-    {
-        $service = $this->services()->firstwhere('ID', $id);
-        $name = $service['Spec']['Name'];
-
-        $this->updating[] = $id;
-
-        $process = Process::path(base_path())->quietly()->start("./docker service update --force {$name}");
-    }
-
     public function taskColorForState(string $state)
     {
         return match ($state) {
@@ -240,22 +235,31 @@ new class extends Component {
 
         return (new AnsiToHtmlConverter())->convert($body);
     }
+}; ?>
 
-    public function with(): array
-    {
-        return [
-//            'swarm' => $this->swarm(),
-//            'nodes' => $this->nodes(),
-//            'stacks' => $this->stacks(),
-//            'services' => $this->services(),
-//            'tasks' => $this->tasks(),
+<div wire:poll>
+    <x-header :title="$stack" separator>
+        <x-slot:actions>
+            <x-button
+                label="Remove"
+                wire:click="remove"
+                wire:confirm="Are you sure?"
+                tooltip-left="Runs `docker stack rm {{ $stack }}`"
+                icon="o-bookmark-slash"
+                spinner
+                responsive />
 
-        ];
-    }
-} ?>
+            <x-button label="Edit" icon="o-pencil" link="/stacks/{{ $stack }}/edit" responsive />
 
-<div wire:poll.4s>
-    <x-header title="All stacks" separator progress-indicator />
+            <x-button
+                label="Re-deploy"
+                tooltip-left="Runs `docker stack deploy {{ $stack }}`"
+                wire:click="deploy" class="btn-primary"
+                icon="o-fire"
+                spinner
+                responsive />
+        </x-slot:actions>
+    </x-header>
 
     @foreach($services as $service)
         <x-card x-data="{expand: false}" @click="expand = !expand" shadow class="mb-5 border border-base-100 hover:!border-primary cursor-pointer"
