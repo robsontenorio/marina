@@ -77,7 +77,7 @@ new class extends Component {
                 label="Remove"
                 wire:click="remove"
                 wire:confirm="Are you sure?"
-                tooltip-left="Runs `docker stack rm {{ $stack }}`"
+                tooltip-left="`docker stack rm {{ $stack }}`"
                 icon="o-bookmark-slash"
                 spinner
                 responsive />
@@ -86,7 +86,7 @@ new class extends Component {
 
             <x-button
                 label="Re-deploy"
-                tooltip-left="Runs `docker stack deploy {{ $stack }}`"
+                tooltip-left="`docker stack deploy {{ $stack }}`"
                 wire:click="deploy" class="btn-primary"
                 icon="o-fire"
                 spinner
@@ -144,7 +144,7 @@ new class extends Component {
                 </div>
                 <div>
                     <x-button
-                        tooltip-left="Force update this service"
+                        tooltip-left="`docker service update --force {service}`"
                         wire:click.stop="forceUpdate('{{ $service['id'] }}')"
                         icon="o-fire"
                         class="btn-ghost btn-sm btn-circle"
