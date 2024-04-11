@@ -1,5 +1,13 @@
 <?php
 
+use App\Actions\Services\FetchServicesAction;
+use App\Actions\Services\ForceServiceUpdateAction;
+use App\Actions\Services\ScaleDownServicesAction;
+use App\Actions\Services\ScaleUpServicesAction;
+use App\Actions\Stack\DeployStackAction;
+use App\Actions\Stack\RemoveStackAction;
+use App\Actions\Tasks\FetchTasksAction;
+use App\Entities\Service;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -14,231 +22,56 @@ new class extends Component {
 
     public string $process_output = '';
 
-    public ?Collection $services;
-
-    public ?Collection $tasks;
-
-    public ?Collection $stats;
-
     public array $updating = [];
+
+    public ?Collection $services;
 
     public function mount(string $stack): void
     {
         $this->stack = $stack;
     }
 
-    public function boot()
+    public function boot(): void
     {
-        $this->tasks = $this->tasks();
-        $this->stats = $this->fetchStats();
-        $this->services = $this->services();
+        $this->services = (new FetchServicesAction($this->stack))->execute();
     }
 
+    // Remove stack
     public function remove(): void
     {
-        Process::path(base_path())->quietly()->start("./docker stack rm {$this->stack}");
+        (new RemoveStackAction($this->stack))->execute();
     }
 
+    // Deploy stack
     public function deploy(): void
     {
-        Process::path(base_path())->quietly()->start("./docker stack deploy -c stacks/{$this->stack}/docker-compose.yml {$this->stack} --with-registry-auth");
+        (new DeployStackAction($this->stack))->execute();
     }
 
-    public function fetchStats()
+    // Scale service up
+    public function scaleUp(string $id): void
     {
-        return collect(Cache::get('joe-stats', []));
+        $service = new Service(...$this->services->firstWhere('id', $id));
+        (new ScaleUpServicesAction($service))->execute();
     }
 
-    public function scaleUpService(string $id)
+    // Scale service down
+    public function scaleDown(string $id): void
     {
-        $service = $this->services()->firstwhere('ID', $id);
-        $name = $service['Spec']['Name'];
-        $replicas = $service['Spec']['Mode']['Replicated']['Replicas'] + 1;
-        $this->updating[] = $id;
-
-        $process = Process::path(base_path())->quietly()->start("./docker service scale {$name}={$replicas}");
+        $service = new Service(...$this->services->firstWhere('id', $id));
+        (new ScaleDownServicesAction($service))->execute();
     }
 
-    public function scaleDown(string $id)
+    // Force update service
+    public function forceUpdate(string $id): void
     {
-        $service = $this->services()->firstwhere('ID', $id);
-        $name = $service['Spec']['Name'];
-        $replicas = $service['Spec']['Mode']['Replicated']['Replicas'] - 1;
-        $this->updating[] = $id;
-
-        $process = Process::path(base_path())->quietly()->start("./docker service scale {$name}={$replicas}");
-    }
-
-    public function forceUpdate(string $id)
-    {
-        $service = $this->services()->firstwhere('ID', $id);
-        $name = $service['Spec']['Name'];
-
-        $this->updating[] = $id;
-
-        $process = Process::path(base_path())->quietly()->start("./docker service update --force {$name}");
-    }
-
-    public function services()
-    {
-        return Http::withOptions(['curl' => [CURLOPT_UNIX_SOCKET_PATH => '/var/run/docker.sock']])
-            ->withQueryParameters([
-                'status' => true,
-                'filters' => '{"label": ["com.docker.stack.namespace=' . $this->stack . '"]}'
-            ])
-            ->get("http://v1.44/services")
-            ->collect()
-            ->map(function ($service) {
-                $service['tasks'] = $this->tasks
-                    ->where('ServiceID', $service['ID'])
-                    ->map(function ($task) use ($service) {
-                        $task['container_id'] = $service['Spec']['Name'] . '.' . $task['Slot'] . '.' . $task['ID'];
-                        $task['stats'] = $this->stats->firstWhere('name', $task['container_id']);
-
-                        return $task;
-                    })
-                    ?->groupBy('Slot') ?? [];
-
-                return $service;
-            })
-            ->map(function ($service) {
-                $service['stats'] = [
-                    'cpu' => $this->calculateCPU($service['tasks']),
-                    'mem' => $this->calculateMemory($service['tasks'])
-                ];
-
-                $service['is_running'] = $service['tasks']->flatten(1)->where('Status.State', 'running')->isNotEmpty();
-                $service['is_updating'] = $service['tasks']
-                    ->flatten(1)
-                    ->filter(function ($task) {
-                        return ($task['Status']['State'] != $task['DesiredState']) && $task['Status']['State'] != 'failed';
-                    })
-                    ->isNotEmpty();
-
-                if (! $service['is_updating']) {
-                    $this->updating = Arr::where($this->updating, fn($id) => $id != $service['ID']);
-                }
-
-                return $service;
-            });
-    }
-
-    public function calculateCPU(Collection $tasks)
-    {
-        $isEmpty = $tasks
-                ->flatten(1)
-                ->where('Status.State', 'running')
-                ->pluck('stats.cpu')
-                ->unique()
-                ->first() == null;
-
-        if ($isEmpty) {
-            return '-';
-        }
-
-        return $tasks
-                ->flatten(1)
-                ->where('Status.State', 'running')
-                ->pluck('stats.cpu')
-                ->map(fn($cpu) => str($cpu)->replace('%', '')->toFloat())
-                ->whenEmpty(fn() => collect(['-']))
-                ->sum() . '%';
-    }
-
-    public function calculateMemory(Collection $tasks)
-    {
-        $kilobytesFromGigas = $tasks
-            ->flatten(1)
-            ->where('Status.State', 'running')
-            ->pluck('stats.mem')
-            ->filter(fn($mem) => str($mem)->contains('GiB'))
-            ->map(fn($cpu) => str($cpu)->replace('GiB', '')->toFloat() * 1024 * 1024)
-            ->sum();
-
-        $kilobytesFromMegas = $tasks
-            ->flatten(1)
-            ->where('Status.State', 'running')
-            ->pluck('stats.mem')
-            ->filter(fn($mem) => str($mem)->contains('MiB'))
-            ->map(fn($cpu) => str($cpu)->replace('MiB', '')->toFloat() * 1024)
-            ->sum();
-
-        $kilobytes = $tasks
-            ->flatten(1)
-            ->where('Status.State', 'running')
-            ->pluck('stats.mem')
-            ->filter(fn($mem) => str($mem)->contains('KiB'))
-            ->map(fn($cpu) => str($cpu)->replace('KiB', '')->toFloat())
-            ->sum();
-
-        $total = $kilobytesFromGigas + $kilobytesFromMegas + $kilobytes;
-
-        if ($total == 0) {
-            return '-';
-        }
-
-        if ($total < 1024) {
-            return $total . 'KiB';
-        }
-
-        if ($total > 1024 && $total < 1024 * 1024) {
-            return round($total / 1024, 2) . 'MiB';
-        }
-
-        return round($total / (1024 * 1024), 2) . 'GiB';
-    }
-
-    public function tasks()
-    {
-        return Http::withOptions(['curl' => [CURLOPT_UNIX_SOCKET_PATH => '/var/run/docker.sock']])
-            ->get('http://v1.44/tasks')
-            ->collect()
-            ->map(function ($task) {
-                $task['color'] = $this->taskColorForState($task['Status']['State']);
-                $task['inspect'] = $this->inspectTask($task['ID']);
-                $task['logs'] = $this->taskLogs($task['ID']);
-                $task['diff_timestamp'] = Carbon::parse($task['CreatedAt'])->diffForHumans();
-
-                return $task;
-            })
-            ->sortBy([
-                ['Slot', 'asc'],
-                ['CreatedAt', 'desc']
-            ]);
-    }
-
-    public function inspectTask(string $id)
-    {
-        return Http::withOptions(['curl' => [CURLOPT_UNIX_SOCKET_PATH => '/var/run/docker.sock']])
-            ->get("http://v1.44/tasks/{$id}")
-            ->json();
-    }
-
-    public function taskColorForState(string $state)
-    {
-        return match ($state) {
-            'running' => 'bg-success/40',
-            'shutdown' => 'bg-base-200',
-            'failed' => 'bg-error/40',
-            default => 'bg-warning/40',
-        };
-    }
-
-    public function taskLogs(string $id): string
-    {
-        return '';
-
-        $body = Http::withOptions(['curl' => [CURLOPT_UNIX_SOCKET_PATH => '/var/run/docker.sock']])
-            ->withQueryParameters(['stdout' => true, 'stderrout' => true])
-            ->get("http://v1.44/tasks/{$id}/logs")
-            ->body();
-
-        return (new AnsiToHtmlConverter())->convert($body);
+        $service = new Service(...$this->services->firstWhere('id', $id));
+        (new ForceServiceUpdateAction($service))->execute();
     }
 }; ?>
 
 <div wire:poll>
-    <x-header :title="$stack" separator>
+    <x-header :title="$stack" separator progress-indicator>
         <x-slot:actions>
             <x-button
                 label="Remove"
@@ -263,7 +96,7 @@ new class extends Component {
 
     @foreach($services as $service)
         <x-card x-data="{expand: false}" @click="expand = !expand" shadow class="mb-5 border border-base-100 hover:!border-primary cursor-pointer"
-                wire:key="service-{{ $service['ID'] }}">
+                wire:key="service-{{ $service['id'] }}">
 
             <div class="flex justify-between">
                 <div class="flex-1">
@@ -271,21 +104,21 @@ new class extends Component {
                         {{--  REPLICAS--}}
                         <div class="flex gap-3">
                             <div @class(["bg-base-300 text-base-content rounded-lg text-center py-2 px-3", "!bg-success !text-base-100"  => $service['is_running']])>
-                                <div class="font-black">{{ $service['Spec']['Mode']['Replicated']['Replicas'] }}</div>
+                                <div class="font-black">{{ $service['replicas'] }}</div>
                                 <div class="text-xs">replicas</div>
                             </div>
                             <div class="grid">
                                 <x-button
                                     tooltip="Scale Up"
-                                    wire:click.stop="scaleUpService('{{ $service['ID'] }}')"
+                                    wire:click.stop="scaleUp('{{ $service['id'] }}')"
                                     class="btn-ghost btn-sm btn-circle"
                                     icon="o-chevron-up"
                                     spinner />
 
                                 <x-button
                                     tooltip="Scale Down"
-                                    wire:click.stop="scaleDown('{{ $service['ID'] }}')"
-                                    :disabled="$service['Spec']['Mode']['Replicated']['Replicas'] == 0"
+                                    wire:click.stop="scaleDown('{{ $service['id'] }}')"
+                                    :disabled="$service['replicas'] == 0"
                                     icon="o-chevron-down"
                                     class="btn-ghost btn-sm btn-circle"
                                     spinner />
@@ -294,9 +127,9 @@ new class extends Component {
                         <div>
                             {{--  SERVICE --}}
                             <div class="font-black text-xl mb-3">
-                                {{ $service['Spec']['Name'] }}
-                                <span data-tip="This service is updating" @class(["hidden tooltip", "!inline-block" => $service['is_updating'] || in_array($service['ID'], $updating)]) />
-                                <x-loading class="loading-ring loading-xs" />
+                                {{ $service['name'] }}
+                                <span data-tip="This service is updating" @class(["hidden", "tooltip !inline-block" => $service['is_updating']]) >
+                                    <x-loading class="loading-ring loading-xs" />
                                 </span>
                             </div>
 
@@ -308,50 +141,43 @@ new class extends Component {
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <div>
-
                     <x-button
                         tooltip-left="Force update this service"
-                        wire:click.stop="forceUpdate('{{ $service['ID'] }}')"
+                        wire:click.stop="forceUpdate('{{ $service['id'] }}')"
                         icon="o-fire"
                         class="btn-ghost btn-sm btn-circle"
                         spinner />
                 </div>
             </div>
 
-            {{--    SLOTS    --}}
+            {{-- SLOTS    --}}
             <div class="hidden cursor-default pt-10" :class="expand && '!block'" @click.stop="">
                 @foreach($service['tasks'] as $slot => $tasks)
-                    <div x-data="{expandTask: false}" @click.stop="expandTask = !expandTask" class="cursor-pointer" wire:key="service-{{ $service['ID'] }}-slot">
+                    <div x-data="{expandTask: false}" @click.stop="expandTask = !expandTask" class="cursor-pointer" wire:key="service-{{ $service['id'] }}-slot">
                         <div>
                             <hr />
                             <div class="flex justify-between gap-3 hover:bg-base-200/50 hover:rounded p-3" :class="expandTask && 'bg-base-200/50'">
-                                {{-- CURRENT --}}
+                                {{-- CURRENT--}}
                                 <div class="flex-1">
-                                    <livewire:tasks.show :current="true" :$service :task="$tasks->first()" wire:key="service-{{ $service['ID'] }}-task-main-{{ rand() }}" />
+                                    <livewire:tasks.show :task="$tasks->first()" wire:key="service-{{ $service['id'] }}-task-main-{{ rand() }}" />
                                 </div>
                             </div>
 
-                            {{-- HISTORY --}}
+                            {{-- HISTORY--}}
                             <div class="ml-11 mt-5 mb-10 cursor-default hidden" :class="expandTask && '!block'" @click.stop="">
                                 <x-icon name="o-arrow-up" label="Task history" class="h-4 w-4 text-xs text-gray-400 -ml-2 mr-8" />
                                 @forelse($tasks->skip(1) as $k => $task)
-                                    {{--                                    <div class="mb-5" wire:key="service-{{ $service['ID'] }}-task-wrapper-{{ rand() }}">--}}
-                                    {{--                                        <livewire:tasks.show :$service :$task wire:key="service-{{ $service['ID'] }}-task-{{ rand() }}" />--}}
-                                    {{--                                    </div>--}}
-
-
                                     <x-timeline-item title="" :last="$loop->last" pending>
                                         <x-slot:title>
                                             <div class="font-normal">
-                                                <span class="badge badge-sm {{ $task['color'] }} mr-2">{{ $task['Status']['State'] }}</span>
-                                                <span @class(["hidden" => ($task['DesiredState'] == $task['Status']['State']) || (($task['Status']['Err'] ??  '') != '')])>
-                                                <x-loading class="loading-ring loading-xs" />
-                                            </span>
+                                                <span class="badge badge-sm {{ $task['color'] }} mr-2">{{ $task['state'] }}</span>
+                                                <span @class(["hidden", "!inline-block" => $task['is_updating']])>
+                                                    <x-loading class="loading-ring loading-xs" />
+                                                </span>
                                                 <span class="text-xs text-gray-500 tooltip"
-                                                      data-tip="{{ Carbon::parse($task['CreatedAt'])->format('Y-m-d H:i:s') }}">{{ $task['diff_timestamp'] }}</span>
+                                                      data-tip="{{ Carbon::parse($task['created_at'])->format('Y-m-d H:i:s') }}">{{ $task['created_at'] }}</span>
                                             </div>
                                         </x-slot:title>
                                     </x-timeline-item>

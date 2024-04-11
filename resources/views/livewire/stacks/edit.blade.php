@@ -1,5 +1,11 @@
 <?php
 
+use App\Actions\Stack\DeployStackAction;
+use App\Actions\Stack\SaveEnvAction;
+use App\Actions\Stack\SaveStackAction;
+use App\Actions\Stack\ScanEnvsAction;
+use App\Actions\Stack\ScanStackAction;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;
 use Livewire\Volt\Component;
@@ -12,58 +18,42 @@ new class extends Component {
 
     public string $group = '';
 
-    public array $envs = [];
+    public string $stackContent = '';
 
-    public string $dockerComposeFile = '';
+    public ?Collection $envs;
 
     public function mount(string $stack): void
     {
         $this->stack = $stack;
-        $this->scanCompose();
-        $this->scanEnvs();
+        $this->stackContent = (new ScanStackAction($stack))->execute();
+        $this->envs = (new ScanEnvsAction($stack))->execute();
     }
 
-    public function scanEnvs(): void
+    public function saveStack(): void
     {
-        $envs = File::glob(base_path("stacks/{$this->stack}/.env*"), true);
-
-        collect($envs)->each(function ($env) {
-            $this->envs[] = [
-                'name' => basename($env),
-                'content' => File::get($env)
-            ];
-        });
-    }
-
-    public function scanCompose(): void
-    {
-        $this->dockerComposeFile = File::get(base_path("stacks/{$this->stack}/docker-compose.yml"));
-    }
-
-    public function saveDockerCompose(): void
-    {
-        File::put(base_path("stacks/{$this->stack}/docker-compose.yml"), $this->dockerComposeFile);
+        (new SaveStackAction($this->stack, $this->stackContent))->execute();
 
         $this->success('Saved.', position: 'toast-bottom');
     }
 
     public function saveAndDeploy(): void
     {
-        $this->saveDockerCompose();
-        $this->deploy();
+        (new SaveStackAction($this->stack, $this->stackContent))->execute();
+        (new DeployStackAction($this->stack))->execute();
 
         $this->success('Stack deploy command is running ...', position: 'toast-bottom', redirectTo: "/stacks/{$this->stack}");
     }
 
     public function deploy(): void
     {
-        Process::path(base_path())->quietly()->start("./docker stack deploy -c stacks/{$this->stack}/docker-compose.yml {$this->stack} --with-registry-auth");
+        (new DeployStackAction($this->stack))->execute();
     }
 
     public function saveEnv(string $fileName): void
     {
-        $index = collect($this->envs)->search(fn($env) => $env['name'] === $fileName);
-        File::put(base_path("stacks/{$this->stack}/{$fileName}"), $this->envs[$index]['content']);
+        $content = $this->envs->firstWhere('name', $fileName)['content'];
+
+        (new SaveEnvAction($this->stack, $fileName, $content))->execute();
 
         $this->success('Saved.', position: 'toast-bottom');
     }
@@ -79,11 +69,11 @@ new class extends Component {
                 docker-compose.yml
             </x-slot:heading>
             <x-slot:content>
-                <x-form wire:submit="saveDockerCompose">
-                    <x-textarea wire:model="dockerComposeFile" rows="20" />
+                <x-form wire:submit="saveStack">
+                    <x-textarea wire:model="stackContent" rows="20" />
                     <x-slot:actions>
                         <x-button label="Save & Deploy" wire:click="saveAndDeploy" class="btn-neutral" icon="o-fire" spinner />
-                        <x-button label="Save" type="submit" class="btn-primary" icon="o-paper-airplane" spinner="saveDockerCompose" />
+                        <x-button label="Save" type="submit" class="btn-primary" icon="o-paper-airplane" spinner="saveStack" />
                     </x-slot:actions>
                 </x-form>
             </x-slot:content>

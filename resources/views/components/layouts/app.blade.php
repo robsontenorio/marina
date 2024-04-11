@@ -1,5 +1,4 @@
-@php use Illuminate\Support\Facades\File; @endphp
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -51,10 +50,10 @@
             <x-menu-item title="Console" icon="o-command-line" link="/" />
 
             <x-menu-sub title="Stacks" icon="o-server-stack">
-                <x-menu-item title="All stacks" icon="o-server" link="/all-stacks" />
                 @foreach(File::directories(base_path('stacks')) as $stack)
                     <x-menu-item title="{{ basename($stack) }}" icon="o-server" link="/stacks/{{ basename($stack) }}" />
                 @endforeach
+                <x-menu-item title="All stacks" icon="o-server" link="/all-stacks" />
             </x-menu-sub>
 
         </x-menu>
