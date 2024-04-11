@@ -2,7 +2,7 @@
 
 use Livewire\Volt\Volt;
 
-Volt::route('/', 'users.index');
+Volt::route('/', 'dashboard');
 
 Volt::route('/all-stacks', 'stacks.index');
 
