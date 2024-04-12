@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 
 class FetchServicesAction extends DockerSocketService
 {
-    public function __construct(public string $stack)
+    public function __construct(public ?string $stack = null)
     {
         parent::__construct();
     }

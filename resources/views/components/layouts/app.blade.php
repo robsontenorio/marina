@@ -51,9 +51,9 @@
 
             <x-menu-sub title="Stacks" icon="o-server-stack">
                 @foreach(File::directories(base_path('stacks')) as $stack)
-                    <x-menu-item title="{{ basename($stack) }}" icon="o-server" link="/stacks/{{ basename($stack) }}" />
+                    <x-menu-item title="{{ basename($stack) }}" icon="o-server" link="/stacks/{{ str(basename($stack))->toBase64 }}/{{ basename($stack) }}" />
                 @endforeach
-                <x-menu-item title="All stacks" icon="o-server" link="/all-stacks" />
+                <x-menu-item title="All stacks" icon="o-list-bullet" link="/all-stacks" />
             </x-menu-sub>
 
         </x-menu>

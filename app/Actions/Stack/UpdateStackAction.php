@@ -4,7 +4,7 @@ namespace App\Actions\Stack;
 
 use Illuminate\Support\Facades\File;
 
-class SaveStackAction
+class UpdateStackAction
 {
     public function __construct(public string $stack, public string $content)
     {

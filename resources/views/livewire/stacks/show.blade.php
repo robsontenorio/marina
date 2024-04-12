@@ -2,10 +2,12 @@
 
 use App\Actions\Services\FetchServicesAction;
 use App\Actions\Services\ForceServiceUpdateAction;
+use App\Actions\Services\RemoveServiceAction;
 use App\Actions\Services\ScaleDownServicesAction;
 use App\Actions\Services\ScaleUpServicesAction;
 use App\Actions\Stack\DeployStackAction;
 use App\Actions\Stack\RemoveStackAction;
+use App\Actions\Stack\TrashStackAction;
 use App\Actions\Tasks\FetchTasksAction;
 use App\Entities\Service;
 use Carbon\Carbon;
@@ -15,9 +17,12 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Process;
 use Livewire\Volt\Component;
+use Mary\Traits\Toast;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
 
 new class extends Component {
+    use Toast;
+
     public string $stack = '';
 
     public string $process_output = '';
@@ -35,62 +40,12 @@ new class extends Component {
     {
         $this->services = (new FetchServicesAction($this->stack))->execute();
     }
-
-    // Remove stack
-    public function remove(): void
-    {
-        (new RemoveStackAction($this->stack))->execute();
-    }
-
-    // Deploy stack
-    public function deploy(): void
-    {
-        (new DeployStackAction($this->stack))->execute();
-    }
-
-    // Scale service up
-    public function scaleUp(string $id): void
-    {
-        $service = new Service(...$this->services->firstWhere('id', $id));
-        (new ScaleUpServicesAction($service))->execute();
-    }
-
-    // Scale service down
-    public function scaleDown(string $id): void
-    {
-        $service = new Service(...$this->services->firstWhere('id', $id));
-        (new ScaleDownServicesAction($service))->execute();
-    }
-
-    // Force update service
-    public function forceUpdate(string $id): void
-    {
-        $service = new Service(...$this->services->firstWhere('id', $id));
-        (new ForceServiceUpdateAction($service))->execute();
-    }
 }; ?>
 
 <div wire:poll>
-    <x-header :title="$stack" separator progress-indicator>
+    <x-header :title="$stack" separator>
         <x-slot:actions>
-            <x-button
-                label="Remove"
-                wire:click="remove"
-                wire:confirm="Are you sure?"
-                tooltip-left="`docker stack rm {{ $stack }}`"
-                icon="o-bookmark-slash"
-                spinner
-                responsive />
-
-            <x-button label="Edit" icon="o-pencil" link="/stacks/{{ $stack }}/edit" responsive />
-
-            <x-button
-                label="Re-deploy"
-                tooltip-left="`docker stack deploy {{ $stack }}`"
-                wire:click="deploy" class="btn-primary"
-                icon="o-fire"
-                spinner
-                responsive />
+            <x-button label="Edit" icon="o-pencil" link="/stacks/{{ str($stack)->toBase64 }}/{{ $stack }}/edit" responsive />
         </x-slot:actions>
     </x-header>
 
@@ -98,59 +53,7 @@ new class extends Component {
         <x-card x-data="{expand: false}" @click="expand = !expand" shadow class="mb-5 border border-base-100 hover:!border-primary cursor-pointer"
                 wire:key="service-{{ $service['id'] }}">
 
-            <div class="flex justify-between">
-                <div class="flex-1">
-                    <div class="flex gap-3">
-                        {{--  REPLICAS--}}
-                        <div class="flex gap-3">
-                            <div @class(["bg-base-300 text-base-content rounded-lg text-center py-2 px-3", "!bg-success !text-base-100"  => $service['is_running']])>
-                                <div class="font-black">{{ $service['replicas'] }}</div>
-                                <div class="text-xs">replicas</div>
-                            </div>
-                            <div class="grid">
-                                <x-button
-                                    tooltip="Scale Up"
-                                    wire:click.stop="scaleUp('{{ $service['id'] }}')"
-                                    class="btn-ghost btn-sm btn-circle"
-                                    icon="o-chevron-up"
-                                    spinner />
-
-                                <x-button
-                                    tooltip="Scale Down"
-                                    wire:click.stop="scaleDown('{{ $service['id'] }}')"
-                                    :disabled="$service['replicas'] == 0"
-                                    icon="o-chevron-down"
-                                    class="btn-ghost btn-sm btn-circle"
-                                    spinner />
-                            </div>
-                        </div>
-                        <div>
-                            {{--  SERVICE --}}
-                            <div class="font-black text-xl mb-3">
-                                {{ $service['name'] }}
-                                <span data-tip="This service is updating" @class(["hidden", "tooltip !inline-block" => $service['is_updating']]) >
-                                    <x-loading class="loading-ring loading-xs" />
-                                </span>
-                            </div>
-
-                            {{--  STATS--}}
-                            <div>
-                                <span class="tooltip" data-tip="cpu / mem">
-                                    <x-icon name="o-cpu-chip" label="{{ $service['stats']['cpu'] ?? '-' }} / {{ $service['stats']['mem'] ?? '-' }}" class="text-xs" />
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <x-button
-                        tooltip-left="`docker service update --force {service}`"
-                        wire:click.stop="forceUpdate('{{ $service['id'] }}')"
-                        icon="o-fire"
-                        class="btn-ghost btn-sm btn-circle"
-                        spinner />
-                </div>
-            </div>
+            <livewire:services.show :$service :$services wire:key="service-{{ $service['id'] }}-component" />
 
             {{-- SLOTS    --}}
             <div class="hidden cursor-default pt-10" :class="expand && '!block'" @click.stop="">
@@ -192,4 +95,13 @@ new class extends Component {
             </div>
         </x-card>
     @endforeach
+
+    @if($services->isEmpty())
+        {{-- TODO: create a new component `x-????` --}}
+        <div class="text-center">
+            <x-icon name="o-server-stack" class="w-10 h-10 bg-amber-200 p-2 rounded-full text-neutral" />
+            <div class="text-xl pl-3 mt-3">No services deployed.</div>
+            {{--            <div class="text-sm text-gray-500 mt-3">Have you hit the deploy button?</div>--}}
+        </div>
+    @endif
 </div>

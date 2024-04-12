@@ -12,8 +12,7 @@ services:
         volumes:
             - ../:/var/www/app
             - /var/run/docker.sock:/var/run/docker.sock
-            # Projects
-            - ../../example:/var/www/app/stacks
+            - ../../stacks:/var/www/app/stacks
         ports:
             - "8717:8080"
             - "5717:5717"
