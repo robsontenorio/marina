@@ -10,6 +10,7 @@ use App\Actions\Support\CalculateCPUAction;
 use App\Actions\Support\CalculateMemoryAction;
 use App\Actions\Tasks\FetchTasksAction;
 use App\Entities\Service;
+use App\Entities\Stats;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -33,10 +34,10 @@ new class extends Component {
     public function with(): array
     {
         return [
-            'stats' => [
-                'cpu' => (new CalculateCPUAction($this->services->pluck('tasks')->flatten(1)))->execute(),
-                'mem' => (new CalculateMemoryAction($this->services->pluck('tasks')->flatten(1)))->execute()
-            ]
+            'stats' => new Stats(
+                (new CalculateCPUAction($this->services->pluck('tasks')->flatten(1)))->execute(),
+                (new CalculateMemoryAction($this->services->pluck('tasks')->flatten(1)))->execute()
+            )
         ];
     }
 }; ?>

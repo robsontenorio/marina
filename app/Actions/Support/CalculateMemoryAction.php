@@ -15,7 +15,7 @@ class CalculateMemoryAction
         $kilobytesFromGigas = $this->tasks
             ->flatten(1)
             ->where('state', 'running')
-            ->pluck('stats.mem')
+            ->pluck('stats.memory')
             ->filter(fn($mem) => str($mem)->contains('GiB'))
             ->map(fn($cpu) => str($cpu)->replace('GiB', '')->toFloat() * 1024 * 1024)
             ->sum();
@@ -23,7 +23,7 @@ class CalculateMemoryAction
         $kilobytesFromMegas = $this->tasks
             ->flatten(1)
             ->where('state', 'running')
-            ->pluck('stats.mem')
+            ->pluck('stats.memory')
             ->filter(fn($mem) => str($mem)->contains('MiB'))
             ->map(fn($cpu) => str($cpu)->replace('MiB', '')->toFloat() * 1024)
             ->sum();
@@ -31,7 +31,7 @@ class CalculateMemoryAction
         $kilobytes = $this->tasks
             ->flatten(1)
             ->where('state', 'running')
-            ->pluck('stats.mem')
+            ->pluck('stats.memory')
             ->filter(fn($mem) => str($mem)->contains('KiB'))
             ->map(fn($cpu) => str($cpu)->replace('KiB', '')->toFloat())
             ->sum();

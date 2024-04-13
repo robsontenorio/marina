@@ -21,7 +21,7 @@ class FetchServicesAction extends DockerSocketService
         ])
             ->collect()
             ->transform(function ($service) {
-                return (array) new Service(
+                return new Service(
                     id: $service['ID'],
                     name: $service['Spec']['Name'],
                     replicas: $service['Spec']['Mode']['Replicated']['Replicas'],

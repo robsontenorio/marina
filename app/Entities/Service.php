@@ -5,22 +5,22 @@ namespace App\Entities;
 use App\Actions\Support\CalculateCPUAction;
 use App\Actions\Support\CalculateMemoryAction;
 use App\Actions\Tasks\FetchTasksAction;
+use App\Traits\WireMe;
 use Illuminate\Support\Collection;
+use Livewire\Wireable;
 
-class Service
+class Service implements Wireable
 {
+    use WireMe;
+
     public function __construct(
         public string $id,
         public string $name,
         public int $replicas = 0,
-        public bool $is_running = false,
-        public bool $is_updating = false,
-        public array $stats = [],
+        public Stats $stats = new Stats(),
         public Collection $tasks = new Collection(),
     ) {
         $this->tasks = (new FetchTasksAction($this))->execute();
-        $this->is_running = $this->isRunning();
-        $this->is_updating = $this->isUpdating();
         $this->stats = $this->stats();
     }
 
@@ -28,7 +28,7 @@ class Service
     {
         return $this->tasks
             ->flatten(1)
-            ->filter(fn($task) => $task['is_running'])
+            ->filter(fn(Task $task) => $task->isRunning())
             ->isNotEmpty();
     }
 
@@ -36,15 +36,15 @@ class Service
     {
         return $this->tasks
             ->flatten(1)
-            ->filter(fn($task) => $task['is_updating'])
+            ->filter(fn(Task $task) => $task->isUpdating())
             ->isNotEmpty();
     }
 
-    public function stats(): array
+    public function stats(): Stats
     {
-        return [
-            'cpu' => (new CalculateCPUAction($this->tasks))->execute(),
-            'mem' => (new CalculateMemoryAction($this->tasks))->execute(),
-        ];
+        return new Stats(
+            (new CalculateCPUAction($this->tasks))->execute(),
+            (new CalculateMemoryAction($this->tasks))->execute(),
+        );
     }
 }

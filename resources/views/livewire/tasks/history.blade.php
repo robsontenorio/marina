@@ -12,14 +12,14 @@ new class extends Component {
 
 <div>
     @forelse($tasks as $k => $task)
-        <x-timeline-item title="" :last="$loop->last" pending wire:key="task-{{ $task['id'] }}">
+        <x-timeline-item title="" :last="$loop->last" pending wire:key="task-{{ $task->id }}">
             <x-slot:title>
                 <div class="font-normal">
-                    <span class="badge badge-sm {{ $task['color'] }} mr-2">{{ $task['state'] }}</span>
-                    <span @class(["hidden", "!inline-block" => $task['is_updating']])>
+                    <span class="badge badge-sm {{ $task->color() }} mr-2">{{ $task->state }}</span>
+                    <span @class(["hidden", "!inline-block" => $task->isUpdating()])>
                         <x-loading class="loading-ring -mb-2" />
                     </span>
-                    <span class="text-xs text-gray-500 tooltip" data-tip="{{ Carbon::parse($task['created_at'])->format('Y-m-d H:i:s') }}">{{ $task['created_at'] }}</span>
+                    <span class="text-xs text-gray-500 tooltip" data-tip="{{ Carbon::parse($task->created_at)->format('Y-m-d H:i:s') }}">{{ $task->created_at }}</span>
                 </div>
             </x-slot:title>
         </x-timeline-item>

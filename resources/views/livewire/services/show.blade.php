@@ -13,18 +13,12 @@ use Mary\Traits\Toast;
 new class extends Component {
     use Toast;
 
-    #[Reactive]
-    public mixed $service;
-
-    #[Reactive]
-    public Collection $services;
+    public Service $service;
 
     // Scale service up
     public function scaleUp(string $id): void
     {
-        $service = new Service(...$this->services->firstWhere('id', $id));
-
-        (new ScaleUpServicesAction($service))->execute();
+        (new ScaleUpServicesAction($this->service))->execute();
 
         $this->success('Running command ...', position: 'toast-bottom', timeout: 5000);
     }
@@ -32,9 +26,7 @@ new class extends Component {
     // Scale service down
     public function scaleDown(string $id): void
     {
-        $service = new Service(...$this->services->firstWhere('id', $id));
-
-        (new ScaleDownServicesAction($service))->execute();
+        (new ScaleDownServicesAction($this->service))->execute();
 
         $this->success('Running command ...', position: 'toast-bottom', timeout: 5000);
     }
@@ -42,9 +34,7 @@ new class extends Component {
     // Force update service
     public function forceUpdate(string $id): void
     {
-        $service = new Service(...$this->services->firstWhere('id', $id));
-
-        (new ForceServiceUpdateAction($service))->execute();
+        (new ForceServiceUpdateAction($this->service))->execute();
 
         $this->success('Running command ...', position: 'toast-bottom', timeout: 5000);
     }
@@ -52,9 +42,7 @@ new class extends Component {
     // Remove service
     public function removeService(string $id): void
     {
-        $service = new Service(...$this->services->firstWhere('id', $id));
-
-        (new RemoveServiceAction($service))->execute();
+        (new RemoveServiceAction($this->service))->execute();
 
         $this->success('Running command ...', position: 'toast-bottom', timeout: 5000);
     }
@@ -66,22 +54,22 @@ new class extends Component {
             <div class="flex gap-3">
                 {{--  REPLICAS--}}
                 <div class="flex gap-3">
-                    <div @class(["bg-base-300 text-base-content rounded-lg text-center py-2 px-3", "!bg-success !text-base-100"  => $service['is_running']])>
-                        <div class="font-black">{{ $service['replicas'] }}</div>
+                    <div @class(["bg-base-300 text-base-content rounded-lg text-center py-2 px-3", "!bg-success !text-base-100"  => $service->isRunning()])>
+                        <div class="font-black">{{ $service->replicas }}</div>
                         <div class="text-xs">replicas</div>
                     </div>
                     <div class="grid">
                         <x-button
                             tooltip="Scale Up"
-                            wire:click.stop="scaleUp('{{ $service['id'] }}')"
+                            wire:click.stop="scaleUp('{{ $service->id }}')"
                             class="btn-ghost btn-sm btn-circle"
                             icon="o-chevron-up"
                             spinner />
 
                         <x-button
                             tooltip="Scale Down"
-                            wire:click.stop="scaleDown('{{ $service['id'] }}')"
-                            :disabled="$service['replicas'] == 0"
+                            wire:click.stop="scaleDown('{{ $service->id }}')"
+                            :disabled="$service->replicas == 0"
                             icon="o-chevron-down"
                             class="btn-ghost btn-sm btn-circle"
                             spinner />
@@ -90,8 +78,8 @@ new class extends Component {
                 <div>
                     {{--  SERVICE --}}
                     <div class="font-black text-xl mb-3">
-                        {{ $service['name'] }}
-                        <span data-tip="This service is updating" @class(["hidden", "tooltip !inline-block" => $service['is_updating']]) >
+                        {{ $service->name }}
+                        <span data-tip="This service is updating" @class(["hidden", "tooltip !inline-block" => $service->isUpdating()]) >
                             <x-loading class="loading-ring -mb-2" />
                         </span>
                     </div>
@@ -99,7 +87,7 @@ new class extends Component {
                     {{--  STATS--}}
                     <div>
                         <span class="tooltip" data-tip="cpu / mem">
-                            <x-icon name="o-cpu-chip" label="{{ $service['stats']['cpu'] ?? '-' }} / {{ $service['stats']['mem'] ?? '-' }}" class="text-xs" />
+                            <x-icon name="o-cpu-chip" label="{{ $service->stats->cpu ?? '-' }} / {{ $service->stats->memory ?? '-' }}" class="text-xs" />
                         </span>
                     </div>
                 </div>
@@ -108,7 +96,7 @@ new class extends Component {
         <div>
             <x-button
                 tooltip-left="`docker service rm {service}`"
-                wire:click.stop="removeService('{{ $service['id'] }}')"
+                wire:click.stop="removeService('{{ $service->id }}')"
                 wire:confirm="Are you sure?"
                 icon="o-bookmark-slash"
                 class="btn-ghost btn-sm btn-circle"
@@ -116,7 +104,7 @@ new class extends Component {
 
             <x-button
                 tooltip-left="`docker service update --force {service}`"
-                wire:click.stop="forceUpdate('{{ $service['id'] }}')"
+                wire:click.stop="forceUpdate('{{ $service->id }}')"
                 wire:confirm="Are you sure?"
                 icon="o-fire"
                 class="btn-ghost btn-sm btn-circle"

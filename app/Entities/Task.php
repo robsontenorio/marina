@@ -2,10 +2,14 @@
 
 namespace App\Entities;
 
+use App\Traits\WireMe;
 use Illuminate\Support\Facades\Cache;
+use Livewire\Wireable;
 
-class Task
+class Task implements Wireable
 {
+    use WireMe;
+
     public const STATE_RUNNING = 'running';
 
     public const STATE_FAILED = 'failed';
@@ -24,27 +28,11 @@ class Task
         public ?string $state = null,
         public ?string $desired_state = null,
         public ?string $error_message = null,
-        public ?string $color = null,
-        public ?bool $is_running = false,
-        public ?bool $is_updating = false,
-        public ?bool $will_remove = false,
         public ?string $created_at = null,
-        public ?array $stats = [
-            'cpu' => '',
-            'memory' => '',
-        ],
+        public Stats $stats = new Stats(),
     ) {
-        $this->name = $this->name();
-        $this->color = $this->colorFor($this->state);
-        $this->is_running = $this->isRunning();
-        $this->is_updating = $this->isUpdating();
-        $this->will_remove = $this->willRemove();
+        $this->name = $this->name ?? $this->service_name . '.' . $this->slot;
         $this->stats = $this->stats();
-    }
-
-    public function name(): string
-    {
-        return $this->name ?? $this->service_name . '.' . $this->slot;
     }
 
     public function isUpdating(): bool
@@ -65,19 +53,16 @@ class Task
         return $this->desired_state == self::STATE_REMOVE;
     }
 
-    public function stats(): array
+    public function stats(): Stats
     {
         $stats = collect(Cache::get('joe-stats', fn() => []))->firstWhere('name', $this->full_name);
 
-        return [
-            'cpu' => $stats['cpu'] ?? '',
-            'mem' => $stats['mem'] ?? '',
-        ];
+        return new Stats($stats['cpu'] ?? '', $stats['mem'] ?? '');
     }
 
-    public function colorFor(string $state)
+    public function color()
     {
-        return match ($state) {
+        return match ($this->state) {
             'running' => 'bg-success/40',
             'shutdown' => 'bg-base-200',
             'failed' => 'bg-error/40',

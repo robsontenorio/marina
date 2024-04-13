@@ -14,28 +14,28 @@ new class extends Component {
         <x-card
             x-data="{expand: false}"
             @click="expand = !expand"
-            wire:key="service-{{ $service['id'] }}"
+            wire:key="service-{{ $service->id }}"
             class="mb-5 border border-base-100 hover:!border-primary cursor-pointer"
             shadow
         >
             {{-- SERVICE --}}
-            <livewire:services.show :$service :$services wire:key="service-{{ $service['id'] }}-component" />
+            <livewire:services.show :$service :$services wire:key="service-{{ $service->id }}-component" />
 
             {{-- TASKS  --}}
             <div class="hidden cursor-default pt-10" :class="expand && '!block'" @click.stop="">
-                @foreach($service['tasks'] as $slot => $tasks)
-                    <div x-data="{expandTask: false}" @click.stop="expandTask = !expandTask" class="cursor-pointer" wire:key="service-{{ $service['id'] }}-slot">
+                @foreach($service->tasks as $slot => $tasks)
+                    <div x-data="{expandTask: false}" @click.stop="expandTask = !expandTask" class="cursor-pointer" wire:key="service-{{ $service->id }}-slot">
                         <div>
                             <hr />
                             <div class="hover:bg-base-200/50 hover:rounded p-3" :class="expandTask && 'bg-base-200/50'">
                                 {{-- CURRENT TASK--}}
-                                <livewire:tasks.show :task="$tasks->first()" wire:key="service-{{ $service['id'] }}-task-main-{{ rand() }}" />
+                                <livewire:tasks.show :task="$tasks->first()" wire:key="service-{{ $service->id }}-task-main-{{ rand() }}" />
                             </div>
 
                             {{-- TASK HISTORY--}}
                             <div class="ml-11 mt-5 mb-10 cursor-default hidden" :class="expandTask && '!block'" @click.stop="">
                                 <x-icon name="o-arrow-up" label="Task history" class="h-4 w-4 text-xs text-gray-400 -ml-2 mr-8" />
-                                <livewire:tasks.history :tasks="$tasks->skip(1)" wire:key="service-{{ $service['id'] }}-task-history-{{ rand() }}" />
+                                <livewire:tasks.history :tasks="$tasks->skip(1)" wire:key="service-{{ $service->id }}-task-history-{{ rand() }}" />
                             </div>
                         </div>
                     </div>
