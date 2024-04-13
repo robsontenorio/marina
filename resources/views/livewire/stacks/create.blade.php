@@ -21,7 +21,7 @@ new class extends Component {
     #[Validate('required')]
     public string $stackContent = '';
 
-    #[Validate('required')]
+    #[Validate('sometimes')]
     #[Validate(['envs.*.name' => 'required'])]
     #[Validate(['envs.*.content' => 'required'])]
     public ?Collection $envs;
@@ -72,19 +72,19 @@ new class extends Component {
                 <x-slot:heading>
                     docker-compose.yml
                 </x-slot:heading>
-                <x-slot:content>
-                    <x-textarea placeholder="File content" wire:model="stackContent" rows="20" />
+                <x-slot:content class="!mx-5">
+                    <x-code-mirror wire:model="stackContent" class="my-5" />
                 </x-slot:content>
             </x-collapse>
 
             @foreach($envs as $env)
                 <x-collapse name="{{ $env['name'] }}" class="bg-base-100">
                     <x-slot:heading>
-                        {{ $env['name'] }}
+                        {{ $env['name'] ?  $env['name'] : 'env file' }}
                     </x-slot:heading>
-                    <x-slot:content>
+                    <x-slot:content class="!mx-5">
                         <x-input label="Env filename" wire:model="envs.{{ $loop->index }}.name" inline />
-                        <x-textarea placeholder="File content" wire:model="envs.{{ $loop->index }}.content" rows="10" />
+                        <x-code-mirror wire:model="envs.{{ $loop->index }}.content" mode="javascript" class="my-5" />
                         <x-button label="Trash" icon="o-trash" wire:click="trashEnv({{ $loop->index }})" class="btn-ghost text-red-500" />
                     </x-slot:content>
                 </x-collapse>
