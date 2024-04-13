@@ -26,6 +26,7 @@ class FetchServicesAction extends DockerSocketService
                     name: $service['Spec']['Name'],
                     replicas: $service['Spec']['Mode']['Replicated']['Replicas'],
                 );
-            });
+            })
+            ->sortBy('name');
     }
 }

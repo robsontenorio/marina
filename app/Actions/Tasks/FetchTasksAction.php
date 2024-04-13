@@ -28,7 +28,6 @@ class FetchTasksAction extends DockerSocketService
                     state: $task['Status']['State'],
                     desired_state: $task['DesiredState'],
                     error_message: $task['Status']['Err'] ?? null,
-                    color: $this->taskColorForState($task['Status']['State']),
                     created_at: $task['CreatedAt'],
                 );
             })
@@ -37,15 +36,5 @@ class FetchTasksAction extends DockerSocketService
                 ['created_at', 'desc']
             ])
             ->groupBy('slot') ?? collect();
-    }
-
-    public function taskColorForState(string $state)
-    {
-        return match ($state) {
-            'running' => 'bg-success/40',
-            'shutdown' => 'bg-base-200',
-            'failed' => 'bg-error/40',
-            default => 'bg-warning/40',
-        };
     }
 }

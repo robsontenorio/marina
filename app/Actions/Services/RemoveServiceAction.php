@@ -13,6 +13,6 @@ class RemoveServiceAction
 
     public function execute(): void
     {
-        Process::path(base_path())->quietly()->start("./docker service rm {$this->service->name}");
+        Process::path(base_path())->quietly()->start("docker service rm {$this->service->name}");
     }
 }

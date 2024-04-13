@@ -92,15 +92,15 @@ new class extends Component {
                     <div class="font-black text-xl mb-3">
                         {{ $service['name'] }}
                         <span data-tip="This service is updating" @class(["hidden", "tooltip !inline-block" => $service['is_updating']]) >
-                                    <x-loading class="loading-ring loading-xs" />
-                                </span>
+                            <x-loading class="loading-ring -mb-2" />
+                        </span>
                     </div>
 
                     {{--  STATS--}}
                     <div>
-                                <span class="tooltip" data-tip="cpu / mem">
-                                    <x-icon name="o-cpu-chip" label="{{ $service['stats']['cpu'] ?? '-' }} / {{ $service['stats']['mem'] ?? '-' }}" class="text-xs" />
-                                </span>
+                        <span class="tooltip" data-tip="cpu / mem">
+                            <x-icon name="o-cpu-chip" label="{{ $service['stats']['cpu'] ?? '-' }} / {{ $service['stats']['mem'] ?? '-' }}" class="text-xs" />
+                        </span>
                     </div>
                 </div>
             </div>

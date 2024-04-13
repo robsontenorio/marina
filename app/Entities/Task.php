@@ -6,6 +6,14 @@ use Illuminate\Support\Facades\Cache;
 
 class Task
 {
+    public const STATE_RUNNING = 'running';
+
+    public const STATE_FAILED = 'failed';
+
+    public const STATE_REJECTED = 'rejected';
+
+    public const STATE_REMOVE = 'remove';
+
     public function __construct(
         public string $id,
         public string $service_id,
@@ -27,6 +35,7 @@ class Task
         ],
     ) {
         $this->name = $this->name();
+        $this->color = $this->colorFor($this->state);
         $this->is_running = $this->isRunning();
         $this->is_updating = $this->isUpdating();
         $this->will_remove = $this->willRemove();
@@ -41,19 +50,19 @@ class Task
     public function isUpdating(): bool
     {
         // TODO: usar ENUM
-        return $this->state != $this->desired_state && $this->state != 'failed';
+        return $this->state != $this->desired_state && ! in_array($this->state, [self::STATE_REJECTED, self::STATE_FAILED]);
     }
 
     public function isRunning(): bool
     {
         // TODO: usar ENUM
-        return $this->state == 'running';
+        return $this->state == self::STATE_RUNNING;
     }
 
     public function willRemove(): bool
     {
         // TODO: usar ENUM
-        return $this->desired_state == 'remove';
+        return $this->desired_state == self::STATE_REMOVE;
     }
 
     public function stats(): array
@@ -64,5 +73,16 @@ class Task
             'cpu' => $stats['cpu'] ?? '',
             'mem' => $stats['mem'] ?? '',
         ];
+    }
+
+    public function colorFor(string $state)
+    {
+        return match ($state) {
+            'running' => 'bg-success/40',
+            'shutdown' => 'bg-base-200',
+            'failed' => 'bg-error/40',
+            'rejected' => 'bg-error/40',
+            default => 'bg-warning/40',
+        };
     }
 }

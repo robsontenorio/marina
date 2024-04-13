@@ -1,5 +1,6 @@
 FROM robsontenorio/laravel:3.2 as base
 COPY --chown=appuser:appuser . .
+COPY docker /usr/local/bin/docker
 
 
 FROM base as local

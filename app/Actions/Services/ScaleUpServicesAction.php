@@ -15,6 +15,6 @@ class ScaleUpServicesAction
     {
         $replicas = ++$this->service->replicas;
 
-        Process::path(base_path())->quietly()->start("./docker service scale {$this->service->name}={$replicas}");
+        Process::path(base_path())->quietly()->start("docker service scale {$this->service->name}={$replicas}");
     }
 }

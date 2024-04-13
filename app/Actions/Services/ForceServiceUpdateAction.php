@@ -13,6 +13,6 @@ class ForceServiceUpdateAction
 
     public function execute(): void
     {
-        Process::path(base_path())->quietly()->start("./docker service update --force {$this->service->name}");
+        Process::path(base_path())->quietly()->start("docker service update --force {$this->service->name}");
     }
 }

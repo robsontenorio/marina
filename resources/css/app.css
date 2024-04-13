@@ -16,3 +16,7 @@
 .mary-table-pagination button {
     @apply bg-base-100
 }
+
+.CodeMirror {
+    @apply h-auto;
+}
