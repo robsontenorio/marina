@@ -12,6 +12,11 @@
 <x-main full-width>
     <x-slot:content>
         {{ $slot }}
+
+        <div class="flex justify-center mt-10">
+            <x-button label="Source code" icon="o-code-bracket" link="https://github.com/robsontenorio/marina" class="btn-ghost" external />
+            <x-button label="Built with maryUI" icon="o-heart" link="https://mary-ui.com" class="btn-ghost !text-pink-500" external />
+        </div>
     </x-slot:content>
 </x-main>
 </body>

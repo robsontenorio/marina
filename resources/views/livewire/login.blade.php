@@ -38,7 +38,9 @@ class extends Component {
 }; ?>
 
 <div class="md:w-96 mx-auto mt-20">
-    <div class="mb-10">Cool image here</div>
+    <div class="mb-5">
+        <img src="/images/marina.png" class="h-12" />
+    </div>
 
     <x-form wire:submit="login">
         <x-input label="E-mail" wire:model="email" icon="o-envelope" inline />

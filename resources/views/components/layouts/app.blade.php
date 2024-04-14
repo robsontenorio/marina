@@ -54,22 +54,23 @@
                 <x-menu-separator />
             @endif
 
-            <x-menu-item title="Home" icon="o-home" link="/" />
-            <x-menu-item title="Console" icon="o-command-line" link="/" />
+            <x-menu-item title="All stacks" icon="o-server-stack" link="/" />
+            <x-menu-separator />
 
-            <x-menu-sub title="Stacks" icon="o-server-stack">
-                @foreach(File::directories(base_path('stacks')) as $stack)
-                    <x-menu-item title="{{ basename($stack) }}" icon="o-server" link="/stacks/{{ str(basename($stack))->toBase64 }}/{{ basename($stack) }}" />
-                @endforeach
-                <x-menu-item title="All stacks" icon="o-list-bullet" link="/all-stacks" />
-            </x-menu-sub>
-
+            @foreach(File::directories(base_path('stacks')) as $stack)
+                <x-menu-item title="{{ basename($stack) }}" icon="o-server-stack" link="/stacks/{{ str(basename($stack))->toBase64 }}/{{ basename($stack) }}" />
+            @endforeach
         </x-menu>
     </x-slot:sidebar>
 
     {{-- The `$slot` goes here --}}
-    <x-slot:content>
+    <x-slot:content class="mb-40">
         {{ $slot }}
+
+        <div class="flex absolute bottom-0 right-0 mr-10">
+            <x-button label="Source code" icon="o-code-bracket" link="https://github.com/robsontenorio/marina" class="btn-ghost" external />
+            <x-button label="Built with maryUI" icon="o-heart" link="https://mary-ui.com" class="btn-ghost !text-pink-500" external />
+        </div>
     </x-slot:content>
 </x-main>
 
