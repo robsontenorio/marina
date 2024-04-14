@@ -13,7 +13,7 @@ class ScaleUpServicesAction
 
     public function execute(): void
     {
-        $replicas = ++$this->service->replicas;
+        $replicas = $this->service->replicas + 1;
 
         Process::path(base_path())->quietly()->start("docker service scale {$this->service->name}={$replicas}");
     }

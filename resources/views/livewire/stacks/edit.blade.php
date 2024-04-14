@@ -148,7 +148,7 @@ new class extends Component {
                         {{ $env['name'] }}
                     </x-slot:heading>
                     <x-slot:content class="!mx-5">
-                        <x-input label="Filename" wire:model="envs.{{ $loop->index }}.name" class="w-64" inline />
+                        <x-input label="Filename" wire:model="envs.{{ $loop->index }}.name" inline />
                         <x-code-mirror wire:model="envs.{{ $loop->index }}.content" mode="javascript" class="my-5" />
                         <x-button label="Trash" icon="o-trash" wire:click="trashEnv({{ $loop->index }})" class="btn-ghost text-red-500" />
                     </x-slot:content>

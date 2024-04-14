@@ -11,7 +11,7 @@ new class extends Component {
 }; ?>
 
 <div>
-    @forelse($tasks as $k => $task)
+    @forelse($tasks as $task)
         <x-timeline-item title="" :last="$loop->last" pending wire:key="task-{{ $task->id }}">
             <x-slot:title>
                 <div class="font-normal">

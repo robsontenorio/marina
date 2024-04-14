@@ -37,19 +37,18 @@ class Task implements Wireable
 
     public function isUpdating(): bool
     {
-        // TODO: usar ENUM
-        return $this->state != $this->desired_state && ! in_array($this->state, [self::STATE_REJECTED, self::STATE_FAILED]);
+        return $this->state != $this->desired_state
+            && ! in_array($this->state, [self::STATE_REJECTED, self::STATE_FAILED])
+            && $this->error_message == null;
     }
 
     public function isRunning(): bool
     {
-        // TODO: usar ENUM
         return $this->state == self::STATE_RUNNING;
     }
 
     public function willRemove(): bool
     {
-        // TODO: usar ENUM
         return $this->desired_state == self::STATE_REMOVE;
     }
 

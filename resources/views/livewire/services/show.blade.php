@@ -13,6 +13,7 @@ use Mary\Traits\Toast;
 new class extends Component {
     use Toast;
 
+    #[Reactive]
     public Service $service;
 
     // Scale service up

@@ -13,6 +13,8 @@ class ScanTaskLogsAction
 
     public function execute()
     {
-        return Process::run("docker service logs {$this->task->id} --raw")->output();
+        $process = Process::run("docker service logs {$this->task->id} --raw");
+
+        return $process->failed() ? $process->errorOutput() : $process->output();
     }
 }
