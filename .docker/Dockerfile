@@ -1,4 +1,4 @@
-FROM robsontenorio/laravel:3.2 as base
+FROM robsontenorio/laravel:3.3 as base
 COPY --chown=appuser:appuser . .
 USER root
 RUN usermod --append --groups 0 appuser

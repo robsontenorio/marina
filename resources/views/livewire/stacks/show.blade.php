@@ -59,6 +59,5 @@ new class extends Component {
     </x-header>
 
     <livewire:stats :$stats :$services />
-
     <livewire:services.index :$services />
 </div>

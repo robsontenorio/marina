@@ -76,5 +76,8 @@
 {{--  TOAST area --}}
 <x-toast />
 
+{{-- Timer to put stats in Cache --}}
+<div x-data="{ timer: null, init() { this.timer = setInterval(() => fetch('/stats'), 3000) }, destroy() { clearInterval(this.timer) }}"></div>
+
 </body>
 </html>
