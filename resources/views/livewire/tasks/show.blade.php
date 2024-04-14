@@ -1,8 +1,10 @@
 <?php
 
+use App\Actions\Tasks\ScanTaskLogsAction;
 use App\Entities\Task;
 use Carbon\Carbon;
 use Livewire\Volt\Component;
+use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
 
 new class extends Component {
     public Task $task;
@@ -35,10 +37,16 @@ new class extends Component {
                 <x-badge value="removing" class="badge-sm bg-error/40" />
             </div>
 
+            {{--  Stats --}}
             <div @class(["hidden", "!inline-flex" => $task->isRunning()])>
                 <span class="tooltip" data-tip="cpu / mem">
                     <x-icon name="o-cpu-chip" label="{{ $task->stats->cpu ?? '-' }} / {{ $task->stats->memory ?? '-' }}" class="text-xs" />
                 </span>
+            </div>
+
+            {{--  Logs --}}
+            <div @class(["hidden", "!inline-flex" => $task->isRunning()])>
+                <livewire:tasks.logs :$task />
             </div>
         </div>
     </div>
