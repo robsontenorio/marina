@@ -19,8 +19,9 @@ class DatabaseSeeder extends Seeder
 
         // TODO: pass env variable on docker run to create it ?
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
+            'avatar' => '/images/empty-user.jpg',
             'password' => Hash::make(2222)
         ]);
     }

@@ -1,6 +1,6 @@
 services:
     ######## APP ########
-    joe-app:
+    marina-app:
         build:
             context: ..
             dockerfile: .docker/Dockerfile

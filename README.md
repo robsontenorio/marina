@@ -39,9 +39,9 @@ volumes:
 Start and enter into container.
 
 ```bash
-cd .docker/ 
-docker-compose up -d                 # Start the containers (wait to start)
-docker compose exec marina-app zsh   # Enter the container
+cd .docker/ &&
+docker-compose up -d &&                  
+docker compose exec marina-app zsh   
 ```
 
 **Then, inside the running container** ... install, migrate and start the app.
@@ -56,5 +56,5 @@ composer start
 
 ## Credentials
 
-- **email**: test@example.com
+- **email**: admin@example.com
 - **password**: 2222

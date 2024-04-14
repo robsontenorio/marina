@@ -28,25 +28,23 @@ new class extends Component {
         <div wire:poll.1500ms="fetchLogs"></div>
     @endif
 
-    <x-modal wire:model="show" box-class="max-w-screen-xl relative bg-black relative">
+    <x-modal wire:model="show" box-class="max-w-screen-lg bg-black">
         <div class="top-0 right-10 sticky text-right">
             <x-button label="Close" wire:click="$toggle('show')" class="btn-sm " />
         </div>
-        <div class="-m-8 ">
-            <pre class="rounded-lg overflow-auto overflow-x-hidden p-10 text-xs whitespace-break-spaces">{!! $logs !!}</pre>
+        <pre class="rounded-lg overflow-y-auto overflow-x-hidden text-xs whitespace-break-spaces">{!! $logs !!}</pre>
 
-            <div class="grid  gap-5 m-10">
-                @if($task->isUpdating() || $logs === null)
-                    <x-loading class="loading-dots text-base-100 " />
-                @endif
+        <div class="grid gap-5 m-10">
+            @if($task->isUpdating() || $logs === null)
+                <x-loading class="loading-dots text-base-100 " />
+            @endif
 
-                @if($logs != null)
-                    <div class="text-base-100">
-                        Task state:
-                        <x-badge class="badge-sm {{ $task->color() }} text-base-100" :value="$task->state" />
-                    </div>
-                @endif
-            </div>
+            @if($logs != null)
+                <div class="text-base-100">
+                    Task state:
+                    <x-badge class="badge-sm {{ $task->color() }} text-base-100" :value="$task->state" />
+                </div>
+            @endif
         </div>
     </x-modal>
 </div>

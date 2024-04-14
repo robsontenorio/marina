@@ -17,7 +17,7 @@ Route::get('/logout', function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Volt::route('/', 'stacks.index');
+    Volt::route('/', 'dashboard');
     Volt::route('/stacks/{hash}/{stack}/edit', 'stacks.edit');
     Volt::route('/stacks/create', 'stacks.create');
     Volt::route('/stacks/{hash}/{stack}', 'stacks.show');

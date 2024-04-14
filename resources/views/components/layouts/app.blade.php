@@ -54,17 +54,20 @@
                 <x-menu-separator />
             @endif
 
-            <x-menu-item title="All stacks" icon="o-server-stack" link="/" />
+            <x-menu-item title="Dashboard" icon="o-squares-2x2" link="/" />
             <x-menu-separator />
 
             @foreach(File::directories(base_path('stacks')) as $stack)
                 <x-menu-item title="{{ basename($stack) }}" icon="o-server-stack" link="/stacks/{{ str(basename($stack))->toBase64 }}/{{ basename($stack) }}" />
             @endforeach
+
+            <x-menu-separator />
+            <x-menu-item title="Add stack" icon="o-plus" link="/stacks/create" />
         </x-menu>
     </x-slot:sidebar>
 
     {{-- The `$slot` goes here --}}
-    <x-slot:content class="mb-40">
+    <x-slot:content class="mb-20">
         {{ $slot }}
 
         <div class="flex absolute bottom-0 right-0 mr-10">

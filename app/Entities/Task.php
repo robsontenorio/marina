@@ -54,7 +54,7 @@ class Task implements Wireable
 
     public function stats(): Stats
     {
-        $stats = collect(Cache::get('joe-stats', fn() => []))->firstWhere('name', $this->full_name);
+        $stats = collect(Cache::get('marina-stats', fn() => []))->firstWhere('name', $this->full_name);
 
         return new Stats($stats['cpu'] ?? '', $stats['mem'] ?? '');
     }

@@ -46,6 +46,6 @@ class FetchDockerStatsJob implements ShouldQueue
             ->skip(1)
             ->values();
 
-        Cache::put('joe-stats', $stats, 15);
+        Cache::put('marina-stats', $stats, 15);
     }
 }
