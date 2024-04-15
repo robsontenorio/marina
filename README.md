@@ -12,6 +12,42 @@ Let's keep pushing it, [sponsor me](https://github.com/sponsors/robsontenorio) â
 
 [@robsontenorio](https://twitter.com/robsontenorio)
 
+## Install
+
+Create the volume.
+
+```bash
+docker volume create marina_data
+```
+
+Run
+
+```bash
+docker run -d --name marina -p 8787:8080 -v marina_data:/var/www/app/.data  -v /var/run/docker.sock:/var/run/docker.sock --rm robsontenorio/marina
+```
+
+**Done!** See http://localhost:8787 or http://SERVER-IP:8787.
+
+## Upgrading
+
+Pull the latest image.
+
+```bash
+docker pull ghcr.io/robsontenorio/marina
+```
+
+Stop the running container.
+
+```bash
+docker stop marina
+```
+
+Run it again.
+
+```bash
+docker run -d --name marina -p 8787:8080 -v marina_data:/var/www/app/.data  -v /var/run/docker.sock:/var/run/docker.sock --rm robsontenorio/marina
+```
+
 ## Contributing
 
 Clone the repository.
@@ -25,15 +61,6 @@ Create `.env` from `.env.example` and adjust few vars.
 ```bash
 APP_ENV=local
 APP_DEBUG=true
-```
-
-Set the **stacks** path on `.docker/docker-compose.yml`
-
-```yaml
-volumes:
-    - ../:/var/www/app
-    - /var/run/docker.sock:/var/run/docker.sock
-    - /path/to/stacks:/var/www/app/stacks             # <--- Change the LEFT SIDE map to your stacks local path
 ```
 
 Start and enter into container.
@@ -52,7 +79,7 @@ docker compose exec marina-app zsh
 composer start
 ```
 
-**Done! See http://localhost:8717**
+**Done!** See http://localhost:8787
 
 ## Credentials
 

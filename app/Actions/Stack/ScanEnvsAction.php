@@ -13,7 +13,7 @@ class ScanEnvsAction
 
     public function execute(): Collection
     {
-        $envs = File::glob(base_path("stacks/{$this->stack}/.env*"), true);
+        $envs = File::glob(base_path(".data/stacks/{$this->stack}/.env*"), true);
 
         return collect($envs)->map(function ($env) {
             return [

@@ -57,7 +57,7 @@
             <x-menu-item title="Dashboard" icon="o-squares-2x2" link="/" />
             <x-menu-separator />
 
-            @foreach(File::directories(base_path('stacks')) as $stack)
+            @foreach(File::directories(base_path(".data/stacks")) as $stack)
                 <x-menu-item title="{{ basename($stack) }}" icon="o-server-stack" link="/stacks/{{ str(basename($stack))->toBase64 }}/{{ basename($stack) }}" />
             @endforeach
 

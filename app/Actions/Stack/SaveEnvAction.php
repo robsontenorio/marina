@@ -12,6 +12,6 @@ class SaveEnvAction
 
     public function execute(): void
     {
-        File::put(base_path("stacks/{$this->stack}/{$this->fileName}"), $this->content);
+        File::put(base_path(".data/stacks/{$this->stack}/{$this->fileName}"), $this->content);
     }
 }

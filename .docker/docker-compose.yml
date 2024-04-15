@@ -10,7 +10,11 @@ services:
         volumes:
             - ../:/var/www/app
             - /var/run/docker.sock:/var/run/docker.sock
-            - ../../stacks:/var/www/app/stacks
+            - marina_data:/var/www/app/.data
         ports:
-            - "8717:8080"
+            - "8787:8080"
             - "5717:5717"
+volumes:
+    marina_data:
+
+

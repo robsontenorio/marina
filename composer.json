@@ -43,7 +43,7 @@
         "start": [
             "Composer\\Config::disableProcessTimeout",
             "composer install",
-            "touch database/database.sqlite",
+            "touch .data/database.sqlite",
             "php artisan migrate:fresh --seed",
             "php artisan key:generate",
             "php artisan cache:clear",

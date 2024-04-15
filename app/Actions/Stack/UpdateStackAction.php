@@ -12,6 +12,6 @@ class UpdateStackAction
 
     public function execute(): void
     {
-        File::put(base_path("stacks/{$this->stack}/docker-compose.yml"), $this->content);
+        File::put(base_path(".data/stacks/{$this->stack}/docker-compose.yml"), $this->content);
     }
 }

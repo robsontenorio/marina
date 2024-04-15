@@ -12,6 +12,6 @@ class ScanStackAction
 
     public function execute(): string
     {
-        return File::get(base_path("stacks/{$this->stack}/docker-compose.yml"));
+        return File::get(base_path(".data/stacks/{$this->stack}/docker-compose.yml"));
     }
 }

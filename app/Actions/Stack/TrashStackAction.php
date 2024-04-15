@@ -14,6 +14,6 @@ class TrashStackAction
     {
         (new RemoveStackAction($this->stack))->execute();
 
-        File::deleteDirectory(base_path("stacks/{$this->stack}"));
+        File::deleteDirectory(base_path(".data/stacks/{$this->stack}"));
     }
 }

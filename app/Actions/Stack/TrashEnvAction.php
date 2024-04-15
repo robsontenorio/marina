@@ -12,6 +12,6 @@ class TrashEnvAction
 
     public function execute(): void
     {
-        File::delete(base_path("stacks/{$this->stack}/{$this->fileName}"));
+        File::delete(base_path(".data/stacks/{$this->stack}/{$this->fileName}"));
     }
 }
