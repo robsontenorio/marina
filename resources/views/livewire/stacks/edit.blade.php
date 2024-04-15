@@ -29,7 +29,7 @@ new class extends Component {
     #[Validate('required')]
     public string $stackContent = '';
 
-    #[Validate('required')]
+    #[Validate('sometimes')]
     #[Validate(['envs.*.name' => 'required'])]
     #[Validate(['envs.*.content' => 'required'])]
     public ?Collection $envs;

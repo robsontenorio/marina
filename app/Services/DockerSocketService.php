@@ -23,7 +23,11 @@ class DockerSocketService
 
     public function prepare(): PendingRequest
     {
-        return Http::withOptions(['curl' => [CURLOPT_UNIX_SOCKET_PATH => self::SOCKET_PATH]])
-            ->baseUrl("http://v1.44/" . self::VERSION);
+        return Http::baseUrl("http://" . self::VERSION)
+            ->withOptions([
+                'curl' => [
+                    CURLOPT_UNIX_SOCKET_PATH => self::SOCKET_PATH
+                ]
+            ]);
     }
 }

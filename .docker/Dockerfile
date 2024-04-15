@@ -1,7 +1,8 @@
 FROM robsontenorio/laravel:3.3 as base
 COPY --chown=appuser:appuser . .
 USER root
-RUN usermod --append --groups 0 appuser
+RUN groupadd -for -g 999 docker
+RUN usermod -aG docker appuser
 RUN mv docker /usr/local/bin/docker
 USER appuser
 
