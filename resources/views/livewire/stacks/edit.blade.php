@@ -79,7 +79,7 @@ new class extends Component {
     {
         (new TrashStackAction($this->stack))->execute();
 
-        $this->success('Stack trashed', position: 'toast-bottom', timeout: 5000, redirectTo: '/all-stacks');
+        $this->success('Stack trashed', position: 'toast-bottom', timeout: 5000, redirectTo: '/');
     }
 
     public function trashEnv(int $index): void
