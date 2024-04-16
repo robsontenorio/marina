@@ -3,15 +3,12 @@
 use App\Actions\Stack\DeployStackAction;
 use App\Actions\Stack\RemoveStackAction;
 use App\Actions\Stack\RenameStackAction;
-use App\Actions\Stack\SaveEnvAction;
-use App\Actions\Stack\TrashEnvAction;
+use App\Actions\Stack\SyncEnvsAction;
 use App\Actions\Stack\UpdateStackAction;
 use App\Actions\Stack\ScanEnvsAction;
 use App\Actions\Stack\ScanStackAction;
 use App\Actions\Stack\TrashStackAction;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Process;
 use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
 use Mary\Traits\Toast;
@@ -22,6 +19,8 @@ new class extends Component {
     public string $group = '';
 
     public ?string $stackPreviousName = null;
+
+    public ?Collection $previousEnvs;
 
     #[Validate('required|regex:/^[\pL\pM\pN_-].+$/u')]
     public string $stack = '';
@@ -34,14 +33,12 @@ new class extends Component {
     #[Validate(['envs.*.content' => 'required'])]
     public ?Collection $envs;
 
-    public ?Collection $trashedEnvs;
-
     public function mount(string $stack): void
     {
         $this->stack = $stack;
         $this->stackContent = (new ScanStackAction($stack))->execute();
         $this->envs = (new ScanEnvsAction($stack))->execute();
-        $this->trashedEnvs = new Collection();
+        $this->previousEnvs = $this->envs;
     }
 
     public function updatingStack($newValue): void
@@ -53,20 +50,8 @@ new class extends Component {
     {
         $this->validate();
 
-        if ($this->stackPreviousName) {
-            (new RenameStackAction($this->stackPreviousName, $this->stack))->execute();
-        }
-
-        (new UpdateStackAction($this->stack, $this->stackContent))->execute();
-
-        $this->envs->each(function ($env) {
-            (new SaveEnvAction($this->stack, $env['name'], $env['content']))->execute();
-        });
-
-        $this->trashedEnvs->each(function ($env) {
-            (new TrashEnvAction($this->stack, $env['name']))->execute();
-        });
-
+        (new UpdateStackAction($this->stack, $this->stackContent, $this->stackPreviousName))->execute();
+        (new SyncEnvsAction($this->stack, $this->envs, $this->previousEnvs))->execute();
         (new DeployStackAction($this->stack))->execute();
 
         $this->group = '';
@@ -83,7 +68,6 @@ new class extends Component {
         $this->group = $name;
     }
 
-    // Remove stack
     public function remove(): void
     {
         (new RemoveStackAction($this->stack))->execute();
@@ -91,7 +75,6 @@ new class extends Component {
         $this->success('Running command ...', position: 'toast-bottom', timeout: 5000);
     }
 
-    // Trash stack
     public function trashStack(): void
     {
         (new TrashStackAction($this->stack))->execute();
@@ -101,7 +84,6 @@ new class extends Component {
 
     public function trashEnv(int $index): void
     {
-        $this->trashedEnvs->add($this->envs->get($index));
         $this->envs->forget($index);
     }
 }; ?>

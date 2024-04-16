@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "316447533797c801aad7b643596985c5",
+    "content-hash": "d87a1a91afff935c91a0d7b76e59ea7d",
     "packages": [
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -1434,16 +1434,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v11.2.0",
+            "version": "v11.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "a1750156b671f37cba702380107e2d22161c31e3"
+                "reference": "3b87d0767e9cbddec46480d883010ba720e50dea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/a1750156b671f37cba702380107e2d22161c31e3",
-                "reference": "a1750156b671f37cba702380107e2d22161c31e3",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/3b87d0767e9cbddec46480d883010ba720e50dea",
+                "reference": "3b87d0767e9cbddec46480d883010ba720e50dea",
                 "shasum": ""
             },
             "require": {
@@ -1635,7 +1635,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-04-02T14:01:33+00:00"
+            "time": "2024-04-10T15:13:49+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -2461,69 +2461,6 @@
                 }
             ],
             "time": "2023-10-27T15:32:31+00:00"
-        },
-        {
-            "name": "neilime/ansi-escapes-to-html",
-            "version": "v3.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/neilime/ansi-escapes-to-html.git",
-                "reference": "ac0869e6c540db036d066da934b13140abb6e20a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/neilime/ansi-escapes-to-html/zipball/ac0869e6c540db036d066da934b13140abb6e20a",
-                "reference": "ac0869e6c540db036d066da934b13140abb6e20a",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.4 || ^8"
-            },
-            "require-dev": {
-                "pcov/clobber": "^2.0",
-                "phpstan/extension-installer": "^1.2",
-                "phpstan/phpstan": "^1.9",
-                "phpstan/phpstan-phpunit": "^1.2",
-                "phpunit/phpunit": "^9.5.26",
-                "squizlabs/php_codesniffer": "^3.7"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "AnsiEscapesToHtml\\": "src/AnsiEscapesToHtml"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Neilime",
-                    "homepage": "https://github.com/neilime",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Convert ANSI escapes (terminal formatting/color codes) to HTML",
-            "homepage": "http://neilime.github.io/ansi-escapes-to-html/",
-            "keywords": [
-                "ansi",
-                "convert",
-                "escapes",
-                "highlight",
-                "html"
-            ],
-            "support": {
-                "issues": "https://github.com/neilime/ansi-escapes-to-html/issues",
-                "source": "https://github.com/neilime/ansi-escapes-to-html/tree/v3.0.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/neilime",
-                    "type": "github"
-                }
-            ],
-            "time": "2022-11-22T09:00:33+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -3718,16 +3655,16 @@
         },
         {
             "name": "robsontenorio/mary",
-            "version": "1.26.1",
+            "version": "1.26.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/robsontenorio/mary.git",
-                "reference": "a5aa03f7b2355e8899b4371134224cca76eac18e"
+                "reference": "cd060d65e86555f2794e7a39970274ee8cb6fdca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/robsontenorio/mary/zipball/a5aa03f7b2355e8899b4371134224cca76eac18e",
-                "reference": "a5aa03f7b2355e8899b4371134224cca76eac18e",
+                "url": "https://api.github.com/repos/robsontenorio/mary/zipball/cd060d65e86555f2794e7a39970274ee8cb6fdca",
+                "reference": "cd060d65e86555f2794e7a39970274ee8cb6fdca",
                 "shasum": ""
             },
             "require": {
@@ -3793,7 +3730,7 @@
             ],
             "support": {
                 "issues": "https://github.com/robsontenorio/mary/issues",
-                "source": "https://github.com/robsontenorio/mary/tree/1.26.1"
+                "source": "https://github.com/robsontenorio/mary/tree/1.26.2"
             },
             "funding": [
                 {
@@ -3801,7 +3738,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-04-13T13:56:46+00:00"
+            "time": "2024-04-14T21:24:34+00:00"
         },
         {
             "name": "sensiolabs/ansi-to-html",

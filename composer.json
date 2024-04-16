@@ -1,31 +1,32 @@
 {
-    "name": "laravel/laravel",
+    "name": "robsontenorio/marina",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "A dead simple Docker Swarm UI.",
     "keywords": [
         "laravel",
-        "framework"
+        "livewire",
+        "tailwind",
+        "maryUI"
     ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "laravel/framework": "^11.0",
+        "laravel/framework": "^11.3",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.4",
         "livewire/volt": "^1.6",
-        "neilime/ansi-escapes-to-html": "^3.0",
         "robsontenorio/mary": "^1.26",
         "sensiolabs/ansi-to-html": "^1.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
-        "laravel/pint": "^1.13",
-        "laravel/sail": "^1.26",
+        "laravel/pint": "^1.15",
+        "laravel/sail": "^1.29",
         "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^8.0",
+        "nunomaduro/collision": "^8.1",
         "pestphp/pest": "^2.34",
         "pestphp/pest-plugin-laravel": "^2.3",
-        "spatie/laravel-ignition": "^2.4"
+        "spatie/laravel-ignition": "^2.5"
     },
     "autoload": {
         "psr-4": {

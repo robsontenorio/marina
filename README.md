@@ -4,6 +4,21 @@
 
 Marina is dead simple web UI for Docker Swarm.
 
+## Features
+
+- [x] Monitor resources
+- [x] Create stacks
+- [x] Edit stacks
+- [x] Update services
+- [x] Remove services
+- [x] Scale services
+- [x] View logs
+- [ ] Manage Networks
+- [ ] Manage Volumes
+- [ ] Manage Secrets
+- [ ] Manage Configs
+- [ ] Manage Nodes
+
 ## Sponsor
 
 Let's keep pushing it, [sponsor me](https://github.com/sponsors/robsontenorio) ❤️
@@ -23,10 +38,12 @@ docker volume create marina_data
 Run
 
 ```bash
-docker run -d --name marina -p 8787:8080 -v marina_data:/var/www/app/.data  -v /var/run/docker.sock:/var/run/docker.sock --rm robsontenorio/marina
+docker run -d --name marina -p 8787:8080 -v marina_data:/var/www/app/.data  -v /var/run/docker.sock:/var/run/docker.sock --rm ghcr.io/robsontenorio/marina:production
 ```
 
-**Done!** See http://localhost:8787 or http://SERVER-IP:8787.
+**Done!**
+
+See http://localhost:8787 or http://SERVER-IP:8787.
 
 ## Upgrading
 
