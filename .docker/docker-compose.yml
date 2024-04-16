@@ -10,6 +10,7 @@ services:
         volumes:
             - ../:/var/www/app
             - /var/run/docker.sock:/var/run/docker.sock
+            - ~/.docker/config.json:/home/appuser/.docker/config.json
             - marina_data:/var/www/app/.data
         ports:
             - "8787:8080"

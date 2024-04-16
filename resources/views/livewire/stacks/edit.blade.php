@@ -72,7 +72,7 @@ new class extends Component {
     {
         (new RemoveStackAction($this->stack))->execute();
 
-        $this->success('Running command ...', position: 'toast-bottom', timeout: 5000);
+        $this->success('Running command ...', position: 'toast-bottom', redirectTo: "/stacks/" . str($this->stack)->toBase64 . "/{$this->stack}");
     }
 
     public function trashStack(): void

@@ -15,9 +15,12 @@ services:
     ######## SHEPHERD  ########
     mary-shepherd:
         image: containrrr/shepherd:latest
-        env_file: .env.shepherd
+        environment:
+            SLEEP_TIME: '30s'
+            FILTER_SERVICES: 'label=shepherd.autodeploy=true'
         volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - /root/.docker/config.json:/root/.docker/config.json:ro
 
     ######## MARY ########
     mary-app:
