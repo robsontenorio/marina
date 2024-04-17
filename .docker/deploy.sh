@@ -3,11 +3,6 @@
 echo '------ Starting deploy tasks  ------'
 
 cp .env.example .env
-composer install --prefer-dist --no-interaction --no-progress --ansi
-
-yarn install
-yarn build
-
 touch /var/www/app/.data/database.sqlite
 php artisan migrate --seed --force
 

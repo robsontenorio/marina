@@ -2,13 +2,12 @@
 
 namespace App\Services;
 
-use App\Exceptions\CaxumbaException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
 class DockerSocketService
 {
-    public const VERSION = 'v1.44';
+    public const VERSION = '_';
 
     public const SOCKET_PATH = '/var/run/docker.sock';
 
