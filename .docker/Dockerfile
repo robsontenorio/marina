@@ -1,7 +1,9 @@
-FROM robsontenorio/laravel:root as base
-COPY  . .
+FROM robsontenorio/laravel:3.3 as base
+USER root
 RUN groupadd -for -g 999 docker         # On MacOS you must change it to `0`.
-RUN usermod -aG docker www-data
+RUN usermod -aG docker appuser
+USER appuser
+COPY --chown=appuser:appuser . .
 
 FROM base as local
 CMD ["/usr/local/bin/start"]

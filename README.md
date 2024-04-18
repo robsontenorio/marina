@@ -38,7 +38,7 @@ docker volume create marina_data
 Run
 
 ```bash
-docker run -d --name marina -p 8787:8080 -v marina_data:/var/www/app/.data  -v /var/run/docker.sock:/var/run/docker.sock --rm ghcr.io/robsontenorio/marina:production
+docker run -d --name marina -p 8787:8080 -v marina_data:/var/www/app/.data  -v /var/run/docker.sock:/var/run/docker.sock -v ~/.docker/config.json:/root/.docker/config.json --rm ghcr.io/robsontenorio/marina:production
 ```
 
 **Done!**
@@ -60,10 +60,6 @@ docker stop marina
 ```
 
 Run it again.
-
-```bash
-docker run -d --name marina -p 8787:8080 -v marina_data:/var/www/app/.data  -v /var/run/docker.sock:/var/run/docker.sock --rm robsontenorio/marina
-```
 
 ## Contributing
 
