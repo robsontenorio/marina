@@ -21,8 +21,8 @@ A simple approach to deploy **multiple** Laravel projects using Docker Swarm on 
 - A project on GitHub.
 - A brand-new VPS.
 - A domain name registered on Cloudflare.
-- Be comfortable with Docker
-  Be comfortable GitHub Actions.
+- Be comfortable with Docker.
+- Be comfortable GitHub Actions.
 
 ## Important
 
@@ -164,7 +164,7 @@ APP_KEY=...
 
 - Also create `.env.shepherd` for the `shepherd` service.
 - It auto deploy the services when a new version is available on Registry.
-- Use the same credentials you used to log in on the GitHub Private Registry on "VPS Setup" step aboce.
+- Use the same credentials you used to log in on the GitHub Private Registry on "VPS Setup" step above.
 
 ```bash 
 # .env.shepherd
