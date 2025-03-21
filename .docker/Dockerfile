@@ -1,6 +1,6 @@
 FROM robsontenorio/laravel:3.3 AS base
 USER root
-RUN groupadd -for -g 999 docker         # If you are trying to build this image locally MacOS, change it from `999` to `0`.
+RUN groupadd -for -g 0 docker         # If you are trying to build this image locally MacOS, change it from `999` to `0`.
 RUN usermod -aG docker appuser
 USER appuser
 COPY --chown=appuser:appuser . .
