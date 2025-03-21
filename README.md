@@ -14,11 +14,6 @@ I did this to my own use case that is pretty simple:
 - Docker Swarm allows easy rollout deployments with zero down time.
 - I need a simple way to visualize my services and deploy new side projects right the way.
 
-
-## Follow me
-
-[@robsontenorio](https://twitter.com/robsontenorio)
-
 ## Install
 
 This command must run only on a **fresh new server**, because it also installs Docker and init the Swarm mode. 
@@ -76,3 +71,7 @@ composer start
 ```
 
 **Done!** See http://localhost:8787
+
+## Follow me
+
+[@robsontenorio](https://twitter.com/robsontenorio)
