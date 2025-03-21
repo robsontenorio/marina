@@ -4,21 +4,6 @@
 
 Marina is dead simple web UI for Docker Swarm.
 
-## Features
-
-- [x] Monitor resources
-- [x] Create stacks
-- [x] Edit stacks
-- [x] Update services
-- [x] Remove services
-- [x] Scale services
-- [x] View logs
-- [ ] Manage Networks
-- [ ] Manage Volumes
-- [ ] Manage Secrets
-- [ ] Manage Configs
-- [ ] Manage Nodes
-
 ## Sponsor
 
 Let's keep pushing it, [sponsor me](https://github.com/sponsors/robsontenorio) ❤️
@@ -52,8 +37,6 @@ docker pull ghcr.io/robsontenorio/marina:production
 ```bash
 docker service update --force marina
 ```
-
-Run it again.
 
 ## Contributing
 
