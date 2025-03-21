@@ -6,7 +6,6 @@ command -v docker >/dev/null && echo -e "\n\e[91m 🚫 Error: Docker is already 
 
 # Install Docker
 echo "\033[96m\n\n\n✨ Installing Docker ...\n\033[0m"
-
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh ./get-docker.sh
 
@@ -29,13 +28,13 @@ docker volume create marina_data
 
 # Create Marina service
 echo "\033[96m\n\n\n✨ Starting 'marina'service ...\n\033[0m"
-
 docker service create \
     --name marina \
     --network marina \
     --publish 8787:8080 \
     --mount type=volume,source=marina_data,target=/var/www/app/.data \
-    --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
+    --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock,ro \
+    --group $(stat -c '%g' /var/run/docker.sock) \
     ghcr.io/robsontenorio/marina:production
 
 echo "\n\n\033[1;32m\n✅ Docker installed and swarm mode is active.\033[0m"
