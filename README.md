@@ -19,7 +19,7 @@ I did this to my own use case that is pretty simple:
 This command must run only on a **fresh new server**, because it also installs Docker and init the Swarm mode. 
 
 ```bash
-sh -c "$(curl -fsSL https://github.com/robsontenorio/marina/raw/master/install.sh)"
+sh -c "$(curl -fsSL https://github.com/robsontenorio/marina/raw/main/install.sh)"
 ```
 
 **Done!**
