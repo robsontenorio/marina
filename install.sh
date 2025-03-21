@@ -24,5 +24,7 @@ docker service create \
     --network marina \
     --publish 8787:8080 \
     --mount type=volume,source=marina_data,target=/var/www/app/.data \
-    --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \    
+    --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
     ghcr.io/robsontenorio/marina:production
+
+echo -e "\n\n\033[1;32mDocker installed. Swarm mode active. Marina is up. Hit http://SERVER-IP:8787\033[0m"
