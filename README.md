@@ -4,9 +4,16 @@
 
 Marina is dead simple web UI for Docker Swarm.
 
-## Sponsor
+## Why
 
-Let's keep pushing it, [sponsor me](https://github.com/sponsors/robsontenorio) ❤️
+I did this to my own use case that is pretty simple:
+
+- I have a lot of online side projects.
+- I do preffer to work with Docker environments.
+- Docker based cloud providers are very expensive (see Render.com).
+- Docker Swarm allows easy rollout deployments with zero down time.
+- I need a simple way to visualize my services and deploy new side projects right the way.
+
 
 ## Follow me
 
@@ -14,8 +21,7 @@ Let's keep pushing it, [sponsor me](https://github.com/sponsors/robsontenorio) �
 
 ## Install
 
-Marina should be installed on a fresh new server.  
-This command also installs Docker and init the Swarm mode. 
+This command must run only on a **fresh new server**, because it also installs Docker and init the Swarm mode. 
 
 ```bash
 sh -c "$(curl -fsSL https://github.com/robsontenorio/marina/raw/master/install.sh)"
@@ -23,7 +29,7 @@ sh -c "$(curl -fsSL https://github.com/robsontenorio/marina/raw/master/install.s
 
 **Done!**
 
-See http://localhost:8787 or http://SERVER-IP:8787.
+See http://SERVER-IP:8787
 
 ## Upgrading
 
@@ -70,8 +76,3 @@ composer start
 ```
 
 **Done!** See http://localhost:8787
-
-## Credentials
-
-- **email**: admin@example.com
-- **password**: 2222
