@@ -7,14 +7,12 @@ use Illuminate\Support\Facades\Process;
 
 class ScaleDownServicesAction
 {
-    public function __construct(public Service $service)
-    {
-    }
+    public function __construct(public Service $service) {}
 
     public function execute(): void
     {
         $replicas = $this->service->replicas - 1;
 
-        Process::path(base_path())->quietly()->start("docker service scale {$this->service->name}={$replicas}");
+        Process::path(base_path())->quietly()->start("./docker service scale {$this->service->name}={$replicas}");
     }
 }

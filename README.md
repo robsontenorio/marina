@@ -29,16 +29,11 @@ Let's keep pushing it, [sponsor me](https://github.com/sponsors/robsontenorio) â
 
 ## Install
 
-Create the volume.
+Marina should be installed on a fresh new server.  
+This command also installs Docker and init the Swarm mode. 
 
 ```bash
-docker volume create marina_data
-```
-
-Run
-
-```bash
-docker run -d --name marina -p 8787:8080 -v marina_data:/var/www/app/.data  -v /var/run/docker.sock:/var/run/docker.sock -v ~/.docker/config.json:/root/.docker/config.json --rm ghcr.io/robsontenorio/marina:production
+sh -c "$(curl -fsSL https://github.com/robsontenorio/marina/raw/master/install.sh)"
 ```
 
 **Done!**
@@ -50,13 +45,12 @@ See http://localhost:8787 or http://SERVER-IP:8787.
 Pull the latest image.
 
 ```bash
-docker pull ghcr.io/robsontenorio/marina
+docker pull ghcr.io/robsontenorio/marina:production
 ```
 
-Stop the running container.
 
 ```bash
-docker stop marina
+docker service update --force marina
 ```
 
 Run it again.

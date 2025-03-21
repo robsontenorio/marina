@@ -1,0 +1,80 @@
+services:
+    ######## PROXY ##########
+    proxy:
+        image: jc21/nginx-proxy-manager:latest
+        ports:
+            - 80:80
+            - 81:81
+            - 443:443
+        volumes:
+            - proxy-data:/data
+            - letsencrypt-data:/etc/letsencrypt
+
+    ######## SHEPHERD ########
+    shepherd:
+        image: containrrr/shepherd:latest
+        env_file: .env.shepherd
+        environment:
+            - SLEEP_TIME=30s
+            - FILTER_SERVICES=label=autodeploy=true
+            - WITH_REGISTRY_AUTH=true
+            - REGISTRY_HOST=ghcr.io
+            - REGISTRY_USER=robsontenorio
+            # REGISTRY_PASSWORD comes from .env.shepherd
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+
+    ######## ORANGE ########
+    orange:
+        image: ghcr.io/robsontenorio/orange.mary-ui.com:production
+        env_file: .env.orange
+        volumes:
+            - orange-db:/var/www/app/database/
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:8080"]
+            start_period: 120s
+            interval: 5s
+            timeout: 10s
+            retries: 3
+        deploy:
+            labels:
+                - autodeploy=true
+            update_config:
+                order: start-first
+                failure_action: rollback
+
+    ######## PING ########
+    ping:
+        image: ghcr.io/robsontenorio/ping.mary-ui.com:production
+        env_file: .env.ping
+        volumes:
+            - ping-db:/var/www/app/database/
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:8080/up"]
+            start_period: 120s
+            interval: 5s
+            timeout: 10s
+            retries: 3
+        deploy:
+            labels:
+                - autodeploy=true
+            update_config:
+                order: start-first
+                failure_action: rollback
+
+#### NETWORKS ####
+networks:
+    default:
+        name: marina
+        external: true
+
+#### VOLUMES ####
+volumes:
+    proxy-data:
+        external: true
+    letsencrypt-data:
+        external: true    
+    orange-db:
+        external: true
+    ping-db:
+        external: true
