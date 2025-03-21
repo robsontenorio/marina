@@ -10,7 +10,7 @@ sudo systemctl enable docker.service
 sudo systemctl enable containerd.service
 
 # Initialize Docker Swarm
-docker swarm init
+docker swarm init || true
 
 # Create a common network
 docker network create --driver overlay marina
