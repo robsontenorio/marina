@@ -16,7 +16,7 @@ I did this to my own use case that is pretty simple:
 
 ## Install
 
-This command must run only on a **fresh new server**, because it also installs Docker and init the Swarm mode. 
+This command must run only on a **fresh new server**, because it also installs Docker and init the Swarm mode.
 
 ```bash
 sh -c "$(curl -fsSL https://github.com/robsontenorio/marina/raw/main/install.sh)"
@@ -33,7 +33,6 @@ Pull the latest image.
 ```bash
 docker pull ghcr.io/robsontenorio/marina:production
 ```
-
 
 ```bash
 docker service update --force marina
@@ -59,7 +58,7 @@ Start and enter into container.
 ```bash
 cd .docker/ &&
 docker-compose up -d &&                  
-docker compose exec marina-app zsh   
+docker compose exec marina zsh   
 ```
 
 **Then, inside the running container** ... install, migrate and start the app.
