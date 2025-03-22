@@ -33,7 +33,6 @@ docker service create \
     --network marina \
     --publish 8787:8080 \
     --mount type=volume,source=marina_data,target=/var/www/app/.data \
-    --mount type=bind,source=/root/.docker/config.json,target=/home/appuser/.docker/config.json,ro \
     --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock,ro \
     --group $(stat -c '%g' /var/run/docker.sock) \
     ghcr.io/robsontenorio/marina:production
