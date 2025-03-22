@@ -97,6 +97,7 @@ new class extends Component {
                 wire:confirm="THIS IS A DESTRUCTIVE ACTION!\n\nAre you sure you want to TRASH this `stack` and `env` files?"
                 tooltip-left="Hard delete files from disk."
                 icon="o-trash"
+                class="text-error"
                 spinner responsive
             />
 
@@ -132,7 +133,7 @@ new class extends Component {
                     <x-slot:content class="!mx-5">
                         <x-input label="Filename" wire:model="envs.{{ $loop->index }}.name" inline />
                         <x-code-mirror wire:model="envs.{{ $loop->index }}.content" mode="javascript" class="my-5" />
-                        <x-button label="Trash" icon="o-trash" wire:click="trashEnv({{ $loop->index }})" class="btn-ghost text-red-500" />
+                        <x-button label="Trash" icon="o-trash" wire:click="trashEnv({{ $loop->index }})" class="btn-ghost text-error" />
                     </x-slot:content>
                 </x-collapse>
             @endforeach

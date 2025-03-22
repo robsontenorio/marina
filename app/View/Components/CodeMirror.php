@@ -44,7 +44,7 @@ class CodeMirror extends Component
                             }"
                     wire:ignore
                 >
-                    <div x-ref="codemirror{{ $uuid }}" {{ $attributes->class(["textarea textarea-primary py-4"]) }}></div>
+                    <div x-ref="codemirror{{ $uuid }}" {{ $attributes->class(["textarea w-full py-4"]) }}></div>
                 </div>
         HTML;
     }

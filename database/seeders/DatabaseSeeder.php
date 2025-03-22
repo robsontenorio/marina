@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         if (User::count()) {
             return;
         }
-        
+
         // TODO: pass env variable on docker run to create it ?
         User::factory()->create([
             'name' => 'Admin',

@@ -6,7 +6,7 @@ use Livewire\Attributes\Title;
 use Livewire\Volt\Component;
 
 new
-#[Layout('components.layouts.empty')]       // <-- Here is the `empty` layout
+#[Layout('components.layouts.empty')]
 #[Title('Login')]
 class extends Component {
     #[Rule('required|email')]
@@ -43,8 +43,8 @@ class extends Component {
     </div>
 
     <x-form wire:submit="login">
-        <x-input label="E-mail" wire:model="email" icon="o-envelope" inline />
-        <x-input label="Password" wire:model="password" type="password" icon="o-key" inline />
+        <x-input label="E-mail" wire:model="email" icon="o-envelope" />
+        <x-input label="Password" wire:model="password" type="password" icon="o-key" />
 
         <x-slot:actions>
             <x-button label="Login" type="submit" icon="o-paper-airplane" class="btn-primary" spinner="login" />
