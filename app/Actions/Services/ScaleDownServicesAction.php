@@ -13,6 +13,6 @@ class ScaleDownServicesAction
     {
         $replicas = $this->service->replicas - 1;
 
-        Process::path(base_path())->quietly()->start("./docker service scale {$this->service->name}={$replicas}");
+        Process::path(base_path())->quietly()->start("docker service scale {$this->service->name}={$replicas}");
     }
 }

@@ -27,7 +27,7 @@ class FetchDockerStatsJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $output = Process::path(base_path())->run('./docker stats --no-stream')->output();
+        $output = Process::path(base_path())->run('docker stats --no-stream')->output();
 
         $stats = str($output)
             ->explode("\n")
