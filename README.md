@@ -2,11 +2,11 @@
 
 ## Introduction
 
-Marina is dead simple web UI for Docker Swarm.
+Marina is a simple self-hosted solution for Docker-based applications.
 
 ## Why
 
-I did this to my own use case that is pretty simple:
+My own use case is pretty simple:
 
 - I have a lot of online side projects.
 - I do preffer to work with Docker environments.
