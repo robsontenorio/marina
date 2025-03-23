@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Rule;
 use Livewire\Attributes\Title;
@@ -20,6 +21,10 @@ class extends Component {
         // It is logged in
         if (auth()->user()) {
             return redirect('/');
+        }
+
+        if (User::count() == 0) {
+            return redirect('/register');
         }
     }
 

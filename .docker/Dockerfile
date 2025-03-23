@@ -2,7 +2,7 @@
 FROM docker:28 AS docker-cli
 
 # Base image
-FROM robsontenorio/laravel:3.3 AS base
+FROM robsontenorio/laravel:3.5 AS base
 COPY --from=docker-cli /usr/local/bin/docker /usr/local/bin/docker
 COPY --chown=appuser:appuser . .
 

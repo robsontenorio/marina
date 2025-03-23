@@ -54,10 +54,15 @@ new class extends Component {
 <div wire:poll>
     <x-header :title="$stack" separator>
         <x-slot:actions>
-            <x-button label="Edit" icon="o-pencil" link="/stacks/{{ str($stack)->toBase64 }}/{{ $stack }}/edit" responsive />
+            <x-button label="Settings" icon="o-cog-6-tooth" link="/stacks/{{ str($stack)->toBase64 }}/{{ $stack }}/edit" responsive />
         </x-slot:actions>
     </x-header>
 
     <livewire:stats :$stats :$services />
     <livewire:services.index :$services />
+
+    <div class="fieldset-label text-sm mt-10">
+        <x-icon name="o-light-bulb" class="w-4 h-4" />
+        If you are using a private images, make sure to <a href="/credentials" wire:navigate class="!underline">add a credential.</a>
+    </div>
 </div>

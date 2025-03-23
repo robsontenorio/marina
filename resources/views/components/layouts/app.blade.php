@@ -55,6 +55,8 @@
                 @endif
 
                 <x-menu-item title="Dashboard" icon="o-squares-2x2" link="/" />
+                <x-menu-item title="Credentials" icon="o-shield-check" link="/credentials" />
+
                 <x-menu-separator />
 
                 @foreach(File::directories(base_path(".data/stacks")) as $stack)

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "62eb51779649e5a52a106185267a631d",
+    "content-hash": "2aa1642b0598d36b4d0cd81eb7929e39",
     "packages": [
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -3044,6 +3044,66 @@
             "time": "2024-11-21T10:39:51+00:00"
         },
         {
+            "name": "owenvoke/blade-fontawesome",
+            "version": "v2.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/owenvoke/blade-fontawesome.git",
+                "reference": "923f40567296e58a6a3452c525ac1e095ece9772"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/owenvoke/blade-fontawesome/zipball/923f40567296e58a6a3452c525ac1e095ece9772",
+                "reference": "923f40567296e58a6a3452c525ac1e095ece9772",
+                "shasum": ""
+            },
+            "require": {
+                "blade-ui-kit/blade-icons": "^1.5",
+                "illuminate/support": "^10.34|^11.0|^12.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.13",
+                "orchestra/testbench": "^8.12|^9.0|^10.0",
+                "pestphp/pest": "^2.26|^3.7",
+                "phpstan/phpstan": "^1.10|^2.1",
+                "symfony/var-dumper": "^6.3|^7.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "OwenVoke\\BladeFontAwesome\\BladeFontAwesomeServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "OwenVoke\\BladeFontAwesome\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A package to easily make use of Font Awesome in your Laravel Blade views",
+            "support": {
+                "issues": "https://github.com/owenvoke/blade-fontawesome/issues",
+                "source": "https://github.com/owenvoke/blade-fontawesome/tree/v2.9.0"
+            },
+            "funding": [
+                {
+                    "url": "https://ecologi.com/owenvoke?gift-trees",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/owenvoke",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-02-17T10:20:16+00:00"
+        },
+        {
             "name": "phpoption/phpoption",
             "version": "1.9.3",
             "source": {
@@ -3907,6 +3967,51 @@
                 }
             ],
             "time": "2025-03-20T13:24:29+00:00"
+        },
+        {
+            "name": "sensiolabs/ansi-to-html",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sensiolabs/ansi-to-html.git",
+                "reference": "44f73c0e8cc24dd4e8555cac356d2331d9400c59"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sensiolabs/ansi-to-html/zipball/44f73c0e8cc24dd4e8555cac356d2331d9400c59",
+                "reference": "44f73c0e8cc24dd4e8555cac356d2331d9400c59",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^2.0",
+                "phpunit/phpunit": "^11.4",
+                "twig/twig": "^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SensioLabs\\AnsiConverter\\": "SensioLabs/AnsiConverter"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                }
+            ],
+            "description": "A library to convert a text with ANSI codes to HTML",
+            "support": {
+                "issues": "https://github.com/sensiolabs/ansi-to-html/issues",
+                "source": "https://github.com/sensiolabs/ansi-to-html/tree/v2.0.0"
+            },
+            "time": "2025-03-15T17:19:40+00:00"
         },
         {
             "name": "symfony/clock",
@@ -9633,6 +9738,6 @@
     "platform": {
         "php": "^8.2"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
