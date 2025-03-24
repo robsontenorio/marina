@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use Livewire\Attributes\Reactive;
 use Livewire\Volt\Component;
 use Mary\Traits\Toast;
+use function Livewire\after;
 
 new class extends Component {
     use Toast;
@@ -79,9 +80,9 @@ new class extends Component {
                 <div>
                     {{--  SERVICE --}}
                     <div class="font-black text-xl mb-3">
-                        {{ $service->name }}
-                        <span data-tip="This service is updating" @class(["hidden", "tooltip !inline-block" => $service->isUpdating()]) >
-                            <x-loading class="loading-ring -mb-2" />
+                        {{ str($service->name)->after('_') }}
+                        <span data-tip="This service is updating" @class(["hidden", "font-bold tooltip  !inline-block" => $service->isUpdating()]) >
+                            <x-loading class="loading-ring" />
                         </span>
                     </div>
 

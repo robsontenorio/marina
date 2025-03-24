@@ -9,12 +9,15 @@ use App\Actions\Stack\ScanEnvsAction;
 use App\Actions\Stack\ScanStackAction;
 use App\Actions\Stack\TrashStackAction;
 use Illuminate\Support\Collection;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
 use Mary\Traits\Toast;
 
 new class extends Component {
     use Toast;
+
+    public bool $showLogs = false;
 
     public string $group = '';
 
@@ -52,11 +55,10 @@ new class extends Component {
 
         (new UpdateStackAction($this->stack, $this->stackContent, $this->stackPreviousName))->execute();
         (new SyncEnvsAction($this->stack, $this->envs, $this->previousEnvs))->execute();
-        (new DeployStackAction($this->stack))->execute();
+        new DeployStackAction($this->stack, $this, 'logs')->execute();
 
+        $this->showLogs = true;
         $this->group = '';
-
-        $this->success('Running command ...', position: 'toast-bottom', redirectTo: "/stacks/" . str($this->stack)->toBase64 . "/{$this->stack}");
     }
 
     public function addEnvFile(): void
@@ -70,9 +72,8 @@ new class extends Component {
 
     public function remove(): void
     {
-        (new RemoveStackAction($this->stack))->execute();
-
-        $this->success('Running command ...', position: 'toast-bottom', redirectTo: "/stacks/" . str($this->stack)->toBase64 . "/{$this->stack}");
+        $this->showLogs = true;
+        new RemoveStackAction($this->stack, $this, 'logs')->execute();
     }
 
     public function trashStack(): void
@@ -98,24 +99,18 @@ new class extends Component {
 
     <x-form wire:submit="deploy">
         <div class="grid grid-cols-2 gap-8">
+            {{-- STACK NAME --}}
             <x-input label="Name" placeholder="Stack Name" wire:model="stack" icon="o-server-stack" />
 
-            <div x-data="{
-                copied: false,
-                copy() {
-                    const input = this.$refs.inputField;
-                    input.select();
-                    navigator.clipboard.writeText(input.value)
-                }
-            }"
-            >
-                <x-input x-ref="inputField" label="Deploy webhook" type="password" value="{{ url('id?='.Crypt::encryptString($stack)) }}" readonly>
+            {{--  WEBHOOK --}}
+            <div x-data="{ copied: false, copy() { const i = this.$refs.input; i.select(); navigator.clipboard.writeText(i.value) } }">
+                <x-input x-ref="input" label="Deploy webhook" type="password" value="{{ url('id?='.Crypt::encryptString($stack)) }}" readonly>
                     <x-slot:append>
                         <x-button
-                                icon="o-document-duplicate"
-                                @click="copy(); $wire.copy()"
-                                class="join-item"
-                                tooltip-left="Call this secret endpoint to trigger a deploy"
+                            icon="o-document-duplicate"
+                            @click="copy(); $wire.copy()"
+                            class="join-item"
+                            tooltip-left="Call this secret endpoint to trigger a deploy"
                         />
                     </x-slot:append>
                 </x-input>
@@ -125,6 +120,7 @@ new class extends Component {
         <fieldset class="fieldset">
             <legend class="fieldset-legend mb-0.5">Stack definition</legend>
 
+            {{-- DOCKER-COMPOSE.YAML --}}
             <x-accordion wire:model="group" class="text-base">
                 <x-collapse name="compose" class="bg-base-100 text-base">
                     <x-slot:heading>
@@ -135,6 +131,7 @@ new class extends Component {
                     </x-slot:content>
                 </x-collapse>
 
+                {{-- ENV FILES --}}
                 @foreach($envs as $env)
                     <x-collapse name="{{ $env['name'] }}" class="bg-base-100">
                         <x-slot:heading>
@@ -152,8 +149,10 @@ new class extends Component {
                 <x-button label="Add `.env` file" icon="o-plus" wire:click="addEnvFile" class="join-item" spinner />
             </x-accordion>
 
-            <div class="fieldset-label mt-5">
+            {{-- NOTES --}}
+            <div class="fieldset-label mt-5 grid">
                 <x-icon name="o-light-bulb" label="Make sure to add the respective `env` file for the service, when needed." class="w-4 h-4" />
+                <x-icon name="o-light-bulb" label="If you are using a private images, make sure to add a credential." class="w-4 h-4" />
             </div>
         </fieldset>
 
@@ -163,26 +162,37 @@ new class extends Component {
         {{-- FORM ACTIONS --}}
         <x-slot:actions>
             <x-button
-                    label="Trash"
-                    wire:click="trashStack"
-                    wire:confirm="THIS IS A DESTRUCTIVE ACTION!\n\nAre you sure you want to TRASH this `stack` and `env` files?"
-                    tooltip-left="Hard delete files from disk."
-                    icon="o-trash"
-                    class="text-error btn-ghost"
-                    spinner
-                    responsive
+                label="Trash"
+                wire:click="trashStack"
+                wire:confirm="THIS IS A DESTRUCTIVE ACTION!\n\nAre you sure you want to TRASH this `stack` and `env` files?"
+                tooltip-left="Hard delete files from disk."
+                icon="o-trash"
+                class="text-error btn-ghost"
+                spinner
+                responsive />
+
+            <x-button
+                label="Remove"
+                wire:click="remove"
+                wire:confirm="Are you sure?"
+                tooltip-left="`docker stack rm {{ $stack }}`"
+                icon="o-bookmark-slash"
+                spinner
+                responsive
             />
 
             <x-button
-                    label="Remove"
-                    wire:click="remove"
-                    wire:confirm="Are you sure?"
-                    tooltip-left="`docker stack rm {{ $stack }}`"
-                    icon="o-bookmark-slash"
-                    spinner
-                    responsive />
-
-            <x-button label="Deploy" type="submit" class="btn-primary" icon="o-fire" spinner="deploy" />
+                label="Deploy"
+                type="submit"
+                class="btn-primary"
+                icon="o-fire"
+                spinner="deploy"
+                wire:click="deploy"
+                responsive
+            />
         </x-slot:actions>
     </x-form>
+
+    {{--  LOGS MODAL --}}
+    <livewire:logs wire:model="showLogs" @close="$toggle('showLogs')" />
 </div>

@@ -2,14 +2,19 @@
 
 namespace App\Actions\Stack;
 
-use Illuminate\Support\Facades\Process;
+use App\Traits\RunsLoggableCommand;
+use Livewire\Volt\Component;
 
 class RemoveStackAction
 {
-    public function __construct(public string $stack) {}
+    use RunsLoggableCommand;
+
+    public function __construct(public string $stack, protected Component $component, public string $target)
+    {
+    }
 
     public function execute(): void
     {
-        Process::path(base_path())->quietly()->start("docker stack rm {$this->stack}");
+        $this->run("docker stack rm {$this->stack}");
     }
 }

@@ -10,20 +10,6 @@ services:
             - proxy-data:/data
             - letsencrypt-data:/etc/letsencrypt
 
-    ######## SHEPHERD ########
-    shepherd:
-        image: containrrr/shepherd:latest
-        env_file: .env.shepherd
-        environment:
-            - SLEEP_TIME=30s
-            - FILTER_SERVICES=label=autodeploy=true
-            - WITH_REGISTRY_AUTH=true
-            - REGISTRY_HOST=ghcr.io
-            - REGISTRY_USER=robsontenorio
-            # REGISTRY_PASSWORD comes from .env.shepherd
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock:ro
-
     ######## ORANGE ########
     orange:
         image: ghcr.io/robsontenorio/orange.mary-ui.com:production
@@ -31,14 +17,12 @@ services:
         volumes:
             - orange-db:/var/www/app/database/
         healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost:8080"]
+            test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
             start_period: 120s
             interval: 5s
             timeout: 10s
             retries: 3
         deploy:
-            labels:
-                - autodeploy=true
             update_config:
                 order: start-first
                 failure_action: rollback
@@ -50,14 +34,12 @@ services:
         volumes:
             - ping-db:/var/www/app/database/
         healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost:8080/up"]
+            test: [ "CMD", "curl", "-f", "http://localhost:8080/up" ]
             start_period: 120s
             interval: 5s
             timeout: 10s
             retries: 3
         deploy:
-            labels:
-                - autodeploy=true
             update_config:
                 order: start-first
                 failure_action: rollback
@@ -73,7 +55,7 @@ volumes:
     proxy-data:
         external: true
     letsencrypt-data:
-        external: true    
+        external: true
     orange-db:
         external: true
     ping-db:

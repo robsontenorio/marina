@@ -2,16 +2,19 @@
 
 namespace App\Actions\Stack;
 
-use Illuminate\Support\Facades\Process;
+use App\Traits\RunsLoggableCommand;
+use Livewire\Volt\Component;
 
 class DeployStackAction
 {
-    public function __construct(public string $stack)
+    use RunsLoggableCommand;
+
+    public function __construct(public string $stack, protected Component $component, public string $target)
     {
     }
 
     public function execute(): void
     {
-        Process::path(base_path())->quietly()->start("docker stack deploy -c .data/stacks/{$this->stack}/docker-compose.yml --resolve-image always --prune {$this->stack} --with-registry-auth");
+        $this->run("docker stack deploy -c .data/stacks/{$this->stack}/docker-compose.yml --detach=true --resolve-image always --prune {$this->stack} --with-registry-auth");
     }
 }

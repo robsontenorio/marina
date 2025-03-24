@@ -16,10 +16,11 @@ new class extends Component {
             <x-slot:title>
                 <div class="font-normal">
                     <span class="badge badge-sm {{ $task->color() }} mr-2">{{ $task->state }}</span>
+                    <span class="text-xs">{{ Carbon::parse($task->created_at)->format('Y-m-d H:i:s') }}</span>
                     <span @class(["hidden", "!inline-block" => $task->isUpdating()])>
-                        <x-loading class="loading-ring -mb-2" />
+                        <x-loading class="loading-ring" />
                     </span>
-                    <span class="text-xs text-gray-500 tooltip" data-tip="{{ Carbon::parse($task->created_at)->format('Y-m-d H:i:s') }}">{{ $task->created_at }}</span>
+                    <span class="text-xs">{{ $task->error_message }}</span>
                 </div>
             </x-slot:title>
         </x-timeline-item>

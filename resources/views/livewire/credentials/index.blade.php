@@ -27,7 +27,7 @@ new class extends Component {
 
         $action = new LoginAction($data)->execute();
 
-        $this->show = false;
+        $this->reset();
         $this->success('Credential added.');
     }
 
@@ -91,10 +91,10 @@ new class extends Component {
         <x-form wire:submit="add">
             <x-input label="Registry URL" icon="o-globe-alt" wire:model="url" />
             <x-input label="Username" icon="o-user" wire:model="username" />
-            <x-password label="Access Token" wire:model="access_token" hint="Make sure this token has permission to read images." />
+            <x-password label="Personal Access Token (not your password)" wire:model="access_token" hint="Make sure this token has permission to read images." />
 
             <x-slot:actions>
-                <x-button label="Cancel" class="btn-ghost" @click="$wire.show = false" />
+                <x-button label="Cancel" @click="$wire.show = false" />
                 <x-button label="Add" type="submit" class="btn-primary" spinner="add" />
             </x-slot:actions>
         </x-form>

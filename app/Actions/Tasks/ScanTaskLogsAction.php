@@ -3,16 +3,19 @@
 namespace App\Actions\Tasks;
 
 use App\Entities\Task;
-use Illuminate\Support\Facades\Process;
+use App\Traits\RunsLoggableCommand;
+use Livewire\Volt\Component;
 
 class ScanTaskLogsAction
 {
-    public function __construct(public Task $task) {}
+    use RunsLoggableCommand;
+
+    public function __construct(public Task $task, protected Component $component, public string $target)
+    {
+    }
 
     public function execute()
     {
-        $process = Process::run("docker service logs {$this->task->id} --raw");
-
-        return $process->failed() ? $process->errorOutput() : $process->output();
+        $this->run("docker service logs {$this->task->id} --raw");
     }
 }

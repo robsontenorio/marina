@@ -28,14 +28,8 @@ See http://SERVER-IP:8787
 
 ## Upgrading
 
-Pull the latest image.
-
 ```bash
-docker pull ghcr.io/robsontenorio/marina:production
-```
-
-```bash
-docker service update --force marina
+docker service update --force --image ghcr.io/robsontenorio/marina:production marina
 ```
 
 ## Contributing

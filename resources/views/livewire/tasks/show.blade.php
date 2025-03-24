@@ -10,6 +10,14 @@ use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
 new class extends Component {
     #[Reactive]
     public Task $task;
+
+    public bool $show = false;
+
+    public function logs(): void
+    {
+        $this->show = true;
+        new ScanTaskLogsAction($this->task, $this, 'logs')->execute();
+    }
 }; ?>
 
 <div>
@@ -19,15 +27,15 @@ new class extends Component {
                 <x-icon name="o-cube" />
             </div>
             <div class="flex-1 flex gap-3 items-center">
-                <span class="font-bold">{{ $task->name }}</span>
+                <span class="font-bold">{{ str($task->name)->after('_') }}</span>
 
                 <x-badge class="badge-sm mr-2 {{ $task->color() }}" :value="$task->state" />
 
-                <span data-tip="This task is updating" @class(["hidden", "tooltip !inline-block" => $task->isUpdating()])>
+                <span class="text-xs">{{ Carbon::parse($task->created_at)->format('Y-m-d H:i:s') }}</span>
+                
+                <span data-tip="This task is updating" @class(["hidden", "tooltip !inline-block mb-3" => $task->isUpdating()])>
                     <x-loading class="loading-ring -mb-2" />
                 </span>
-
-                <span class="text-xs text-gray-500 tooltip" data-tip="{{ Carbon::parse($task->created_at)->format('Y-m-d H:i:s') }}">{{ $task->created_at }}</span>
 
                 <div @class(["hidden", "text-xs text-error !block" => $task->error_message ?? ''])>
                     {{ $task->error_message ?? '' }}
@@ -48,8 +56,13 @@ new class extends Component {
 
             {{--  Logs --}}
             <div @class(["hidden", "!inline-flex" => $task->isRunning() || $task->isUpdating()])>
-                <livewire:tasks.logs :$task />
+                <x-button wire:click.stop="logs" icon="o-command-line" tooltip="Logs" class="btn-ghost btn-sm btn-circle mb-2" />
             </div>
         </div>
     </div>
+
+    @if($show)
+        <div wire:poll="logs"></div>
+        <livewire:logs wire:model="show" @close="$toggle('show')" />
+    @endif
 </div>
