@@ -15,6 +15,6 @@ class DeployStackAction
 
     public function execute(): void
     {
-        $this->run("docker stack deploy -c .data/stacks/{$this->stack}/docker-compose.yml --detach=true --resolve-image always --prune {$this->stack} --with-registry-auth");
+        $this->run("docker stack deploy -c .data/stacks/{$this->stack}/docker-compose.yml --detach=true --resolve-image=always --prune --with-registry-auth {$this->stack}");
     }
 }

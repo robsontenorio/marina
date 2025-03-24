@@ -46,7 +46,7 @@
             "docker network create --driver overlay marina || true",
             "composer install",
             "touch .data/database.sqlite",
-            "php artisan migrate:fresh --seed",
+            "php artisan migrate --force --seed",
             "php artisan key:generate",
             "php artisan view:clear",
             "php artisan cache:clear",

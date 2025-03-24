@@ -12,7 +12,7 @@ class TrashStackAction
 
     public function execute(): void
     {
-        (new RemoveStackAction($this->stack))->execute();
+        new RemoveStackAction($this->stack)->execute();
 
         File::deleteDirectory(base_path(".data/stacks/{$this->stack}"));
     }
