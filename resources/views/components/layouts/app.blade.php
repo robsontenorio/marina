@@ -37,7 +37,7 @@
         <x-slot:sidebar drawer="main-drawer" collapsible class="bg-base-100 lg:bg-inherit">
 
             {{-- BRAND --}}
-            <x-app-brand class="p-5 pt-3" />
+            <x-app-brand class="mt-5 mb-1 ps-4" />
 
             {{-- MENU --}}
             <x-menu activate-by-route>

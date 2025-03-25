@@ -25,10 +25,13 @@ new class extends Component {
     {
         $data = $this->validate();
 
-        $action = new LoginAction($data)->execute();
-
-        $this->reset();
-        $this->success('Credential added.');
+        try {
+            new LoginAction($data)->execute();
+            $this->reset();
+            $this->success('Credential added.');
+        } catch (Throwable $e) {
+            $this->addError("access_token", $e->getMessage());
+        }
     }
 
     public function remove(string $url): void
@@ -91,7 +94,11 @@ new class extends Component {
         <x-form wire:submit="add">
             <x-input label="Registry URL" icon="o-globe-alt" wire:model="url" />
             <x-input label="Username" icon="o-user" wire:model="username" />
-            <x-password label="Personal Access Token (not your password)" wire:model="access_token" hint="Make sure this token has permission to read images." />
+            <x-password
+                label="Personal Access Token (PAT)"
+                wire:model="access_token"
+                hint="Make sure this token has permission to read images. If you enter a password instead of the PAT, in some registries the login may succeed. But, you may not be able to pull images."
+            />
 
             <x-slot:actions>
                 <x-button label="Cancel" @click="$wire.show = false" />

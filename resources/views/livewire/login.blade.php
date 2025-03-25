@@ -43,7 +43,7 @@ class extends Component {
 }; ?>
 
 <div class="md:w-96 mx-auto mt-20">
-    <div class="mb-5">
+    <div class="mb-5 -ml-2">
         <img src="/images/marina.png" class="h-12" />
     </div>
 

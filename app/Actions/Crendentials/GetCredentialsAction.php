@@ -20,16 +20,15 @@ class GetCredentialsAction
 
     public function execute(): Collection
     {
-        $registries = Process::run("cat ~/.docker/config.json")->output();
+        $registries = Process::run("docker-credential-pass list")->output();
         $registries = json_decode($registries, true);
-        $registries = $registries['auths'] ?? [];
 
-        return collect($registries)->map(function ($registry, $key) {
+        return collect($registries)->map(function ($username, $url) {
             $object = new stdClass();
-            $object->url = $key;
-            $object->domain = $this->domain($key);
-            $object->username = $this->username($registry['auth']);
-            $object->icon = $this->icon($key);
+            $object->url = $url;
+            $object->username = $username;
+            $object->domain = $this->domain($url);
+            $object->icon = $this->icon($url);
 
             return $object;
         })->flatten();
@@ -46,10 +45,5 @@ class GetCredentialsAction
     private function icon(string $url): string
     {
         return $this->registries[$this->domain($url)] ?? 'o-cube-transparent';
-    }
-
-    private function username(string $auth): string
-    {
-        return str(base64_decode($auth))->before(':');
     }
 }

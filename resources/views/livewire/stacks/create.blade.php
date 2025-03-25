@@ -62,7 +62,7 @@ new class extends Component {
 }; ?>
 
 <div>
-    <x-header title="Add Stack" separator />
+    <x-header title="New stack" separator />
 
     <x-form wire:submit="deploy">
         <x-input placeholder="Stack Name" wire:model="stack" prefix="/path/to/stacks/" icon="o-server" inline />

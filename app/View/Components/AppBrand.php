@@ -24,17 +24,17 @@ class AppBrand extends Component
         return <<<'HTML'
                 <a href="/" wire:navigate>
                     <!-- Hidden when collapsed -->
-                    <div {{ $attributes->class(["hidden-when-collapsed"]) }}>
+                    <div {{ $attributes->class(["hidden-when-collapsed h-[28px]"]) }}>
                         <div class="flex gap-2">
-                            <img src="/images/waves.png" width="30" class="mt-1" />
-                            <span class="font-bold text-3xl mr-3 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent ">
+                            <img src="/images/waves.png" width="30" class="h-8" />
+                            <span class="font-bold text-3xl mr-3 -mt-1 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent ">
                                 marina
                             </span>
                         </div>
                     </div>
 
                     <!-- Display when collapsed -->
-                    <div class="display-when-collapsed hidden mx-5 mt-4 lg:mb-6 h-[28px]">
+                    <div {{ $attributes->class(["display-when-collapsed hidden h-[28px]"]) }}>
                         <img src="/images/waves.png" width="30" class="h-8" />
                     </div>
                 </a>
