@@ -21,8 +21,8 @@ CMD ["/usr/local/bin/start"]
 
 # Used to build the final image for distribution
 FROM base AS deploy
-RUN php artisan key:generate
 RUN composer install --prefer-dist --no-interaction --no-progress --ansi
+RUN php artisan key:generate
 RUN yarn install && yarn build
 RUN chmod a+x .docker/deploy.sh
 CMD ["/bin/sh", "-c", ".docker/deploy.sh && /usr/local/bin/start"]
