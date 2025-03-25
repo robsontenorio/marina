@@ -6,7 +6,7 @@ RUN ARCH=$(uname -m) && \
     chmod +x docker-credential-pass
 
 # Base image
-FROM robsontenorio/laravel:3.5 AS base
+FROM robsontenorio/laravel:3.5.x AS base
 USER root
 COPY --from=docker-cli docker-credential-pass /usr/local/bin/docker-credential-pass
 RUN apt update && apt install -y pass && rm -rf /var/lib/apt/lists/*
