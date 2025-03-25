@@ -18,9 +18,9 @@ jobs:
         platform: [ amd64, arm64 ]
         include:
           - platform: amd64
-            runner: github-actions-amd64
+            runner: X64
           - platform: arm64
-            runner: github-actions-arm64
+            runner: ARM64
     permissions:
       contents: read
       packages: write
