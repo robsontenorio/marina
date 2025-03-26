@@ -11,9 +11,16 @@ class CodeMirror extends Component
     public string $uuid;
 
     public function __construct(
+        public ?string $label = null,
         public ?string $mode = 'yaml',
+        public ?string $hint = ''
     ) {
         $this->uuid = "mary" . md5(serialize($this));
+    }
+
+    public function modelName(): ?string
+    {
+        return $this->attributes->whereStartsWith('wire:model')->first();
     }
 
     /**
@@ -29,22 +36,35 @@ class CodeMirror extends Component
                                 value: @entangle($attributes->wire('model')),
                                 editor: null,
                                 init() {
-                                    this.editor = CodeMirror(this.$refs.codemirror{{ $uuid }}, {
-                                                       lineNumbers: true,
-                                                        value: this.value,
-                                                        mode: '{{ $mode }}',
-                                                        viewportMargin: Infinity,
-                                                 });
+                                    this.editor = new CodeMirror(this.$refs.codemirror{{ $uuid }}, {
+                                                   lineNumbers: true,
+                                                   value: this.value || '\n\n\n',
+                                                   mode: '{{ $mode }}',
+                                                   viewportMargin: Infinity,
+                                             });
 
-                                    this.editor.on('change', (editor) => this.value = editor.doc.getValue());
+                                    this.editor.on('change', () => this.$nextTick(() => this.value = this.editor.doc.getValue()));
                                 },
                                 destroy() {
                                     this.editor.getWrapperElement().remove();
                                 }
                             }"
-                    wire:ignore
                 >
-                    <div x-ref="codemirror{{ $uuid }}" {{ $attributes->class(["textarea w-full py-4"]) }}></div>
+                    @if($label)
+                        <div class="text-xs font-semibold mt-5 mb-3">{{ $label }}</div>
+                    @endif
+
+                    <div {{ $attributes->class(["textarea w-full", "textarea-error" => $errors->has($modelName())]) }} >
+                        <div x-ref="codemirror{{ $uuid }}" wire:ignore ></div>
+                    </div>
+
+                    @error($modelName())
+                        <div class="text-error text-xs mt-3">{{ $message }}</div>
+                    @enderror
+
+                    @if($hint)
+                        <div class="text-xs text-base-content/50 mt-2">{{ $hint }}</div>
+                    @endif
                 </div>
         HTML;
     }

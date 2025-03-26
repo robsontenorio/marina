@@ -20,7 +20,7 @@ class Service implements Wireable
         public Stats $stats = new Stats(),
         public Collection $tasks = new Collection(),
     ) {
-        $this->tasks = (new FetchTasksAction($this))->execute();
+        $this->tasks = new FetchTasksAction($this)->execute();
         $this->stats = $this->stats();
     }
 
@@ -43,8 +43,8 @@ class Service implements Wireable
     public function stats(): Stats
     {
         return new Stats(
-            (new CalculateCPUAction($this->tasks))->execute(),
-            (new CalculateMemoryAction($this->tasks))->execute(),
+            new CalculateCPUAction($this->tasks)->execute(),
+            new CalculateMemoryAction($this->tasks)->execute(),
         );
     }
 }

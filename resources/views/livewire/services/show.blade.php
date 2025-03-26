@@ -20,7 +20,7 @@ new class extends Component {
     // Scale service up
     public function scaleUp(string $id): void
     {
-        (new ScaleUpServicesAction($this->service))->execute();
+        new ScaleUpServicesAction($this->service)->execute();
 
         $this->success('Running command ...', position: 'toast-bottom', timeout: 5000);
     }
@@ -28,7 +28,7 @@ new class extends Component {
     // Scale service down
     public function scaleDown(string $id): void
     {
-        (new ScaleDownServicesAction($this->service))->execute();
+        new ScaleDownServicesAction($this->service)->execute();
 
         $this->success('Running command ...', position: 'toast-bottom', timeout: 5000);
     }
@@ -36,7 +36,7 @@ new class extends Component {
     // Force update service
     public function forceUpdate(string $id): void
     {
-        (new ForceServiceUpdateAction($this->service))->execute();
+        new ForceServiceUpdateAction($this->service)->execute();
 
         $this->success('Running command ...', position: 'toast-bottom', timeout: 5000);
     }
@@ -44,7 +44,7 @@ new class extends Component {
     // Remove service
     public function removeService(string $id): void
     {
-        (new RemoveServiceAction($this->service))->execute();
+        new RemoveServiceAction($this->service)->execute();
 
         $this->success('Running command ...', position: 'toast-bottom', timeout: 5000);
     }

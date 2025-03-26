@@ -19,7 +19,6 @@ class FetchServicesAction extends DockerSocketService
             'status' => true,
             'filters' => '{"label": ["com.docker.stack.namespace=' . $this->stack . '"]}'
         ])
-            ->collect()
             ->transform(function ($service) {
                 return new Service(
                     id: $service['ID'],

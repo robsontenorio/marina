@@ -17,7 +17,6 @@ class FetchTasksAction extends DockerSocketService
     public function execute(): Collection
     {
         return $this->get('/tasks', ['filters' => '{"service": ["' . $this->service->name . '"]}'])
-            ->collect()
             ->transform(function ($task) {
                 return new Task(
                     id: $task['ID'],

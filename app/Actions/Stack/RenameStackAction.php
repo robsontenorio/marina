@@ -13,9 +13,14 @@ class RenameStackAction
 
     public function execute(): void
     {
-        if (File::exists(base_path(".data/stacks/{$this->newName}/docker-compose.yml"))) {
-            throw  ValidationException::withMessages(['stack' => 'This directory already exists.']);
+        $isDifferent = $this->newName != $this->currentName;
+        $newNameExists = File::exists(base_path(".data/stacks/{$this->newName}/docker-compose.yml"));
+
+        if ($isDifferent && $newNameExists) {
+            throw  ValidationException::withMessages(['stack' => 'This stack already exists.']);
         }
+
+        new RemoveStackAction($this->currentName)->execute();
 
         File::moveDirectory(base_path(".data/stacks/{$this->currentName}"), base_path(".data/stacks/{$this->newName}"));
     }

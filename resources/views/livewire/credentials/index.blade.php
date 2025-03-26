@@ -56,9 +56,9 @@ new class extends Component {
         </x-slot:actions>
     </x-header>
 
-    <div class="grid grid-cols-3 gap-5 w-full">
+    <div class="grid grid-cols-2 xl:grid-cols-3 gap-5 w-full">
         @foreach($registries as $registry)
-            <x-card shadow>
+            <x-card class="!p-3" shadow>
                 <x-list-item :item="$registry" value="domain" sub-value="username" no-separator no-hover>
                     <x-slot:avatar>
                         <x-icon :name="$registry->icon" class="w-9 h-9" />

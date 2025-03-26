@@ -16,8 +16,8 @@ new class extends Component {
 
     public function fetchLogs(): void
     {
-        $logs = (new ScanTaskLogsAction($this->task))->execute();
-        $this->logs = (new AnsiToHtmlConverter())->convert($logs);
+        $logs = new ScanTaskLogsAction($this->task)->execute();
+        $this->logs = new AnsiToHtmlConverter()->convert($logs);
     }
 }; ?>
 

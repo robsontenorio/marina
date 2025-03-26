@@ -2,12 +2,13 @@
 
 ## Introduction
 
-Marina is a simple self-hosting solution using Docker Swarm. It's a web interface to manage your Docker containers and services.
+Marina is a simple self-hosting solution using Docker Swarm. It's a web interface to manage containers and services.
 
 ## Warning
 
 The web interface does not include advanced features such as volume and network management.
-It is simply a way to deploy stacks based on `docker-compose.yaml` files and visualize containers and resources in a Docker Swarm environment.
+
+It is simply a way to deploy stacks based on `docker-compose.yaml` files and visualize containers in a Docker Swarm environment.
 
 ## Install
 

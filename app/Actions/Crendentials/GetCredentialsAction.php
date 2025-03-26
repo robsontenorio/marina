@@ -44,6 +44,6 @@ class GetCredentialsAction
 
     private function icon(string $url): string
     {
-        return $this->registries[$this->domain($url)] ?? 'o-cube-transparent';
+        return $this->registries[$this->domain($url)] ?? 'o-inbox-stack';
     }
 }

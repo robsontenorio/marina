@@ -16,7 +16,7 @@ new class extends Component {
     public function logs(): void
     {
         $this->show = true;
-        new ScanTaskLogsAction($this->task, $this, 'logs')->execute();
+        new ScanTaskLogsAction($this->task)->execute();
     }
 }; ?>
 
@@ -32,7 +32,7 @@ new class extends Component {
                 <x-badge class="badge-sm mr-2 {{ $task->color() }}" :value="$task->state" />
 
                 <span class="text-xs">{{ Carbon::parse($task->created_at)->format('Y-m-d H:i:s') }}</span>
-                
+
                 <span data-tip="This task is updating" @class(["hidden", "tooltip !inline-block mb-3" => $task->isUpdating()])>
                     <x-loading class="loading-ring -mb-2" />
                 </span>

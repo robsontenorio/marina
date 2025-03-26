@@ -1,51 +1,33 @@
 <?php
 
 use App\Actions\Services\FetchServicesAction;
-use App\Actions\Services\ForceServiceUpdateAction;
-use App\Actions\Services\RemoveServiceAction;
-use App\Actions\Services\ScaleDownServicesAction;
-use App\Actions\Services\ScaleUpServicesAction;
-use App\Actions\Stack\DeployStackAction;
-use App\Actions\Stack\RemoveStackAction;
-use App\Actions\Stack\TrashStackAction;
 use App\Actions\Support\CalculateCPUAction;
 use App\Actions\Support\CalculateMemoryAction;
-use App\Actions\Tasks\FetchTasksAction;
-use App\Entities\Service;
 use App\Entities\Stats;
-use Carbon\Carbon;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Process;
 use Livewire\Volt\Component;
 use Mary\Traits\Toast;
-use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
 
 new class extends Component {
     use Toast;
 
-    public string $stack = '';
+    public ?string $stack = null;
 
     public ?Collection $services;
 
-    public function mount(string $stack): void
+    public function mount(string $hash): void
     {
-        $this->stack = $stack;
-    }
-
-    public function boot(): void
-    {
-        $this->services = (new FetchServicesAction($this->stack))->execute();
+        $this->stack = str($hash)->fromBase64();
     }
 
     public function with(): array
     {
+        $this->services = new FetchServicesAction($this->stack)->execute();
+
         return [
             'stats' => new Stats(
-                (new CalculateCPUAction($this->services->pluck('tasks')->flatten(1)))->execute(),
-                (new CalculateMemoryAction($this->services->pluck('tasks')->flatten(1)))->execute()
+                new CalculateCPUAction($this->services->pluck('tasks')->flatten(1))->execute(),
+                new CalculateMemoryAction($this->services->pluck('tasks')->flatten(1))->execute()
             )
         ];
     }
@@ -54,7 +36,7 @@ new class extends Component {
 <div wire:poll>
     <x-header :title="$stack" separator>
         <x-slot:actions>
-            <x-button label="Settings" icon="o-cog-6-tooth" link="/stacks/{{ str($stack)->toBase64 }}/{{ $stack }}/edit" responsive />
+            <x-button label="Settings" icon="o-cog-6-tooth" link="/stacks/{{ str($stack)->toBase64() }}/edit" responsive />
         </x-slot:actions>
     </x-header>
 

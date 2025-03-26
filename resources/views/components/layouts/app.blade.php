@@ -60,9 +60,7 @@
 
                 <x-menu-separator />
 
-                @foreach(File::directories(base_path(".data/stacks")) as $stack)
-                    <x-menu-item title="{{ basename($stack) }}" icon="o-server-stack" link="/stacks/{{ str(basename($stack))->toBase64 }}/{{ basename($stack) }}" />
-                @endforeach
+                <livewire:stacks.menu />
 
                 <x-menu-separator />
                 <x-menu-item title="Add stack" icon="o-plus" link="/stacks/create" />

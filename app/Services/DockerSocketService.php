@@ -3,21 +3,25 @@
 namespace App\Services;
 
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 class DockerSocketService
 {
-    public const VERSION = '_';
+    public const string VERSION = '_';
 
-    public const SOCKET_PATH = '/var/run/docker.sock';
+    public const string SOCKET_PATH = '/var/run/docker.sock';
 
     public function __construct()
     {
     }
 
-    public function get(string $url, array $query = null)
+    public function get(string $url, array $query = []): Collection
     {
-        return $this->prepare()->get($url, $query);
+        $response = $this->prepare()->get($url, $query)->collect();
+
+        // If there is a `message` ignore it and return an empty collection
+        return $response->keys()->first() == 'message' ? collect() : $response;
     }
 
     public function prepare(): PendingRequest

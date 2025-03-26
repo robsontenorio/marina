@@ -11,7 +11,7 @@
 }
 
 .CodeMirror {
-    @apply h-auto;
+    @apply h-auto leading-7;
 }
 
 hr {

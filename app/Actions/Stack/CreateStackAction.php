@@ -14,7 +14,7 @@ class CreateStackAction
     public function execute(): void
     {
         if (File::exists(base_path(".data/stacks/{$this->stack}/docker-compose.yml"))) {
-            throw  ValidationException::withMessages(['stack' => 'This directory already exists.']);
+            throw  ValidationException::withMessages(['stack' => 'This stack name already exists.']);
         }
 
         File::makeDirectory(base_path(".data/stacks/{$this->stack}"));

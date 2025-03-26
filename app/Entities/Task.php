@@ -10,13 +10,13 @@ class Task implements Wireable
 {
     use WireMe;
 
-    public const STATE_RUNNING = 'running';
+    public const string STATE_RUNNING = 'running';
 
-    public const STATE_FAILED = 'failed';
+    public const string STATE_FAILED = 'failed';
 
-    public const STATE_REJECTED = 'rejected';
+    public const string STATE_REJECTED = 'rejected';
 
-    public const STATE_REMOVE = 'remove';
+    public const string STATE_REMOVE = 'remove';
 
     public function __construct(
         public string $id,
@@ -59,7 +59,7 @@ class Task implements Wireable
         return new Stats($stats['cpu'] ?? '', $stats['mem'] ?? '');
     }
 
-    public function color()
+    public function color(): string
     {
         return match ($this->state) {
             'running' => 'bg-success/40',

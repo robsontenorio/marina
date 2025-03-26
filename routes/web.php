@@ -21,9 +21,9 @@ Route::get('/logout', function () {
 
 Route::middleware('auth')->group(function () {
     Volt::route('/', 'dashboard');
-    Volt::route('/stacks/{hash}/{stack}/edit', 'stacks.edit');
+    Volt::route('/stacks/{hash}/edit', 'stacks.edit');
     Volt::route('/stacks/create', 'stacks.create');
-    Volt::route('/stacks/{hash}/{stack}', 'stacks.show');
+    Volt::route('/stacks/{hash}', 'stacks.show');
     Volt::route('/credentials', 'credentials.index');
 
     // Put `docker stats` in cache for a few seconds

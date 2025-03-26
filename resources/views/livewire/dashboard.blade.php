@@ -26,17 +26,14 @@ new class extends Component {
 
     public ?Collection $services;
 
-    public function boot(): void
-    {
-        $this->services = (new FetchServicesAction())->execute();
-    }
-
     public function with(): array
     {
+        $this->services = new FetchServicesAction()->execute();
+
         return [
             'stats' => new Stats(
-                (new CalculateCPUAction($this->services->pluck('tasks')->flatten(1)))->execute(),
-                (new CalculateMemoryAction($this->services->pluck('tasks')->flatten(1)))->execute()
+                new CalculateCPUAction($this->services->pluck('tasks')->flatten(1))->execute(),
+                new CalculateMemoryAction($this->services->pluck('tasks')->flatten(1))->execute()
             )
         ];
     }
