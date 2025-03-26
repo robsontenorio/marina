@@ -21,6 +21,4 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
-/.data
-!/.data/stacks/proxy/**
-!/.data/stacks/demo/**
+/.data/database.sqlite
