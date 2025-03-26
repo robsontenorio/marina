@@ -20,6 +20,10 @@ new class extends Component {
 }; ?>
 
 <div>
+    @if(count($stacks))
+        <x-menu-separator />
+    @endif
+
     @foreach($stacks as $stack)
         <x-menu-item title="{{ basename($stack) }}" icon="o-server-stack" link="/stacks/{{ str(basename($stack))->toBase64() }}" />
     @endforeach

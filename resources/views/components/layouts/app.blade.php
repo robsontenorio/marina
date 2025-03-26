@@ -57,11 +57,7 @@
 
                 <x-menu-item title="Dashboard" icon="o-squares-2x2" link="/" />
                 <x-menu-item title="Credentials" icon="o-shield-check" link="/credentials" />
-
-                <x-menu-separator />
-
                 <livewire:stacks.menu />
-
                 <x-menu-separator />
                 <x-menu-item title="Add stack" icon="o-plus" link="/stacks/create" />
             </x-menu>
