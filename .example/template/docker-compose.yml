@@ -1,14 +1,39 @@
+#### NETWORKS ####
+networks:
+    default:
+        name: marina
+        external: true
+
+#### VOLUMES ####
+volumes:
+    mary-db:
+        external: true
+    flow-db:
+        external: true
+    paper-db:
+        external: true
+    orange-db:
+        external: true
+    ping-db:
+        external: true
+
 services:
-    ######## PROXY ##########
-    proxy:
-        image: jc21/nginx-proxy-manager:latest
-        ports:
-            - 80:80
-            - 81:81
-            - 443:443
+    ######## ORANGE ########
+    mary:
+        image: ghcr.io/robsontenorio/mary-ui.com:production
+        env_file: .env.mary
         volumes:
-            - proxy-data:/data
-            - letsencrypt-data:/etc/letsencrypt
+            - mary-db:/var/www/app/database/
+        healthcheck:
+            test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+            start_period: 120s
+            interval: 5s
+            timeout: 10s
+            retries: 3
+        deploy:
+            update_config:
+                order: start-first
+                failure_action: rollback
 
     ######## ORANGE ########
     orange:
@@ -16,6 +41,40 @@ services:
         env_file: .env.orange
         volumes:
             - orange-db:/var/www/app/database/
+        healthcheck:
+            test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+            start_period: 120s
+            interval: 5s
+            timeout: 10s
+            retries: 3
+        deploy:
+            update_config:
+                order: start-first
+                failure_action: rollback
+
+    ######## PAPER ########
+    paper:
+        image: ghcr.io/robsontenorio/paper.mary-ui.com:production
+        env_file: .env.paper
+        volumes:
+            - paper-db:/var/www/app/database/
+        healthcheck:
+            test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+            start_period: 120s
+            interval: 5s
+            timeout: 10s
+            retries: 3
+        deploy:
+            update_config:
+                order: start-first
+                failure_action: rollback
+
+    ######## FLOW ########
+    flow:
+        image: ghcr.io/robsontenorio/flow.mary-ui.com:production
+        env_file: .env.flow
+        volumes:
+            - flow-db:/var/www/app/database/
         healthcheck:
             test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
             start_period: 120s
@@ -43,20 +102,3 @@ services:
             update_config:
                 order: start-first
                 failure_action: rollback
-
-#### NETWORKS ####
-networks:
-    default:
-        name: marina
-        external: true
-
-#### VOLUMES ####
-volumes:
-    proxy-data:
-        external: true
-    letsencrypt-data:
-        external: true
-    orange-db:
-        external: true
-    ping-db:
-        external: true

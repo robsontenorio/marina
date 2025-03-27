@@ -1,3 +1,4 @@
+# Prepare for get `docker` binary and `docker-credencial-pass`
 FROM docker:28 AS docker-cli
 RUN ARCH=$(uname -m) && \
     if [ "$ARCH" = "aarch64" ]; then ARCH="arm64"; else ARCH="amd64"; fi && \
@@ -19,7 +20,7 @@ RUN gpg --batch --passphrase '' --quick-gen-key appuser default default && pass 
 FROM base AS local
 CMD ["/usr/local/bin/start"]
 
-# Used to build the final image for distribution
+# Build the final image for distribution
 FROM base AS deploy
 RUN chmod a+x .docker/deploy.sh
 CMD ["/bin/sh", "-c", ".docker/deploy.sh && /usr/local/bin/start"]

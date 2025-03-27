@@ -2,11 +2,12 @@
 
 echo '------ Starting deploy tasks  ------'
 
-composer install --prefer-dist --no-interaction --no-progress --ansi
 cp .env.example .env
+composer install --prefer-dist --no-interaction --no-progress --ansi
 php artisan key:generate
 
-yarn install && yarn build
+yarn install
+yarn build
 
 touch /var/www/app/.data/database.sqlite
 
