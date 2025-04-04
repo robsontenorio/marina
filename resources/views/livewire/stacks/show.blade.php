@@ -46,7 +46,7 @@ new class extends Component {
     @if($services->count())
         <div class="fieldset-label text-sm mt-10">
             <x-icon name="o-light-bulb" class="w-4 h-4" />
-            If you are using a private images, make sure to <a href="/credentials" wire:navigate class="!underline">add a credential.</a>
+            If you are using private images, make sure to <a href="/credentials" wire:navigate class="!underline">add a credential.</a>
         </div>
     @endif
 </div>

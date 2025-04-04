@@ -146,7 +146,7 @@ new class extends Component {
         {{-- NOTES --}}
         <div class="fieldset-label mt-5 grid text-xs">
             <x-icon name="o-light-bulb" label="Make sure to add the respective `env` file for the service, when needed." class="w-4 h-4" />
-            <x-icon name="o-light-bulb" label="If you are using a private images, make sure to add a credential." class="w-4 h-4" />
+            <x-icon name="o-light-bulb" label="If you are using private images, make sure to add a credential." class="w-4 h-4" />
         </div>
 
         {{-- FORM ACTIONS --}}
