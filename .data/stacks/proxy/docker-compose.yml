@@ -1,9 +1,8 @@
-# PROXY MANAGER
-# Docs: https://nginxproxymanager.com
-# Panel: http://YOUR-SERVER-IP:81
+# THE REVERSE PROXY (traefik.io)
 
-# Go ahead and hit DEPLOY!
-
+# Traefik dashboard: http://proxy.maryui.com
+# Marina: http://marina.maryui.com
+# Change the hosts below and hit DEPLOY!
 
 # Joins to the `marina` network
 networks:
@@ -11,22 +10,42 @@ networks:
         name: marina
         external: true
 
-# Automatically creates `external` volumes at /var/lib/docker/volumes
-volumes:
-    proxy:
-        external: true
-    letsencrypt:
-        external: true
-
-# The Proxy Manager
 services:
-    proxy:
-        image: jc21/nginx-proxy-manager:latest
+    traefik:
+        image: traefik:v3.3
+        entrypoint: /bin/sh
+        command:
+            - -c
+            - >
+                mkdir -p /etc/traefik &&
+                echo "$${CONFIG}" > /etc/traefik/dynamic.yml &&
+                exec traefik
+                --providers.file.filename=/etc/traefik/dynamic.yml
+                --providers.swarm
+                --api.insecure=true
+                --entrypoints.web.address=:80
+        environment:
+            # Creates a proxy for the marina service
+            CONFIG: |
+                http:
+                  routers:
+                    marina:
+                      rule: "Host(`marina.maryui.com`)"
+                      service: marina
+
+                  services:
+                    marina:
+                      loadBalancer:
+                        servers:
+                          - url: "http://marina:8080"
         ports:
             - 80:80
-            - 81:81
-            - 443:443
+            - 8080:8080
         volumes:
-            - proxy:/data
-            - letsencrypt:/etc/letsencrypt
-
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+        deploy:
+            labels:
+                - "traefik.http.routers.traefik.rule=Host(`proxy.maryui.com`)"
+                - "traefik.http.routers.traefik.entrypoints=web"
+                - "traefik.http.routers.traefik.service=api@internal"
+                - "traefik.http.services.traefik.loadbalancer.server.port=8080"

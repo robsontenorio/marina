@@ -1,25 +1,19 @@
-# DO NOT MAP SERVICE PORTS HERE!
-#
-# Expose the `services` through the Proxy Manager admin panel:
-#  - For the `domain`: something like `my-app1.com`.
-#  - For the `host`: use the `service` names like `app1`.
-#  - For the `port`: you need to know what port each container exposes.
+# NOTICE WE DO NOT USE SERVICE PORTS MAPPING.
+# See down below the Traefik labels, it does the mapping.
+# Zero downtime deployment works because of `healthcheck` and `deploy` settings.
 
-
-# The same network as the Proxy Manager
+# The same network as the Traefik
 networks:
     default:
         name: marina
         external: true
 
-
-# Zero downtime deployment works because of `healthcheck` and `deploy` settings
 services:
     app1:
         image: my-private-registry/app1:production
         env_file: .env.app1
         healthcheck:
-            test: [ "CMD", "curl", "-f", "http://localhost:<port>" ]
+            test: [ "CMD", "curl", "-f", "http://localhost:<INTERNAL-PORT>" ]
             start_period: 120s
             interval: 5s
             timeout: 10s
@@ -28,12 +22,15 @@ services:
             update_config:
                 order: start-first
                 failure_action: rollback
+            labels:
+                - "traefik.http.routers.paper.rule=Host(`app1.com`)"
+                - "traefik.http.services.paper.loadbalancer.server.port=<INTERNAL-PORT>"
 
     app2:
         image: my-private-registry/app2:production
         env_file: .env.app2
         healthcheck:
-            test: [ "CMD", "curl", "-f", "http://localhost:<port>" ]
+            test: [ "CMD", "curl", "-f", "http://localhost:<INTERNAL-PORT>" ]
             start_period: 120s
             interval: 5s
             timeout: 10s
@@ -42,5 +39,7 @@ services:
             update_config:
                 order: start-first
                 failure_action: rollback
-
+            labels:
+                - "traefik.http.routers.paper.rule=Host(`app2.com`)"
+                - "traefik.http.services.paper.loadbalancer.server.port=<INTERNAL-PORT>"
 
