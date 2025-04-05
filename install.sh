@@ -25,7 +25,6 @@ docker network create --driver overlay marina
 # Create Docker volume and network
 echo "\033[96m\n\n\n✨ Creating 'marina_data' volume ...\n\033[0m"
 docker volume create marina_data
-docker volume create marina_credentials
 
 # Create Marina service
 echo "\033[96m\n\n\n✨ Starting 'marina'service ...\n\033[0m"
@@ -33,9 +32,8 @@ docker service create \
     --name marina \
     --network marina \
     --publish 8787:8080 \
-    --label "traefik.http.services.marina.loadbalancer.server.port=8080" \
+    --label traefik.http.services.marina.loadbalancer.server.port=8080 \
     --mount type=volume,source=marina_data,target=/var/www/app/.data \
-    --mount type=volume,source=marina_credentials,target=/home/appuser/.credentials \
     --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock,ro \
     --group $(stat -c '%g' /var/run/docker.sock) \
     ghcr.io/robsontenorio/marina:production
