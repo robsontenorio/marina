@@ -6,8 +6,6 @@ networks:
 
 #### VOLUMES ####
 volumes:
-    mary-db:
-        external: true
     flow-db:
         external: true
     paper-db:
@@ -17,24 +15,8 @@ volumes:
     ping-db:
         external: true
 
-services:
-    ######## ORANGE ########
-    mary:
-        image: ghcr.io/robsontenorio/mary-ui.com:production
-        env_file: .env.mary
-        volumes:
-            - mary-db:/var/www/app/database/
-        healthcheck:
-            test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
-            start_period: 120s
-            interval: 5s
-            timeout: 10s
-            retries: 3
-        deploy:
-            update_config:
-                order: start-first
-                failure_action: rollback
 
+services:
     ######## ORANGE ########
     orange:
         image: ghcr.io/robsontenorio/orange.mary-ui.com:production
@@ -42,7 +24,7 @@ services:
         volumes:
             - orange-db:/var/www/app/database/
         healthcheck:
-            test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+            test: [ "CMD", "curl", "-f", "http://localhost:8000/up" ]
             start_period: 120s
             interval: 5s
             timeout: 10s
@@ -59,7 +41,7 @@ services:
         volumes:
             - paper-db:/var/www/app/database/
         healthcheck:
-            test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+            test: [ "CMD", "curl", "-f", "http://localhost:8000/up" ]
             start_period: 120s
             interval: 5s
             timeout: 10s
@@ -76,7 +58,7 @@ services:
         volumes:
             - flow-db:/var/www/app/database/
         healthcheck:
-            test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+            test: [ "CMD", "curl", "-f", "http://localhost:8000/up" ]
             start_period: 120s
             interval: 5s
             timeout: 10s
@@ -93,7 +75,7 @@ services:
         volumes:
             - ping-db:/var/www/app/database/
         healthcheck:
-            test: [ "CMD", "curl", "-f", "http://localhost:8080/up" ]
+            test: [ "CMD", "curl", "-f", "http://localhost:8000/up" ]
             start_period: 120s
             interval: 5s
             timeout: 10s
@@ -102,3 +84,5 @@ services:
             update_config:
                 order: start-first
                 failure_action: rollback
+
+
