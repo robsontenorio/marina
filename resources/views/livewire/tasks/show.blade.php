@@ -23,15 +23,15 @@ new class extends Component {
 <div>
     <div>
         <div @class(["flex justify-between items-center gap-3"])>
-            <div>
-                <x-icon name="o-cube" />
-            </div>
             <div class="flex-1 flex gap-3 items-center">
-                <span class="font-bold">{{ str($task->name)->after('_') }}</span>
+                <div class="tooltip" data-tip="{{ str($task->name)->after('_') }}">
+                    <x-icon name="o-cube" class="mb-1" />
+                    <span class="font-bold hidden sm:inline-flex">{{ str($task->name)->after('_') }}</span>
+                </div>
 
                 <x-badge class="badge-sm mr-2 {{ $task->color() }}" :value="$task->state" />
 
-                <span class="text-xs">{{ Carbon::parse($task->created_at)->format('Y-m-d H:i:s') }}</span>
+                <span class="text-xs hidden sm:inline-flex">{{ Carbon::parse($task->created_at)->format('Y-m-d H:i:s') }}</span>
 
                 <span data-tip="This task is updating" @class(["hidden", "tooltip !inline-block mb-3" => $task->isUpdating()])>
                     <x-loading class="loading-ring -mb-2" />

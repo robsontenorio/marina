@@ -20,7 +20,7 @@ new class extends Component {
                     <span @class(["hidden", "!inline-block" => $task->isUpdating()])>
                         <x-loading class="loading-ring" />
                     </span>
-                    <span class="text-xs">{{ $task->error_message }}</span>
+                    <span class="text-xs block sm:inline-flex">{{ $task->error_message }}</span>
                 </div>
             </x-slot:title>
         </x-timeline-item>

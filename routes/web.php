@@ -1,6 +1,8 @@
 <?php
 
+use App\Actions\Stack\DeployStackFromWebhookAction;
 use App\Jobs\FetchDockerStatsJob;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -17,6 +19,11 @@ Route::get('/logout', function () {
     request()->session()->regenerateToken();
 
     return redirect('/');
+});
+
+// Deploy endpoint
+Route::post("/deploy", function (Request $request) {
+    defer(fn() => new DeployStackFromWebhookAction($request->stack)->execute());
 });
 
 Route::middleware('auth')->group(function () {

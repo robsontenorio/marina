@@ -17,6 +17,7 @@ class Service implements Wireable
         public string $id,
         public string $name,
         public int $replicas = 0,
+        public ?string $image = null,
         public Stats $stats = new Stats(),
         public Collection $tasks = new Collection(),
     ) {

@@ -1,4 +1,4 @@
-# Prepare for get `docker` binary and `docker-credencial-pass`
+# Prepare for get `docker` and `docker-credencial-pass` binaries
 FROM docker:28 AS docker-cli
 RUN ARCH=$(uname -m) && \
     if [ "$ARCH" = "aarch64" ]; then ARCH="arm64"; else ARCH="amd64"; fi && \
@@ -7,20 +7,14 @@ RUN ARCH=$(uname -m) && \
     chmod +x docker-credential-pass
 
 # Base image
-FROM robsontenorio/laravel:3.5 AS base
-USER root
+FROM robsontenorio/laravel:franken-classic AS base
 COPY --from=docker-cli docker-credential-pass /usr/local/bin/docker-credential-pass
-RUN apt update && apt install -y pass && rm -rf /var/lib/apt/lists/*
-USER appuser
 COPY --from=docker-cli /usr/local/bin/docker /usr/local/bin/docker
 COPY --chown=appuser:appuser . .
 RUN gpg --batch --passphrase '' --quick-gen-key appuser default default && pass init appuser
 
-# For local development
-FROM base AS local
-CMD ["/usr/local/bin/start"]
 
-# Build the final image for distribution
+# Production
 FROM base AS deploy
 RUN chmod a+x .docker/deploy.sh
-CMD ["/bin/sh", "-c", ".docker/deploy.sh && /usr/local/bin/start"]
+CMD ["/bin/sh", "-c", ".docker/deploy.sh && start"]

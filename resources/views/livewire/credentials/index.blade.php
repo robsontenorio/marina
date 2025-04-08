@@ -1,8 +1,8 @@
 <?php
 
-use App\Actions\Crendentials\GetCredentialsAction;
-use App\Actions\Crendentials\LoginAction;
-use App\Actions\Crendentials\LogoutAction;
+use App\Actions\Credentials\GetCredentialsAction;
+use App\Actions\Credentials\LoginAction;
+use App\Actions\Credentials\LogoutAction;
 use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
 use Mary\Traits\Toast;
@@ -56,7 +56,7 @@ new class extends Component {
         </x-slot:actions>
     </x-header>
 
-    <div class="grid grid-cols-2 xl:grid-cols-3 gap-5 w-full">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
         @foreach($registries as $registry)
             <x-card class="!p-3" shadow>
                 <x-list-item :item="$registry" value="domain" sub-value="username" no-separator no-hover>

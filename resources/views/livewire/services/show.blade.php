@@ -55,8 +55,8 @@ new class extends Component {
         <div class="flex-1">
             <div class="flex gap-3">
                 {{--  REPLICAS--}}
-                <div class="flex gap-3">
-                    <div @class(["bg-base-300 text-base-content rounded-lg text-center py-2 px-3", "!bg-success !text-base-100"  => $service->isRunning()])>
+                <div class="flex gap-3 items-start">
+                    <div @class(["bg-base-300 text-base-content rounded-lg text-center p-3", "!bg-success !text-base-100"  => $service->isRunning()])>
                         <div class="font-black">{{ $service->replicas }}</div>
                         <div class="text-xs">replicas</div>
                     </div>
@@ -105,7 +105,7 @@ new class extends Component {
                 spinner />
 
             <x-button
-                tooltip-left="`docker service update --force {service}`"
+                tooltip-left="`docker service update --image {image} --force {service}`"
                 wire:click.stop="forceUpdate('{{ $service->id }}')"
                 wire:confirm="Are you sure?"
                 icon="o-fire"

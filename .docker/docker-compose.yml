@@ -4,14 +4,16 @@ services:
         build:
             context: ..
             dockerfile: .docker/Dockerfile
-            target: local
+            target: base
         group_add:
             - root
+        environment:
+            - SERVER_NAME=:8787
         volumes:
-            - ../:/var/www/app
-            - /var/run/docker.sock:/var/run/docker.sock
+            - ../:/app:cached
+            - /var/run/docker.sock:/var/run/docker.sock:ro
         ports:
-            - 8787:8080
+            - 8787:8787
             - 5717:5717
 
 

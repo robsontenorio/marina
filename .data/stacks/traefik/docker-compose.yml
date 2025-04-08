@@ -1,7 +1,7 @@
-# THE REVERSE PROXY (traefik.io)
+# Reverse Proxy (traefik.io)
+# Traefik: http://traefik.your-site.com
+# Marina: http://marina.your-site.com
 
-# Traefik dashboard: http://proxy.maryui.com
-# Marina: http://marina.maryui.com
 # Change the hosts below and hit DEPLOY!
 
 # Joins to the `marina` network
@@ -25,19 +25,19 @@ services:
                 --api.insecure=true
                 --entrypoints.web.address=:80
         environment:
-            # Creates a proxy for the marina service
+            # Creates an entry for the `marina` service
             CONFIG: |
                 http:
                   routers:
                     marina:
-                      rule: "Host(`marina.maryui.com`)"
+                      rule: "Host(`marina.your-site.com`)"
                       service: marina
 
                   services:
                     marina:
                       loadBalancer:
                         servers:
-                          - url: "http://marina:8080"
+                          - url: "http://marina:8000"
         ports:
             - 80:80
             - 8080:8080
@@ -45,7 +45,7 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock:ro
         deploy:
             labels:
-                - "traefik.http.routers.traefik.rule=Host(`proxy.maryui.com`)"
+                - "traefik.http.routers.traefik.rule=Host(`traefik.your-site.com`)"
                 - "traefik.http.routers.traefik.entrypoints=web"
                 - "traefik.http.routers.traefik.service=api@internal"
                 - "traefik.http.services.traefik.loadbalancer.server.port=8080"

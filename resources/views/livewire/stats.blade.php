@@ -14,7 +14,7 @@ new class extends Component {
 }; ?>
 
 <div>
-    <div class="grid grid-cols-4 gap-5 mb-8">
+    <div class="grid sm:grid-cols-4 gap-5 mb-8">
         <x-stat title="CPU" :value="$stats->cpu" icon="o-cpu-chip" class="shadow" color="text-base-content" />
         <x-stat title="Memory" :value="$stats->memory" icon="o-rectangle-stack" class="shadow" color="text-base-content" />
         <x-stat title="Services" :value="$services->count()" icon="o-squares-2x2" class="shadow" color="text-base-content" />

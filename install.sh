@@ -32,8 +32,8 @@ docker service create \
     --name marina \
     --network marina \
     --publish 8787:8080 \
-    --label traefik.http.services.marina.loadbalancer.server.port=8080 \
-    --mount type=volume,source=marina_data,target=/var/www/app/.data \
+    --label traefik.http.services.marina.loadbalancer.server.port=8000 \
+    --mount type=volume,source=marina_data,target=/app/.data \
     --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock,ro \
     --group $(stat -c '%g' /var/run/docker.sock) \
     ghcr.io/robsontenorio/marina:production

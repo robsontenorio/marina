@@ -1,6 +1,5 @@
-# NOTICE WE DO NOT USE SERVICE PORTS MAPPING.
+# DO NOT USE SERVICES PORTS MAPPING!
 # See down below the Traefik labels, it does the mapping.
-# Zero downtime deployment works because of `healthcheck` and `deploy` settings.
 
 # The same network as the Traefik
 networks:
@@ -8,6 +7,7 @@ networks:
         name: marina
         external: true
 
+# Zero downtime deployment works because of `healthcheck` and `deploy` settings.
 services:
     app1:
         image: my-private-registry/app1:production

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Crendentials;
+namespace App\Actions\Credentials;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Process;
@@ -44,6 +44,6 @@ class GetCredentialsAction
 
     private function icon(string $url): string
     {
-        return $this->registries[$this->domain($url)] ?? 'o-inbox-stack';
+        return $this->registries[$this->domain($url)] ?? 'o-square-3-stack-3d';
     }
 }

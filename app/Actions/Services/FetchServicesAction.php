@@ -24,6 +24,7 @@ class FetchServicesAction extends DockerSocketService
                     id: $service['ID'],
                     name: $service['Spec']['Name'],
                     replicas: $service['Spec']['Mode']['Replicated']['Replicas'],
+                    image: str($service['Spec']['TaskTemplate']['ContainerSpec']['Image'])->before('@') ?? ''
                 );
             })
             ->sortBy('name');

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Crendentials;
+namespace App\Actions\Credentials;
 
 use Exception;
 use Illuminate\Support\Facades\Process;

@@ -1,0 +1,60 @@
+# Server monitoring (beszel.dev)
+# Dashboard: http://monitor.your-site.com
+
+# Change the hosts below and hit DEPLOY!
+
+# The same network as the Traefik
+networks:
+    default:
+        name: marina
+        external: true
+
+volumes:
+    beszel_data:
+        external: true
+    beszel_socket:
+        external: true
+
+services:
+    #### DASHBOARD ####
+    beszel:
+        image: henrygd/beszel:latest
+        volumes:
+            - beszel_data:/beszel_data
+            - beszel_socket:/beszel_socket
+        healthcheck:
+            test: [ 'CMD', '/beszel', 'health', '--url', 'http://localhost:8090' ]
+            start_period: 5s
+            interval: 120s
+            timeout: 10s
+            retries: 3
+        deploy:
+            update_config:
+                order: start-first
+                failure_action: rollback
+            labels:
+                - "traefik.http.routers.beszel.rule=Host(`monitor.your-site.com`)"
+                - "traefik.http.services.beszel.loadbalancer.server.port=8090"
+
+    #### AGENT ####
+    beszel-agent:
+        image: henrygd/beszel-agent:latest
+        volumes:
+            - beszel_socket:/beszel_socket
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+        healthcheck:
+            test: [ 'CMD', '/agent', 'health' ]
+            start_period: 5s
+            interval: 120s
+            timeout: 10s
+            retries: 3
+        environment:
+            LISTEN: /beszel_socket/beszel.sock
+            # Deploy a first time to get Beszel dashboard up and running.
+            # Then, register a new server and replace the key below with the one you get.
+            # Do not remove quotes around the key
+            KEY: 'get-this-on-beszel-panel'
+        deploy:
+            update_config:
+                order: start-first
+                failure_action: rollback

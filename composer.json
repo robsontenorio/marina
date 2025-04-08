@@ -14,12 +14,12 @@
     "license": "MIT",
     "require": {
         "php": "^8.4",
-        "laravel/framework": "^12.0",
+        "laravel/framework": "^12.7",
         "laravel/tinker": "^2.10.1",
         "livewire/livewire": "^3.6",
         "livewire/volt": "^1.7",
         "owenvoke/blade-fontawesome": "^2.9",
-        "robsontenorio/mary": "V2.x-dev",
+        "robsontenorio/mary": "dev-main",
         "sensiolabs/ansi-to-html": "^2.0"
     },
     "require-dev": {
@@ -47,13 +47,13 @@
     "scripts": {
         "start": [
             "Composer\\Config::disableProcessTimeout",
+            "docker swarm init || true",
             "docker network create --driver overlay marina || true",
             "composer install",
+            "php artisan key:generate",
             "touch .data/database.sqlite",
             "php artisan migrate --force --seed",
-            "php artisan key:generate",
-            "php artisan view:clear",
-            "php artisan cache:clear",
+            "php artisan optimize:clear",
             "php artisan storage:link",
             "rm -rf public/build",
             "yarn install",

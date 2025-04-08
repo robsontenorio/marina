@@ -10,9 +10,9 @@
     'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
-.CodeMirror {
-    @apply h-auto leading-7;
-}
+/**
+ * Some custom styles
+ */
 
 hr {
     @apply border-t  border-t-base-content/10;

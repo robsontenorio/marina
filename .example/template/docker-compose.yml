@@ -33,7 +33,7 @@ services:
                 order: start-first
                 failure_action: rollback
             labels:
-                - "traefik.http.routers.orange.rule=Host(`orange.maryui.com`)"
+                - "traefik.http.routers.orange.rule=Host(`orange.mary-ui.com`)"
                 - "traefik.http.services.orange.loadbalancer.server.port=8000"
 
     ######## PAPER ########
@@ -53,7 +53,7 @@ services:
                 order: start-first
                 failure_action: rollback
             labels:
-                - "traefik.http.routers.paper.rule=Host(`paper.maryui.com`)"
+                - "traefik.http.routers.paper.rule=Host(`paper.mary-ui.com`)"
                 - "traefik.http.services.paper.loadbalancer.server.port=8000"
 
     ######## FLOW ########
@@ -74,7 +74,7 @@ services:
                 failure_action: rollback
             labels:
                 # 🌐 HTTP
-                - "traefik.http.routers.flow.rule=Host(`flow.maryui.com`)"
+                - "traefik.http.routers.flow.rule=Host(`flow.mary-ui.com`)"
                 - "traefik.http.services.flow.loadbalancer.server.port=8000"
 
                 # 🔁 Forces https for Livewire file uploads
@@ -100,11 +100,11 @@ services:
                 failure_action: rollback
             labels:
                 # 🔁 WebSocket → port 8099
-                - "traefik.http.routers.ping-ws.rule=Host(`ping.maryui.com`) && PathPrefix(`/app`)"
+                - "traefik.http.routers.ping-ws.rule=Host(`ping.mary-ui.com`) && PathPrefix(`/app`)"
                 - "traefik.http.routers.ping-ws.service=ping-ws"
                 - "traefik.http.services.ping-ws.loadbalancer.server.port=8099"
 
                 # 🌐 HTTP  → port 8000
-                - "traefik.http.routers.ping-http.rule=Host(`ping.maryui.com`)"
+                - "traefik.http.routers.ping-http.rule=Host(`ping.mary-ui.com`)"
                 - "traefik.http.routers.ping-http.service=ping-http"
                 - "traefik.http.services.ping-http.loadbalancer.server.port=8000"
