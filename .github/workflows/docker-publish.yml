@@ -2,9 +2,10 @@ name: Create and publish a Docker image
 
 on:
   push:
+    branches:
+      - main
     tags:
-      - "[0-9]+.[0-9]+.[0-9]+" # any `x.y.z` tag builds the `production` iamge
-      - "stage-*" # the `stage-xxxx` pattern tag builds the`stage` image
+      - "[0-9]+.[0-9]+.[0-9]+"
 
 env:
   REGISTRY: ghcr.io
@@ -12,7 +13,7 @@ env:
 
 jobs:
   build-and-push-image:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: write
@@ -30,15 +31,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: "Check Github Tag"
+      - name: "Check GitHub ref"
         id: check-tag
         run: |
-          if [[ ${{ github.event.ref }} =~ ^refs/tags/[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-              echo "IS_PRODUCTION=true" >> $GITHUB_OUTPUT
+          REF="${GITHUB_REF##*/}"
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            echo "IS_VERSION_TAG=true" >> $GITHUB_OUTPUT
+            echo "TAG_NAME=${REF}" >> $GITHUB_OUTPUT
           fi
 
-          if [[ ${{ github.event.ref }} =~ ^refs/tags/stage-(.*)$ ]]; then
-              echo "IS_STAGE=true" >> $GITHUB_OUTPUT
+          if [[ $GITHUB_REF == refs/heads/main ]]; then
+            echo "IS_MAIN_BRANCH=true" >> $GITHUB_OUTPUT
           fi
 
       - name: "Extract Docker metadata (tags, labels)"
@@ -49,8 +52,8 @@ jobs:
           flavor: |
             latest=false
           tags: |
-            type=raw,value=production,enable=${{  steps.check-tag.outputs.IS_PRODUCTION == 'true' }}
-            type=raw,value=stage,enable=${{  steps.check-tag.outputs.IS_STAGE == 'true' }}
+            type=raw,value=${{ steps.check-tag.outputs.TAG_NAME }},enable=${{ steps.check-tag.outputs.IS_VERSION_TAG == 'true' }}
+            type=raw,value=latest,enable=${{ steps.check-tag.outputs.IS_MAIN_BRANCH == 'true' }}
 
       - name: "Build and push Docker images"
         uses: docker/build-push-action@v6

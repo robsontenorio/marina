@@ -80,7 +80,7 @@ new class extends Component {
             @foreach($envs as $k => $env)
                 <x-collapse :name="$k" class="bg-base-100" separator>
                     <x-slot:heading @class(["text-error" => $errors->has('envs.'.$k.'.*')])>
-                        <x-icon :name="$errors->hasAny('envs.*') ? 's-exclamation-triangle' : 'o-document'" :label="$env['name'] ? $env['name'] : '<no name>'" />
+                        <x-icon :name="$errors->hasAny('envs.*') ? 's-exclamation-triangle' : 'o-document'" :label="$env['name'] ?? '<no name>'" />
                     </x-slot:heading>
                     <x-slot:content class="px-20">
                         <x-input label="Name" wire:model.live="envs.{{ $k }}.name" hint="Ex: .env.app1" class="max-w-96" />

@@ -22,22 +22,22 @@ new class extends Component {
 
 <div>
     <div>
-        <div @class(["flex justify-between items-center gap-3"])>
+        <div @class(["flex justify-between items-center gap-3 h-12"])>
             <div class="flex-1 flex gap-3 items-center">
                 <div class="tooltip" data-tip="{{ str($task->name)->after('_') }}">
                     <x-icon name="o-cube" class="mb-1" />
                     <span class="font-bold hidden sm:inline-flex">{{ str($task->name)->after('_') }}</span>
                 </div>
 
-                <x-badge class="badge-sm mr-2 {{ $task->color() }}" :value="$task->state" />
+                <x-badge class="badge-sm me-2 w-0 text-transparent sm:w-fit sm:text-inherit {{ $task->color() }}" :value="$task->state" />
 
                 <span class="text-xs hidden sm:inline-flex">{{ Carbon::parse($task->created_at)->format('Y-m-d H:i:s') }}</span>
 
-                <span data-tip="This task is updating" @class(["hidden", "tooltip !inline-block mb-3" => $task->isUpdating()])>
-                    <x-loading class="loading-ring -mb-2" />
+                <span data-tip="This task is updating" @class(["hidden", "tooltip !inline-fkex mb-3" => $task->isUpdating()])>
+                    <x-loading class="loading-ring loading-xs -mb-2" />
                 </span>
 
-                <div @class(["hidden", "text-xs text-error !block" => $task->error_message ?? ''])>
+                <div @class(["hidden", "text-xs text-error !inline-flex" => $task->error_message ?? ''])>
                     {{ $task->error_message ?? '' }}
                 </div>
             </div>
@@ -49,14 +49,14 @@ new class extends Component {
 
             {{--  Stats --}}
             <div @class(["hidden", "!inline-flex" => $task->isRunning()])>
-                <span class="tooltip" data-tip="cpu / mem">
+                <span class="lg:tooltip" data-tip="cpu / mem">
                     <x-icon name="o-cpu-chip" label="{{ $task->stats->cpu ?? '-' }} / {{ $task->stats->memory ?? '-' }}" class="text-xs" />
                 </span>
             </div>
 
             {{--  Logs --}}
-            <div @class(["hidden", "!inline-flex" => $task->isRunning() || $task->isUpdating()])>
-                <x-button wire:click.stop="logs" icon="o-command-line" tooltip="Logs" class="btn-ghost btn-sm btn-circle mb-2" />
+            <div @class(["hidden mb-2", "!inline-flex" => $task->isRunning() || $task->isUpdating()])>
+                <x-button wire:click.stop="logs" icon="o-command-line" tooltip="Logs" class="btn-ghost btn-sm btn-circle" />
             </div>
         </div>
     </div>

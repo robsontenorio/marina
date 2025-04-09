@@ -52,9 +52,12 @@ services:
             LISTEN: /beszel_socket/beszel.sock
             # Deploy a first time to get Beszel dashboard up and running.
             # Then, register a new server and replace the key below with the one you get.
-            # Do not remove quotes around the key
+            # Finally, hit DEPLOY again.
+            # Do not remove quotes around the key.
             KEY: 'get-this-on-beszel-panel'
         deploy:
             update_config:
                 order: start-first
                 failure_action: rollback
+            labels:
+                - "traefik.enable=false"

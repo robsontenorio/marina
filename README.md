@@ -2,17 +2,22 @@
 
 ## Introduction
 
-Marina is a simple self-hosting solution using Docker Swarm. It's a web interface to manage containers and services.
+Marina is a lightweight web interface for managing Docker Swarm. It lets you deploy stacks using `docker-compose.yaml` files and view running containers.
 
-## Warning
+# Screenshots
 
-The web interface does not include advanced features such as volume and network management.
-
-It is simply a way to deploy stacks based on `docker-compose.yaml` files and visualize containers in a Docker Swarm environment.
+<table>
+  <tr>
+    <td><img src="public/images/demo1.png" width="300" style="border-radius: 5px;"></td>
+    <td><img src="public/images/demo4.png" width="300" style="border-radius: 5px;"></td>
+    <td><img src="public/images/demo2.png" width="300" style="border-radius: 5px;"></td>
+    <td><img src="public/images/demo3.png" width="300" style="border-radius: 5px;"></td> 
+  </tr>
+</table>
 
 ## Install
 
-This command must run only on a **fresh new server**, because it installs Docker and init the Swarm mode.
+Run this on a **fresh server**. Besides marina, it installs Docker and initializes Swarm mode.
 
 ```bash
 sh -c "$(curl -fsSL https://github.com/robsontenorio/marina/raw/main/install.sh)"
@@ -23,8 +28,12 @@ sh -c "$(curl -fsSL https://github.com/robsontenorio/marina/raw/main/install.sh)
 ## Upgrading
 
 ```bash
-docker service update --force --image ghcr.io/robsontenorio/marina:production marina
+docker service update --force --image ghcr.io/robsontenorio/marina:<TAG> marina
 ```
+
+## Example
+
+See a real world [usage example](.example/README.md).
 
 ## Contributing
 

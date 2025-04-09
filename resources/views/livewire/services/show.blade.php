@@ -55,10 +55,10 @@ new class extends Component {
         <div class="flex-1">
             <div class="flex gap-3">
                 {{--  REPLICAS--}}
-                <div class="flex gap-3 items-start">
-                    <div @class(["bg-base-300 text-base-content rounded-lg text-center p-3", "!bg-success !text-base-100"  => $service->isRunning()])>
+                <div class="flex gap-3 items-center">
+                    <div @class(["bg-base-300 text-base-content rounded-lg text-center p-5 sm:p-3", "!bg-success !text-base-100"  => $service->isRunning()])>
                         <div class="font-black">{{ $service->replicas }}</div>
-                        <div class="text-xs">replicas</div>
+                        <div class="text-xs hidden sm:block">replicas</div>
                     </div>
                     <div class="grid">
                         <x-button
@@ -71,6 +71,7 @@ new class extends Component {
                         <x-button
                             tooltip="Scale Down"
                             wire:click.stop="scaleDown('{{ $service->id }}')"
+                            wire:confirm="Are you sure you want to scale down?"
                             :disabled="$service->replicas == 0"
                             icon="o-chevron-down"
                             class="btn-ghost btn-sm btn-circle"
@@ -79,17 +80,17 @@ new class extends Component {
                 </div>
                 <div>
                     {{--  SERVICE --}}
-                    <div class="font-black text-xl mb-3">
+                    <div class="font-black sm:text-xl mb-3">
                         {{ str($service->name)->after('_') }}
-                        <span data-tip="This service is updating" @class(["hidden", "font-bold tooltip  !inline-block" => $service->isUpdating()]) >
-                            <x-loading class="loading-ring" />
-                        </span>
                     </div>
 
                     {{--  STATS--}}
                     <div>
-                        <span class="tooltip" data-tip="cpu / mem">
+                        <span class="lg:tooltip" data-tip="cpu / mem">
                             <x-icon name="o-cpu-chip" label="{{ $service->stats->cpu ?? '-' }} / {{ $service->stats->memory ?? '-' }}" class="text-xs" />
+                        </span>
+                        <span data-tip="This service is updating" @class(["hidden", "font-bold tooltip  !inline-flex" => $service->isUpdating()]) >
+                            <x-loading class="loading-ring loading-xs" />
                         </span>
                     </div>
                 </div>
@@ -99,7 +100,7 @@ new class extends Component {
             <x-button
                 tooltip-left="`docker service rm {service}`"
                 wire:click.stop="removeService('{{ $service->id }}')"
-                wire:confirm="Are you sure?"
+                wire:confirm="Remove `{{ $service->name }}`?"
                 icon="o-bookmark-slash"
                 class="btn-ghost btn-sm btn-circle"
                 spinner />
@@ -107,7 +108,7 @@ new class extends Component {
             <x-button
                 tooltip-left="`docker service update --image {image} --force {service}`"
                 wire:click.stop="forceUpdate('{{ $service->id }}')"
-                wire:confirm="Are you sure?"
+                wire:confirm="Force ?"
                 icon="o-fire"
                 class="btn-ghost btn-sm btn-circle"
                 spinner />

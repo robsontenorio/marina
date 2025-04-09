@@ -27,7 +27,7 @@ new class extends Component {
                     <div x-data="{expandTask: false}" @click.stop="expandTask = !expandTask" class="cursor-pointer" wire:key="service-{{ $service->id }}-slot">
                         <div>
                             <hr />
-                            <div class="hover:bg-base-200/50 hover:rounded p-3" :class="expandTask && 'bg-base-200/50'">
+                            <div class="hover:bg-base-content/5 hover:rounded p-3" :class="expandTask && 'bg-base-200'">
                                 {{-- CURRENT TASK--}}
                                 <livewire:tasks.show :task="$tasks->first()" wire:key="service-{{ $service->id }}-task-{{ $tasks->first()->id }}" />
                             </div>
