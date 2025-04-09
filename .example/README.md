@@ -2,7 +2,7 @@
 
 A simple approach to host multiple apps on same server using **Docker Swarm**.
 
-![img.png](assets/overview.png)
+![img.png](assets/overview2.png)
 
 ## Tools
 
