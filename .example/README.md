@@ -62,7 +62,7 @@ The above GitHub Action example will produce these images:
 
 ## Setup
 
-**VPS**
+### VPS
 
 ```bash
 # Update the system
@@ -75,12 +75,12 @@ sh -c "$(curl -fsSL https://github.com/robsontenorio/marina/raw/main/install.sh)
 See http://YOUR-VPS-IP-ADDRESS:8787
 ```
 
-**PROXY**
+### Proxy
 
 After entering the **marina** interface, check de `traefik` stack example.
 Change the domains and subdomains to your own and **hit deploy**.
 
-**DOMAINS**
+### Domains
 
 On your favorite domain registrar, point the domains/subdomains to your VPS IP address.  
 We recommend Cloudflare, because it provides the SSL certificates for free.
@@ -93,12 +93,12 @@ We recommend Cloudflare, because it provides the SSL certificates for free.
 | A    | **traefik** | YOUR-VPS-IP  | Proxied | Auto | **traefik**.your-site.com |
 | A    | **popcorn** | YOUR-VPS-IP  | Proxied | Auto | **popcorn**.your-site.com |
 
-**EXAMPLE**
+### Example
 
 Here is an [example](template/stack) of a stack you can use as reference.
 In this example, in the same stack, we group a several apps. But, you can organize your stacks as you prefer.
 
-**CREDENTIALS**
+### Credentials
 
 As we are using **private images**, check the **marina** interface to set the credentials for the private registry.
 Otherwise, you will not be able to pull the images.

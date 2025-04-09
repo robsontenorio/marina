@@ -4,7 +4,7 @@
 
 Marina is a lightweight web interface for managing Docker Swarm. It lets you deploy stacks using `docker-compose.yaml` files and view running containers.
 
-# Screenshots
+## Screenshots
 
 <table>
   <tr>
