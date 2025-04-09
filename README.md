@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Marina is a lightweight web interface for managing Docker Swarm. It lets you deploy stacks using `docker-compose.yaml` files and view running containers.
+Marina is a lightweight web interface for managing Docker Swarm. It lets you deploy stacks using `docker-compose.yaml` files and view containers.
 
 ## Screenshots
 
@@ -17,7 +17,7 @@ Marina is a lightweight web interface for managing Docker Swarm. It lets you dep
 
 ## Install
 
-Run this on a **fresh server**. Besides marina, it installs Docker and initializes Swarm mode.
+Run this on a **fresh server**. It installs Docker and initializes Swarm mode, along with Marina.
 
 ```bash
 sh -c "$(curl -fsSL https://github.com/robsontenorio/marina/raw/main/install.sh)"
@@ -31,9 +31,24 @@ sh -c "$(curl -fsSL https://github.com/robsontenorio/marina/raw/main/install.sh)
 docker service update --force --image ghcr.io/robsontenorio/marina:<TAG> marina
 ```
 
+## Security
+
+Marina uses [docker-credential-helpers](https://github.com/docker/docker-credential-helpers) and [pass](https://www.passwordstore.org/) to store registry credentials, not plain
+`config.json` credentials.
+
+**Note**: If you restart the VPS, you'll need to re-enter your registry credentials, since the credentials volume is not persisted.
+
+## Deployment Webhook
+
+Each stack has a secret webhook URL available in the Marina interface, which you can use to trigger deployments from your CI/CD pipeline.
+
 ## Example
 
 See a real world [usage example](.example/README.md).
+
+## Follow me
+
+[@robsontenorio](https://twitter.com/robsontenorio)
 
 ## Contributing
 
@@ -65,7 +80,3 @@ composer start
 ```
 
 **Done!** See http://localhost:8787
-
-## Follow me
-
-[@robsontenorio](https://twitter.com/robsontenorio)

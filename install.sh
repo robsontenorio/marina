@@ -34,7 +34,7 @@ TAG=$(curl -s https://api.github.com/repos/robsontenorio/marina/tags \
   | head -n1)
 
 # Create Marina service
-echo "\033[96m\n\n\n✨ Starting 'marina'service ...\n\033[0m"
+echo "\033[96m\n\n\n✨ Starting 'marina' service ...\n\033[0m"
 docker service create \
     --name marina \
     --network marina \

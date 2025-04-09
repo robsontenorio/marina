@@ -1,3 +1,5 @@
+# This is an explanatory example, and it will not work out of the box.
+
 # DO NOT USE SERVICES PORTS MAPPING!
 # See down below the Traefik labels, it does the mapping.
 

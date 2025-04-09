@@ -12,7 +12,7 @@ env:
 
 jobs:
   build-and-push-image:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -61,3 +61,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: "Deploy webhook"
+        if: success()
+        run: |
+          curl -X POST "${{ secrets.DEPLOY_WEBHOOK }}"

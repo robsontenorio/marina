@@ -95,7 +95,7 @@ new class extends Component {
             </div>
 
             {{--  WEBHOOK --}}
-            <div x-data="{ copy() { navigator.clipboard.writeText('{{ url('/deploy/?stack='.Crypt::encryptString($stack)) }}') } }">
+            <div x-data="{ copy() { navigator.clipboard.writeText('{{ url('/deploy/?stack='.Crypt::encryptString($stack), secure: true) }}') } }">
                 <div class="text-xs font-semibold mb-3 mt-2">Deployment webhook</div>
                 <x-button
                     label="Copy secret URL"

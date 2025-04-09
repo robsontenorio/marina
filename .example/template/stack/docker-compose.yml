@@ -25,8 +25,8 @@ services:
         healthcheck:
             test: [ "CMD", "curl", "-f", "http://localhost:8000/up" ]
             start_period: 120s
-            interval: 5s
-            timeout: 10s
+            interval: 60s
+            timeout: 20s
             retries: 3
         deploy:
             update_config:
@@ -45,8 +45,8 @@ services:
         healthcheck:
             test: [ "CMD", "curl", "-f", "http://localhost:8000/up" ]
             start_period: 120s
-            interval: 5s
-            timeout: 10s
+            interval: 60s
+            timeout: 20s
             retries: 3
         deploy:
             update_config:
@@ -65,8 +65,8 @@ services:
         healthcheck:
             test: [ "CMD", "curl", "-f", "http://localhost:8000/up" ]
             start_period: 120s
-            interval: 5s
-            timeout: 10s
+            interval: 60s
+            timeout: 20s
             retries: 3
         deploy:
             update_config:
@@ -91,8 +91,8 @@ services:
         healthcheck:
             test: [ "CMD", "curl", "-f", "http://localhost:8000/up" ]
             start_period: 120s
-            interval: 5s
-            timeout: 10s
+            interval: 60s
+            timeout: 20s
             retries: 3
         deploy:
             update_config:
