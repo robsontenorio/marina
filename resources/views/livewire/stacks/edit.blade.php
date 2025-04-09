@@ -61,8 +61,11 @@ new class extends Component {
     public function deploy(): void
     {
         $this->group = $this->group == "docker-compose" ? null : $this->group;
+        $this->envs = $this->envs->reject(fn($env) => ! isset($env['name']));
+
         $this->validate();
         $this->showLogs = true;
+
         $this->dispatch('stack-updated');
 
         new UpdateStackAction($this->stack, $this->stackContent, $this->stackOriginalName)->execute();
