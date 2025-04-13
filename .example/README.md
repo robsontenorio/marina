@@ -84,7 +84,7 @@ Change the domains and subdomains to your own and **hit deploy**.
 ### Domains
 
 On your favorite domain registrar, point the domains/subdomains to your VPS IP address.  
-We recommend Cloudflare, because it provides the SSL certificates for free.
+Cloudflare it is recommended because it provides free browser SSL certificates. 
 
 | Type | Name        | IPV4 Address | Proxy   | TTL  | Observation               |
 |------|-------------|--------------|---------|------|---------------------------|
