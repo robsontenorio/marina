@@ -27,7 +27,7 @@ echo "\033[96m\n\n\n✨ Creating 'marina' volume ...\n\033[0m"
 docker volume create marina || true
 
 # Get the current version
-apt install jq
+apt install -y jq
 
 TAG=$(curl -s https://api.github.com/repos/robsontenorio/marina/tags \
   | jq -r '.[].name' \
