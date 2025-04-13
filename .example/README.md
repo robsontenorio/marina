@@ -9,7 +9,7 @@ A simple approach to host multiple apps on same server using **Docker Swarm**.
 - **Marina** allows you to deploy stacks and receive deployment webhooks.
 - **Traefik**  routes all incoming traffic to the appropriate container.
 - **GitHub Actions** build and push images to a registry.
-- **Docker Swarm** handles zero-downtime deployments and rollbacks..
+- **Docker Swarm** handles zero-downtime deployments and rollbacks.
 
 ## Pre-requisites
 
