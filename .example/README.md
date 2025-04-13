@@ -67,7 +67,7 @@ The above GitHub Action example will produce these images:
 
 ```bash
 # Update the system
-apt update && apt install -y 
+apt update && apt upgrade
 
 # Install Marina
 sh -c "$(curl -fsSL https://github.com/robsontenorio/marina/raw/main/install.sh)"
