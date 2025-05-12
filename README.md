@@ -1,5 +1,12 @@
 <p align="center"><img width="250" src="public/images/marina.png"></p>
 
+## Archived (May, 2025)
+
+🔥 Although I didn’t set out to build a tool for beginner users, as an advanced Docker Swarm user, I’ve come to realize that it’s much more efficient to manage stack files directly on the VPS using VSCode over an SSH connection (via the plugin).
+
+That said, I learned a lot from this project. As you can see at https://robsontenorio.com, I built a Docker Swarm visualizer — and that’s exactly what I needed.
+
+
 ## Introduction
 
 Marina is a lightweight web interface for managing Docker Swarm. It lets you deploy stacks using `docker-compose.yaml` files and view containers.
